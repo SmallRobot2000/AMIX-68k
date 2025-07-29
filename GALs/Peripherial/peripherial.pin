@@ -1,0 +1,25 @@
+
+
+ Pin # | Name     | Pin Type
+-----------------------------
+   1   | IOnM     | Input
+   2   | RnW      | Input
+   3   | /nLDS    | Input
+   4   | /nUDS    | Input
+   5   | A12      | Input
+   6   | A13      | Input
+   7   | A14      | Input
+   8   | A15      | Input
+   9   | A16      | Input
+  10   | GND      | GND
+  11   | A17      | Input
+  12   | /nIOW    | Output
+  13   | /nIOR    | Output
+  14   | PSTIRG   | Output
+  15   | /nPPICS  | Output
+  16   | /nDMACS  | Output
+  17   | /nIDE0CS | Output
+  18   | /nUARTCS | Output
+  19   | /nFPGACS | Output
+  20   | VCC      | VCC
+

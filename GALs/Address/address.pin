@@ -1,0 +1,25 @@
+
+
+ Pin # | Name     | Pin Type
+-----------------------------
+   1   | A18      | Input
+   2   | A19      | Input
+   3   | A20      | Input
+   4   | A21      | Input
+   5   | A22      | Input
+   6   | A23      | Input
+   7   | RnW      | Input
+   8   | /nLDS    | Input
+   9   | /nUDS    | Input
+  10   | GND      | GND
+  11   | /nAS     | Input
+  12   | nDTACK   | Output
+  13   | IOnM     | Output
+  14   | /nROMUCS | Output
+  15   | /nROMLCS | Output
+  16   | /nRAM1UCS| Output
+  17   | /nRAM1LCS| Output
+  18   | /nRAM0UCS| Output
+  19   | /nRAM0LCS| Output
+  20   | VCC      | VCC
+

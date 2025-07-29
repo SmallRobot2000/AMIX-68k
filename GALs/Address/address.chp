@@ -1,0 +1,25 @@
+
+
+                                GAL16V8
+
+                          -------\___/-------
+                      A18 |  1           20 | VCC
+                          |                 |
+                      A19 |  2           19 | /nRAM0LCS
+                          |                 |
+                      A20 |  3           18 | /nRAM0UCS
+                          |                 |
+                      A21 |  4           17 | /nRAM1LCS
+                          |                 |
+                      A22 |  5           16 | /nRAM1UCS
+                          |                 |
+                      A23 |  6           15 | /nROMLCS
+                          |                 |
+                      RnW |  7           14 | /nROMUCS
+                          |                 |
+                    /nLDS |  8           13 | IOnM
+                          |                 |
+                    /nUDS |  9           12 | nDTACK
+                          |                 |
+                      GND | 10           11 | /nAS
+                          -------------------

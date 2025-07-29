@@ -1,0 +1,14 @@
+GAL16V8                ; this is the second example
+Controls 
+
+RnW			/nLDS		/nUDS		/nAS		A1		NC		NC		NC		NC		GND
+NC     	    NC  	    NC          NC 	        A0 	    /nWRU 	/nRDU   /nWRL 	/nRDL 	VCC
+
+A0 = nUDS
+
+nWRU = /RnW * nUDS
+nRDU = RnW * nUDS
+
+nWRL = /RnW * nLDS
+nRDL = RnW * nLDS
+DESCRIPTION

@@ -1,0 +1,20 @@
+GAL16V8                ; this is the second example
+Address 
+
+A18			A19			A20			A21			A22			A23			RnW			/nLDS		/nUDS		GND
+/nAS     	nDTACK  	IOnM    	/nROMUCS 	/nROMLCS 	/nRAM1UCS 	/nRAM1LCS 	/nRAM0UCS 	/nRAM0LCS 	VCC
+
+nDTACK.T = GND
+nDTACK.E = /A22 * /A23
+
+nROMUCS = nUDS * /A20 * /A21 * /A22 * /A23
+nROMLCS = nLDS * /A20 * /A21 * /A22 * /A23
+
+nRAM0UCS = nUDS * A20 * /A21 * /A22 * /A23
+nRAM0LCS = nLDS * A20 * /A21 * /A22 * /A23
+
+nRAM1UCS = nUDS * /A20 * A21 * /A22 * /A23
+nRAM1LCS = nLDS * /A20 * A21 * /A22 * /A23
+
+IOnM = nAS * A18 * A19 * A20 * A21 * A22 * A23
+DESCRIPTION

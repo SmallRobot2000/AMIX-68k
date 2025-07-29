@@ -1,0 +1,25 @@
+
+
+                                GAL16V8
+
+                          -------\___/-------
+                   /nIRQX |  1           20 | VCC
+                          |                 |
+                /nIRQUART |  2           19 | /nVPA
+                          |                 |
+                 /nIRQIDE |  3           18 | /nIACK
+                          |                 |
+                /nIRQDMAC |  4           17 | /nDMAIACK
+                          |                 |
+                      FC0 |  5           16 | /IRQRX
+                          |                 |
+                      FC1 |  6           15 | NC
+                          |                 |
+                      FC2 |  7           14 | NC
+                          |                 |
+                      A23 |  8           13 | NC
+                          |                 |
+                     /nAS |  9           12 | NC
+                          |                 |
+                      GND | 10           11 | NC
+                          -------------------

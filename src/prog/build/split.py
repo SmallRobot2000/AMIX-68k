@@ -1,0 +1,6 @@
+with open("bin/program.bin", "rb") as infile:
+    data = infile.read()
+
+with open("bin/odd.bin", "wb") as even_file, open("bin/even.bin", "wb") as odd_file:
+    even_file.write(data[::2])  # Bytes 0, 2, 4, ...
+    odd_file.write(data[1::2])  # Bytes 1, 3, 5, ...

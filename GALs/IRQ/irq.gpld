@@ -1,0 +1,13 @@
+GAL16V8                ; this is the second example
+IRQ
+
+/nIRQX		/nIRQUART	/nIRQIDE	/nIRQDMAC	FC0			FC1			FC2			A23		    /nAS	GND
+NC       	NC  	    NC          NC          NC          /IRQRX   	/nDMAIACK 	/nIACK 	    /nVPA 	VCC
+
+
+nVPA = nIRQX + nIRQIDE + nIRQUART
+/nIACK = FC0 * FC1 * FC2 * A23
+/nDMAIACK = FC0 * FC1 * FC2 * A23
+IRQRX   =   FC0 * FC1 * FC2 * nAS
+DESCRIPTION
+Dodat A23

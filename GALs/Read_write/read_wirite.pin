@@ -1,0 +1,25 @@
+
+
+ Pin # | Name     | Pin Type
+-----------------------------
+   1   | RnW      | Input
+   2   | /nLDS    | Input
+   3   | /nUDS    | Input
+   4   | /nAS     | Input
+   5   | A1       | Input
+   6   | NC       | Input
+   7   | NC       | Input
+   8   | NC       | Input
+   9   | NC       | Input
+  10   | GND      | GND
+  11   | NC       | Input
+  12   | NC       | NC
+  13   | NC       | NC
+  14   | NC       | NC
+  15   | A0       | Output
+  16   | /nWRU    | Output
+  17   | /nRDU    | Output
+  18   | /nWRL    | Output
+  19   | /nRDL    | Output
+  20   | VCC      | VCC
+

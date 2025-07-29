@@ -1,0 +1,19 @@
+GAL16V8                ; this is the second example
+Peripherial U11
+
+IOnM			RnW			/nLDS			/nUDS			A12			A13			A14			A15		    A16		    GND
+A17     	    /nIOW  	    /nIOR    	    PSTIRG 	        /nPPICS 	/nDMACS 	/nIDE0CS 	/nUARTCS 	/nFPGACS 	VCC
+
+nIOW = /RnW * IOnM * nLDS + /RnW * IOnM * nUDS
+nIOR = RnW * IOnM * nLDS + RnW * IOnM * nUDS
+
+nUARTCS = IOnM * A17 * A16 * /A15 * /A14 * /A13 * /A12
+nFPGACS = IOnM * A17 * A16 * /A15 * /A14 * /A13 * A12
+nIDE0CS = IOnM * A17 * A16 * /A15 * /A14 * A13 * /A12
+nPPICS  = IOnM * A17 * A16 * /A15 * /A14 * A13 * A12
+nDMACS  = IOnM * A17 * A16 * /A15 * A14 * /A13 * /A12
+
+
+PSTIRG = IOnM * A17 * A16 * A15 * A14 * A13 * A12
+
+DESCRIPTION

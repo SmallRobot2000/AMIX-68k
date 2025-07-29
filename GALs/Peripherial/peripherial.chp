@@ -1,0 +1,25 @@
+
+
+                                GAL16V8
+
+                          -------\___/-------
+                     IOnM |  1           20 | VCC
+                          |                 |
+                      RnW |  2           19 | /nFPGACS
+                          |                 |
+                    /nLDS |  3           18 | /nUARTCS
+                          |                 |
+                    /nUDS |  4           17 | /nIDE0CS
+                          |                 |
+                      A12 |  5           16 | /nDMACS
+                          |                 |
+                      A13 |  6           15 | /nPPICS
+                          |                 |
+                      A14 |  7           14 | PSTIRG
+                          |                 |
+                      A15 |  8           13 | /nIOR
+                          |                 |
+                      A16 |  9           12 | /nIOW
+                          |                 |
+                      GND | 10           11 | A17
+                          -------------------
