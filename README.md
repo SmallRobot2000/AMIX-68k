@@ -19,3 +19,11 @@ But somehow this is the first time working with 68k chip, I known for 68k style 
 |UART| 16550 @ 18.432 Mhz -> 115200 bps|
 |POWER| ATX PSU or 12V in|
 |TIME & TIMERS| Tmers in Xosera and 68230, and RTC (SparkFun BOB-10160)|
+
+# Present (problems)
+For now the keyboard, Video output, UART and DISK work.
+Xosera has problems reading and making interrupts, PCB is flawed, will continue testing.
+
+#Future
+Planned are (offcorse) to fix all the above issues, make a C compiler working, nice API,
+libc and that adn hopefully simple OS the AMIX OS
