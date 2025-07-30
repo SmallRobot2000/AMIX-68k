@@ -1,69 +1,13 @@
     section .vectors
 	ORG		$000000
-    dc.l   $00001000
+    dc.l   STACK_START
     dc.l   _start
-	dc.l	_exc_bus_err
-	dc.l	_exc_add_err
 
-	dc.l	_exc_illegal
-	dc.l	_exc_dev_zero
-	dc.l	_exc_err_chk
-	dc.l	_exc_overflow
-	dc.l	_exc_usr_privilage
-
-	dc.l	_exc_trace
-	dc.l	_exc_line1010
-	dc.l	_exc_line1111
-
-	dc.l	_exc_soft_none0
-	dc.l	_exc_soft_none1
-	dc.l	_exc_soft_none2 ;reserved
-
-	dc.l	_exc_soft_none3 ;unitilized int vector
-
-	dc.l	_exc_soft_none4
-	dc.l	_exc_soft_none5
-	dc.l	_exc_soft_none6
-	dc.l	_exc_soft_none7
-	dc.l	_exc_soft_none8
-	dc.l	_exc_soft_none9
-	dc.l	_exc_soft_none10
-	dc.l	_exc_soft_none11
-	dc.l	_exc_soft_none12
-
-	
-
-	;auto vectors
-	dc.l	_autovec_none1	;IRQ 1
-	dc.l	_autovec_none2	;IRQ 2
-	dc.l	_autovec_none3	;IRQ 3
-	dc.l	_autovec_none4	;IRQ 4
-	dc.l	_autovec_none5	;IRQ 5 - xosera
-	dc.l	_autovec_none6	;IRQ 6
-	dc.l	_autovec_none7	;IRQ 7
-		
-	;TRAP 0-15
-	dc.l	_exc_trap_VID		;Xosera
-	dc.l	_exc_trap_UART		;UART
-	dc.l	_exc_trap_none2	
-	dc.l	_exc_trap_none3	
-	dc.l	_exc_trap_none4	
-	dc.l	_exc_trap_none5	
-	dc.l	_exc_trap_none6	
-	dc.l	_exc_trap_none7	
-	dc.l	_exc_trap_none8	
-	dc.l	_exc_trap_none9	
-	dc.l	_exc_trap_none10	
-	dc.l	_exc_trap_none11	
-	dc.l	_exc_trap_none12	
-	dc.l	_exc_trap_none13	
-	dc.l	_exc_trap_none14	
-	dc.l	_exc_trap_none15	
 
 PWR_TRIG		equ 	$FFFFFF
 RAM_START		equ     $100000
-STACK_START		equ		RAM_START+$1EFF0
-program			equ		RAM_START+$1F000
+STACK_START		equ		RAM_START+$1F000
+program			equ		RAM_START+$20000
 UART_BASE       equ     $FF0000
 
 UART_RBR        equ     $00
@@ -87,41 +31,32 @@ DEBUG		equ		1
 	INCLUDE		"xosera.asm"
 	INCLUDE		"dmac.asm"
 	INCLUDE		"PPI_KEYB_PIT.asm"
-	INCLUDE		"bss.asm"
+	INCLUDE		"../common/bss.asm"
 	section .text
 _start:
-	lea		STACK_START,a7	;set up stack
-	lea 	UART_BASE,a0
-	move.b  #$80,(UART_LCR,a0) ; Enable DLAB
-    ; Set divisor latch for 9600 baud
-	;move.b  #$78,(UART_DLL,a0) ; 9600 baud @ 18.432 MHz
-	move.b  #$0A,(UART_DLL,a0) 	; 115200 baud @ 18.432 MHz
-	move.b  #$00,(UART_DLM,a0) 
-
-    ; 8N1, DLAB=0
-	move.b  #$03,(UART_LCR,a0)
-
-	;FIFO enable
-	move.b 	#$07,(UART_FCR,a0)
-
+	move.w  #$2700,sr	;disable interupts
 	jsr		clear_ram
-	;jsr		receve_byte
-	;move.w  #$2700,sr	;disable interupts
+	jsr		init_EXC
+	move.l	#trap0_code,(Vector_table_start+$80)
+	jsr		UART_init
 	jsr		wait_for_x
-	jsr		init_xosera	
-
-	jsr		x_update_screen
+	jsr		init_xosera
 	jsr		init_DMAC
 	jsr		ppi_init
 	
 
 	lea		msg,a0
-	move	#1,d1		;Xosera MODE 1 - a0 string
-	TRAP	#0
-	move	#3,d1
-	TRAP	#0			;Xosera update screen
+	jsr		send_string
+	lea		msg,a0
+	jsr		x_print_string
+	jsr		x_update_screen
 
-	
+	TRAP	#0
+	TRAP	#1
+	lea		msg,a0
+	jsr		x_print_string
+	jsr		x_update_screen
+	jmp		*
 	lea		program,a0
 	jsr		xmodem_receve
 
@@ -137,6 +72,26 @@ _start:
 
 	;move.b #$FF,(PWR_TRIG)
 	jmp *
+UART_init:	
+	lea 	UART_BASE,a0
+	
+	move.b  #$80,(UART_LCR,a0) ; Enable DLAB
+    ; Set divisor latch for 9600 baud
+	;move.b  #$78,(UART_DLL,a0) ; 9600 baud @ 18.432 MHz
+	move.b  #$0A,(UART_DLL,a0) 	; 115200 baud @ 18.432 MHz
+	move.b  #$00,(UART_DLM,a0) 
+
+    ; 8N1, DLAB=0
+	move.b  #$03,(UART_LCR,a0)
+
+	;FIFO enable
+	move.b 	#$07,(UART_FCR,a0)
+	rts
+trap0_code:	
+	lea		msg_t0,a0
+	jsr		x_print_string
+	jsr		x_update_screen
+	rte
 clear_ram:	
 	lea		RAM_START,a0
 	move	#$FFFF/2,d0
@@ -291,216 +246,74 @@ test_RAM:
 	jsr 	print_hex_add
 	
 	rts
-_autovec_none:
-	move.l	d0,-(a7)
-	move	#'X',d0
-	jsr		send_byte
-	move.l	(a7)+,d0
-	rte
+init_EXC:	
+	lea		Vector_table_start,a0
 
-_exc_illegal:
-	move	d0,-(a7)
-	move.b	#'0',d0
-	jmp		print_exeption
-_exc_bus_err:
-	move	d0,-(a7)
-	move.b	#'1',d0
-	jmp		print_exeption
-_exc_add_err:
-	move	d0,-(a7)
-	move.b	#'2',d0
-	jmp		print_exeption
-_exc_dev_zero:
-	move	d0,-(a7)
-	move.b	#'3',d0
-	jmp		print_exeption
-_exc_err_chk:
-	move	d0,-(a7)
-	move.b	#'4',d0
-	jmp		print_exeption
-_exc_overflow:
-	move	d0,-(a7)
-	move.b	#'5',d0
-	jmp		print_exeption
-_exc_usr_privilage:
-	move	d0,-(a7)
-	move.b	#'6',d0
-	jmp		print_exeption
-_exc_trace:
-	move	d0,-(a7)
-	move.b	#'7',d0
-	jmp		print_exeption
-_exc_line1010:
-	move	d0,-(a7)
-	move.b	#'8',d0
-	jmp		print_exeption
-_exc_line1111:
-	move	d0,-(a7)
-	move.b	#'9',d0
-	jmp		print_exeption
-_exc_soft_none:
-	move	d0,-(a7)
-	move.b	#'A',d0
-	jmp		print_exeption
-
-_exc_soft_none0:
-	move	d0,-(a7)
-	move.b	#'B',d0
-	jmp		print_exeption
-_exc_soft_none1:
-	move	d0,-(a7)
-	move.b	#'C',d0
-	jmp		print_exeption
-_exc_soft_none2: ;
-	move	d0,-(a7)
-	move.b	#'D',d0
-	jmp		print_exeption
-_exc_soft_none3: ;
-	move	d0,-(a7)
-	move.b	#'E',d0
-	jmp		print_exeption
-_exc_soft_none4:
-	move	d0,-(a7)
-	move.b	#'F',d0
-	jmp		print_exeption
-_exc_soft_none5:
-	move	d0,-(a7)
-	move.b	#'G',d0
-	jmp		print_exeption
-_exc_soft_none6:
-	move	d0,-(a7)
-	move.b	#'H',d0
-	jmp		print_exeption
-_exc_soft_none7:
-	move	d0,-(a7)
-	move.b	#'I',d0
-	jmp		print_exeption
-_exc_soft_none8:
-	move	d0,-(a7)
-	move.b	#'J',d0
-	jmp		print_exeption
-_exc_soft_none9:
-	move	d0,-(a7)
-	move.b	#'K',d0
-	jmp		print_exeption
-_exc_soft_none10:
-	move	d0,-(a7)
-	move.b	#'L',d0
-	jmp		print_exeption
-_exc_soft_none11:
-	move	d0,-(a7)
-	move.b	#'M',d0
-	jmp		print_exeption
-_exc_soft_none12:
-	move	d0,-(a7)
-	move.b	#'N',d0
-	jmp		print_exeption
+	move.l	#Vector_table_start,d0
+	movec	d0,vbr
+	move	#255,d0
+.l1:
+	move.l	#empty_exeption,(a0)+
+	dbra	d0,.l1
+	rts
 
 
-_exc_trap_none1:
-	move	d0,-(a7)
-	move.b	#'O',d0
-	jmp		print_exeption
-_exc_trap_none2:
-	move	d0,-(a7)
-	move.b	#'P',d0
-	jmp		print_exeption
-_exc_trap_none3:
-	move	d0,-(a7)
-	move.b	#'R',d0
-	jmp		print_exeption
-_exc_trap_none6:
-	move	d0,-(a7)
-	move.b	#'S',d0
-	jmp		print_exeption
-_exc_trap_none7:
-	move	d0,-(a7)
-	move.b	#'T',d0
-	jmp		print_exeption
+empty_exeption:
+	lea		msg_empty,a0
+	jsr		send_string
+	rte	
 
-_exc_trap_none0:	
-	move	d0,-(a7)
-	move.b	#'U',d0
-	jmp		print_exeption
-_exc_trap_none4:	
-	move	d0,-(a7)
-	move.b	#'Q',d0
-	jmp		print_exeption
-_exc_trap_none5:	
-	move	d0,-(a7)
-	move.b	#'a',d0
-	jmp		print_exeption
-_exc_trap_none8:	
-	move	d0,-(a7)
-	move.b	#'d',d0
-	jmp		print_exeption
-_exc_trap_none9:	
-	move	d0,-(a7)
-	move.b	#'e',d0
-	jmp		print_exeption
-_exc_trap_none10:
-	move	d0,-(a7)
-	move.b	#'f',d0
-	jmp		print_exeption
-_exc_trap_none11:
-	move	d0,-(a7)
-	move.b	#'g',d0
-	jmp		print_exeption
-_exc_trap_none12:
-	move	d0,-(a7)
-	move.b	#'h',d0
-	jmp		print_exeption
-_exc_trap_none13:
-	move	d0,-(a7)
-	move.b	#'i',d0
-	jmp		print_exeption
-_exc_trap_none14:
-	move	d0,-(a7)
-	move.b	#'j',d0
-	jmp		print_exeption
-_exc_trap_none15:
-	move	d0,-(a7)
-	move.b	#'k',d0
-	jmp		print_exeption
-_autovec_none1:
-	move	d0,-(a7)
-	move.b	#'l',d0
-	jmp		print_exeption
-_autovec_none2:
-	move	d0,-(a7)
-	move.b	#'m',d0
-	jmp		print_exeption
-_autovec_none3:
-	move	d0,-(a7)
-	move.b	#'n',d0
-	jmp		print_exeption
-_autovec_none4:
-	move	d0,-(a7)
-	move.b	#'o',d0
-	jmp		print_exeption
-_autovec_none5:
-	move	d0,-(a7)
-	move.b	#'p',d0
-	jmp		print_exeption
-_autovec_none6:
-	move	d0,-(a7)
-	move.b	#'r',d0
-	jmp		print_exeption
-_autovec_none7:
-	move	d0,-(a7)
-	move.b	#'s',d0
-	jmp		print_exeption
-print_exeption:
-	jsr	send_byte
-	move	(a7)+,d0
-	
-	rte
+;d0 - hex
+print_hex:	
+	movem.l	d0/d1/d2/a0,-(a7)
+	lea		tmp_str,a0
 
+	move	#7,d2
+	move.l	d0,d1
+	andi.l	#$FFFF0000,d1	;see if long
+	tst.l	d1
+	bne		.l1
+
+	move	#3,d2
+	move	d0,d1
+	swap	d0
+	and.w	#$FF00,d1		;see if word
+	tst		d1
+	bne		.l1
+	;must be byte
+	lsl.l	#8,d0
+	move	#1,d2	;byte
+.l1:
+	move.l	d0,d1
+	swap	d1
+	lsr.w	#8,d1
+	lsr.w	#4,d1	
+	and.l	#$0000000F,d1	;mask 0-3 bits
+	lsl.l	#4,d0
+	;print hexa bits in d1 0-3
+
+	cmpi.b  #9,d1
+    ble     .digit
+    addi.b  #'A'-10,d1
+    bra     .send
+.digit:
+    addi.b  #'0',d1
+.send:
+	move.b	d1,(a0)+
+	dbra	d2,.l1
+	move.b	#0,(a0)+
+
+	lea		tmp_str,a0
+	move	#1,d1
+	TRAP	#0	;print string
+	movem.l	(a7)+,d0/d1/d2/a0
+	rts
 
 	section .rodata
 msg:
 	dc.b 13,"Hello form 68k!",13,10,0
-
+msg_empty:
+	dc.b "Empty exec",0
 msg_wrong:
 	dc.b 13,"Memory test FAIL",13,10,0
 msg_failed_at:
@@ -508,7 +321,8 @@ msg_failed_at:
 
 msg_OK:
 	dc.b 13,"Memory test OK",13,10,0
-
+msg_t0:
+	dc.b "Hello TRAP #0",0
 
 
 

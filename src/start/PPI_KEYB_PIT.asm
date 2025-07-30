@@ -52,13 +52,13 @@ kyb_get_key:
 .wait_for_key_end:
     lea     kyb_last,a0
     lea     kyb_wait,a1
-    lea     FRAME,a2
+    lea     tmr_cnt,a2
     move.b  d0,d3   ;save cur cahar
     move.b  (a0),d1 ;last char
     cmp.b   d0,d1
     bne     .new_char
     jsr     send_byte
-    move.l  (a1),d0 ;get FRAME TARGET
+    move.l  (a1),d0 ;get tmr_cnt TARGET
     
 .wait:
 
@@ -84,16 +84,16 @@ kyb_get_key:
     cmp.b   d0,d3
     bne     .wait_for_key
     ;end of wait
-    add.l   #KYB_SHORT_WAIT_FRAMES,d1   ;new frame target
+    add.l   #KYB_SHORT_WAIT,d1   ;new frame target
     move.l    d1,(a1) ;update wait target
     move.b  (a0),d0   ;get char
     jmp     .end
 .new_char
     lea     kyb_last,a0
     lea     kyb_wait,a1
-    lea     FRAME,a2
+    lea     tmr_cnt,a2
     move.l  (a2),d1
-    add.l   #KYB_LONG_WAIT_FRAMES,d1
+    add.l   #KYB_LONG_WAIT,d1
     move.l  d1,(a1) ;update kyb_wait
     move.b  d0,(a0) ;update last char
     
@@ -188,14 +188,14 @@ get_key_from_matrix:
     rts
 
 ;flag bits, used with btst
-KYB_FLG_BIT_SHIFT  equ     $00
-KYB_FLG_BIT_CAPS   equ     $01
-KYB_FLG_BIT_CTRL   equ     $02
+KYB_FLG_BIT_SHIFT   equ     $00
+KYB_FLG_BIT_CAPS    equ     $01
+KYB_FLG_BIT_CTRL    equ     $02
 
 KYB_ROWS            equ     9
 
-KYB_LONG_WAIT_FRAMES equ    10
-KYB_SHORT_WAIT_FRAMES equ   2
+KYB_LONG_WAIT       equ    10
+KYB_SHORT_WAIT      equ   2
 
 
 KYB_SHIFT       equ     $80

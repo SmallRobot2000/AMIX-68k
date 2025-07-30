@@ -166,9 +166,6 @@ cursor_update:
     cmp.w   d0,d1
     beq     .end
     move.w  (a0),(a1)
-    lea     cursor_pos,a0
-    lea     last_cursor_pos,a1
-    move.w  (a0),(a1)
     lea     cursor_state,a0
     lea     last_cursor_state,a1
     move.w  (a0),(a1)
