@@ -1,5 +1,4 @@
     section .bss
-        section .bss
     ORG		RAM_START
 	
 Vector_table_start:
@@ -125,7 +124,8 @@ tmr_cnt:
 	ds.l 1	;TODO add interupt that increments this every frame(for now it in loop)
 x_screen:
 	ds.w 32*80
-
+FRAME:
+	ds.l 1
 ;kyboard
 kyb_wait:
 	ds.l 1
@@ -133,5 +133,6 @@ kyb_last:
 	ds.w 1
 kyb_flags:
 	ds.w 1
-
+buffer:
+	ds.w $2000
     

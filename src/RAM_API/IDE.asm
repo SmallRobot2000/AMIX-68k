@@ -37,8 +37,9 @@ _DIAG        equ   $9000   ; Execute drive diagnostic
 _IDENTPKT    equ   $A100   ; Identify packet device
 _PKTCMD      equ   $A000   ; ATAPI packet command
 
+    section .text
 IDE_init:
-    jsr     IDE_wait_BUSY
+    bsr     IDE_wait_BUSY
     rts
 
 
@@ -51,23 +52,23 @@ IDE_read_sectors_LBA:
     move.l  d1,d2
     lsl.l   #8,d2
     move.w  d2,(IDE_SCT_CNT) ;set sector count to byte in d1
-    jsr     IDE_wait_BUSY
+    bsr     IDE_wait_BUSY
 
     move.l  d0,d2
     lsl.l   #8,d2   ;set 2nd byte as low byte
     move.w  d2,(IDE_SCT_NUM)
-    jsr     IDE_wait_BUSY
+    bsr     IDE_wait_BUSY
 
     move    d0,d2
     and.w   #$FF00,d2   ;hi byte
     move.w  d2,(IDE_CYL_LOW)
-    jsr     IDE_wait_BUSY
+    bsr     IDE_wait_BUSY
 
     move    d0,d2
     lsr.l   #8,d2
     and.w   #$FF00,d2   ;2nd hi byte
     move.w  d2,(IDE_CYL_HIGH)
-    jsr     IDE_wait_BUSY
+    bsr     IDE_wait_BUSY
 
     move    d0,d2
     swap    d2
@@ -75,12 +76,12 @@ IDE_read_sectors_LBA:
     or.w    #$E000,d2
     move.w  d2,(IDE_DRV)
 
-    jsr     IDE_wait_BUSY
-    jsr     IDE_wait_CMD_RDY
+    bsr     IDE_wait_BUSY
+    bsr     IDE_wait_CMD_RDY
     move.w  #_RDSEC,(IDE_CMD)    ;CMD $20 read sector(s)
-    jsr     IDE_wait_BUSY
-    jsr     IDE_wait_CMD_RDY
-    jsr     IDE_wait_DAT_RDY
+    bsr     IDE_wait_BUSY
+    bsr     IDE_wait_CMD_RDY
+    bsr     IDE_wait_DAT_RDY
 
     move.w  (IDE_STAT),d2
     lsr.l   #8,d2
@@ -112,13 +113,13 @@ IDE_read_sectors_LBA:
     move.l  d0,-(a7)
 
     lea     msg_drv_err,a0
-    jsr     print_string
+    bsr     x_print_byte_string
 
     move    (IDE_ERR),d0
     lsr.w   #8,d0
 
     andi.l  #$000000FF,d0
-    jsr     print_hex
+    bsr     x_print_hex
 
     move.l  (a7)+,d0
     movem.l (a7)+,d2/a0
@@ -130,28 +131,28 @@ IDE_write_sectors_LBA:
     movem.l d2/a0,-(a7)
     move.l  d1,-(a7)
     ;d2 copy 
-    jsr     IDE_wait_BUSY
-    jsr     IDE_wait_CMD_RDY
+    bsr     IDE_wait_BUSY
+    bsr     IDE_wait_CMD_RDY
     move.l  d1,d2
     lsl.l   #8,d2
     move.w  d2,(IDE_SCT_CNT) ;set sector count to byte in d1
-    jsr     IDE_wait_BUSY
+    bsr     IDE_wait_BUSY
 
     move.l  d0,d2
     lsl.l   #8,d2   ;set 2nd byte as low byte
     move.w  d2,(IDE_SCT_NUM)
-    jsr     IDE_wait_BUSY
+    bsr     IDE_wait_BUSY
 
     move    d0,d2
     and.w   #$FF00,d2   ;hi byte
     move.w  d2,(IDE_CYL_LOW)
-    jsr     IDE_wait_BUSY
+    bsr     IDE_wait_BUSY
 
     move    d0,d2
     lsr.l   #8,d2
     and.w   #$FF00,d2   ;2nd hi byte
     move.w  d2,(IDE_CYL_HIGH)
-    jsr     IDE_wait_BUSY
+    bsr     IDE_wait_BUSY
 
     move    d0,d2
     swap    d2
@@ -159,8 +160,8 @@ IDE_write_sectors_LBA:
     or.w    #$E000,d2
     move.w  d2,(IDE_DRV)
 
-    jsr     IDE_wait_BUSY
-    jsr     IDE_wait_CMD_RDY
+    bsr     IDE_wait_BUSY
+    bsr     IDE_wait_CMD_RDY
 
 
     move.w  #_WRSEC,(IDE_CMD)    ;CMD $30 write sector(s)
@@ -174,7 +175,7 @@ IDE_write_sectors_LBA:
     andi.w  #$00FF,d2
 .loop_write_sec: 
     move.w  #255,d1
-    jsr     IDE_wait_DAT_RDY
+    bsr     IDE_wait_DAT_RDY
 .loop_write:
     btst    #15,(IDE_STAT)      ;bit 7
     bne     .loop_write
@@ -186,7 +187,7 @@ IDE_write_sectors_LBA:
     dbra    d1,.loop_write
     dbra    d2,.loop_write_sec
     
-    ;jsr     IDE_wait_DAT_RDY_fast
+    ;bsr     IDE_wait_DAT_RDY_fast
 
     move.l  (a7)+,d1
     movem.l (a7)+,d2/a0
@@ -195,15 +196,15 @@ IDE_write_sectors_LBA:
     move.l  d0,-(a7)
 
     lea     msg_drv_err,a0
-    jsr     print_string
+    bsr     x_print_byte_string
 
     move    (IDE_ERR),d0
     lsr.w   #8,d0
 
     andi.l  #$000000FF,d0
-    jsr     print_hex
+    bsr     x_print_hex
 
-    jsr     update_scren
+
     jmp     *
 
     move.l  (a7)+,d0
@@ -238,8 +239,7 @@ IDE_wait_DAT_RDY_fast:
     rts
 .aaa:
     move.b  d1,d0
-    jsr     print_hex
-    jsr     update_scren
+    bsr     x_print_hex
     jmp     IDE_wait_DAT_RDY_fast
 
 IDE_read_CMD:
@@ -254,15 +254,14 @@ IDE_read_CMD:
     bne     IDE_read_CMD
 
     move    #$AAAA,d0
-    jsr     print_hex
-    jsr     update_scren ;test
+    bsr     x_print_hex
 
     lea     buffer,a0
     move    #$60-1,d2
 .loop_read1:
     move    #255,d1
 .loop_read:
-    jsr     IDE_wait_DAT_RDY
+    bsr     IDE_wait_DAT_RDY
     move.w  (IDE_DATA),(a0)+
     dbra    d1,.loop_read
     dbra    d2,.loop_read1

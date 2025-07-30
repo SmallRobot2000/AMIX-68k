@@ -37,7 +37,6 @@ _start:
 	move.w  #$2700,sr	;disable interupts
 	jsr		clear_ram
 	jsr		init_EXC
-	move.l	#trap0_code,(Vector_table_start+$80)
 	jsr		UART_init
 	jsr		wait_for_x
 	jsr		init_xosera
@@ -51,12 +50,7 @@ _start:
 	jsr		x_print_string
 	jsr		x_update_screen
 
-	TRAP	#0
-	TRAP	#1
-	lea		msg,a0
-	jsr		x_print_string
-	jsr		x_update_screen
-	jmp		*
+	
 	lea		program,a0
 	jsr		xmodem_receve
 

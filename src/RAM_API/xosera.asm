@@ -55,40 +55,6 @@ SCREEN_HIGHT    equ     32
 DEFAULT_FR      equ     $02 ;green
 DEFAULT_BG      equ     $00 ;black
 XM_TIME_CUR_BIT equ     12  ;speed of cursor
-init_xosera:        
-    
-    lea     XM_BASE,a0
-    move    #XR_PA_GFX_CTRL,d1
-    movep   d1,(XM_WR_XADD,a0)
-
-    move    #$0000,d0       ;colorbase 0 idk, no blank, bitmap in tile mem, 1bpp,1x wide,1x tall
-    movep   d0,(XM_XDATA,a0)
-    move    #$400F,d0       ;tileset in tile memory at $4000, display in vram, hight 16
-    movep   d0,(XM_XDATA,a0)
-    move    #X_SCREEN_START,d0       ;VRAM start
-    movep   d0,(XM_XDATA,a0)
-    move    #80,d0          ;display line lengt in word - 80 because 80 characters per line
-    movep   d0,(XM_XDATA,a0)
-    move    #$0000,d0       ;fractional scale off
-    movep   d0,(XM_XDATA,a0)
-    move    #$107F,d0       ;enable vsync and clear?
-    ;movep   d0,(XM_INT_CTR,a0)
-
-    move    #00,d0
-    jsr     x_set_border_color
-
-    move    #$0F20,d0
-    move    #DEFAULT_FR,d1
-    move    #DEFAULT_BG,d2
-    jsr     set_char_colors
-    lea     x_screen,a0 
-    move    #SCREEN_WIDTH*SCREEN_HIGHT-1,d1
-.loop:
-    move.w  d0,(a0)+
-    dbra    d1,.loop
-
-.end:
-	rts
 
 ;d0 - color in low byte
 x_set_border_color:
@@ -101,24 +67,36 @@ x_set_border_color:
     movem.l (a7)+,d0/d1/a0
     rts
 
-;d0 - low word - color/char
+;d0 - color/char
 ;puts char in RAM map of VRAM display
-x_print_char:
+x_print_char_word:
     movem.l d1/a0/a1,-(a7)
     lea     x_screen,a0
     lea     cursor_add,a1
     move.w  (a1),d1
     lsl.w   #1,d1       ;*2 for even address
-    move.w  d0,(a0,d1)
+    move.w  d0,(a0,d1)  ;make copy in RAM
+    lea     XM_BASE,a0
+    move.w  (a1),d1
+    add.w   #X_SCREEN_START,d1
+    movep   d1,(XM_WR_ADDR,a0)
+    move.w  #1,d1
+    movep   d1,(XM_WR_INCR,a0)
+    movep   d0,(XM_DATA,a0)
     add.w   #1,(a1)
-
     movem.l (a7)+,d1/a0/a1
     rts
 
+;d0 - byte char
+x_print_char_byte:
+    andi.w  #$00FF,d0
+    or.w    #(DEFAULT_BG<<4|DEFAULT_FR)<<8,d0
+    jmp     x_print_char_word
+
 x_update_screen:
     
-    jsr     x_send_screen
-    jsr     cursor_update
+    bsr     x_send_screen
+    bsr     cursor_update
     rts
 
 ;updates the screen copy in ram
@@ -139,7 +117,7 @@ cursor_update:
     beq     .skip_last_flip ;its not fliped so no need to change
 
 ;here we flip last character
-    ;jsr     flip_last_cursor
+    ;bsr     flip_last_cursor
 .skip_last_flip:
     
     ;update curent cursor state and colors
@@ -156,7 +134,7 @@ cursor_update:
     eor.w   #$02,(a0)  ;flip cur state
 
 
-    jsr     flip_cursor
+    bsr     flip_cursor
 .skip_cur_flip:
     ;update last cursor if not same
     lea     cursor_add,a0
@@ -165,9 +143,6 @@ cursor_update:
     move.w  (a1),d1
     cmp.w   d0,d1
     beq     .end
-    move.w  (a0),(a1)
-    lea     cursor_pos,a0
-    lea     last_cursor_pos,a1
     move.w  (a0),(a1)
     lea     cursor_state,a0
     lea     last_cursor_state,a1
@@ -185,8 +160,18 @@ flip_cursor:
     move.w  (a1),d1
     lsl.w   #1,d1   ;*2 for even address
     move.w  (a0,d1.w),d0
-    jsr     flip_char_colors
+    bsr     flip_char_colors
     move.w  d0,(a0,d1)
+    ;d0 - char
+    ;print to xosera
+    lea     XM_BASE,a0
+    move.w  #1,d1
+    movep   d1,(XM_WR_INCR,a0)
+    move.w  (a1),d1
+    add.w   #X_SCREEN_START,d1
+    movep   d1,(XM_WR_ADDR,a0)
+    movep   d0,(XM_DATA,a0)
+
     movem.l (a7)+,d0/d1/a0/a1
     rts
 
@@ -198,16 +183,110 @@ flip_last_cursor:
     move.w  (a1),d1
     lsl.w   #1,d1   ;*2 for even address
     move.w  (a0,d1.w),d0
-    jsr     flip_char_colors
+    bsr     flip_char_colors
     move.w  d0,(a0,d1)
+    ;d0 - char
+    ;print to xosera
+    lea     XM_BASE,a0
+    move.w  #1,d1
+    movep   d1,(XM_WR_INCR,a0)
+    move.w  (a1),d1
+    add.w   #X_SCREEN_START,d1
+    movep   d1,(XM_WR_ADDR,a0)
+    movep   d0,(XM_DATA,a0)
     movem.l (a7)+,d0/d1/a0/a1
     rts
+
+
+;d0 - X
+;d1 - Y
+x_set_cursor_xy:
+	movem.l	d0/d1/a0,-(a7)
+	mulu.w	#80,d1
+	add.w	d1,d0
+
+	lea     cursor_add,a0
+	move.w	d0,(a0)
+
+	movem.l	(a7)+,d0/d1/a0
+	rts
+;d0 - X
+;d1 - Y
+x_get_cursor_xy:
+	movem.l	a0,-(a7)
+	lea     cursor_add,a0
+
+	move.l	#0,d0
+	move.w	(a0),d0
+
+	divu	#80,d0	;D0 hi = x, D0 lo = y
+	move.w	d0,d1	;y
+	swap	d0		;x
+	and.l	#$0000FFFF,d0 ; mask only x
+
+	movem.l	(a7)+,a0
+	rts
+
+;New line
+x_print_NL:
+    movem.l	d0/d1,-(a7)
+	bsr		x_get_cursor_xy
+	add.w	#1,d1
+	bsr		x_set_cursor_xy
+	movem.l (a7)+,d0/d1
+    rts
+;Carrige return
+x_print_CR:
+    movem.l	d0/d1,-(a7)
+	bsr		x_get_cursor_xy
+	move.w	#0,d0
+	bsr		x_set_cursor_xy
+	movem.l (a7)+,d0/d1
+    rts
+;Back space
+x_print_BS:
+    movem.l	d0/d1,-(a7)
+    bsr     x_get_cursor_xy
+    tst     d0
+    beq     .s1
+    subq.w  #1,d0
+    bsr     x_set_cursor_xy
+	movem.l (a7)+,d0/d1
+    rts
+.s1:
+    move.w  #79,d0
+    subq.w  #1,d1
+    bsr     x_set_cursor_xy
+    movem.l (a7)+,d0/d1
+    rts
+
+;Back space with delete
+x_print_BS_DEL:
+    movem.l	d0/d1,-(a7)
+    bsr     x_get_cursor_xy
+    tst     d0
+    beq     .s1
+    subq.w  #1,d0
+    bsr     x_set_cursor_xy
+	movem.l (a7)+,d0/d1
+    rts
+.s1:
+    move.w  #79,d0
+    subq.w  #1,d1
+    bsr     x_set_cursor_xy
+
+    move    #' ',d0
+    jsr     x_print_char_byte
+    bsr     x_set_cursor_xy
+    movem.l (a7)+,d0/d1
+    rts
+
 ;char in d0(word)
 flip_char_colors:
     movem.l d1/d2,-(a7)
-    jsr     get_char_colors
+    bsr     get_char_colors
     exg     d1,d2
-    jsr     set_char_colors
+    bsr     set_char_colors
     movem.l (a7)+,d1/d2
     rts
 x_send_screen:
@@ -283,67 +362,177 @@ get_char_colors:
     andi    #$0000000F,d2
     move    (a7)+,d0
     rts
+
+x_set_add_rep:
+    movem.l d0/a0/a1,-(a7)
+    lea     XM_BASE,a0
+    lea     cursor_add,a1
+    move.w  (a1),d0
+    add.w   #X_SCREEN_START,d0
+    movep   d0,(XM_WR_ADDR,a0)
+    move.w  #1,d0
+    movep   d0,(XM_WR_INCR,a0)
+    movem.l (a7)+,d0/a0/a1
+    rts
+
 ;a0 - string (bytes)
-x_print_string:
-    movem.l d0/d1/d2/a0,-(a7)
-    
+s:
+    movem.l d0/d1/d2/a0/a1,-(a7)
+    bsr     x_set_add_rep
+    lea     XM_BASE,a1
+
     move    #$0000,d0
     move    #DEFAULT_FR,d1
     move    #DEFAULT_BG,d2
-    jsr     set_char_colors
+    bsr     set_char_colors
+
 .loop:
     move.b  (a0)+,d0
     tst.b   d0
     beq     .end
-    jsr     x_print_char
+    movep   d0,(XM_DATA,a1)
     jmp     .loop
 .end:
-    movem.l (a7)+,d0/d1/d2/a0
+    movem.l (a7)+,d0/d1/d2/a0/a1
     rts
+
+;a0 - string (words)
 x_print_word_string:
-    movem.l d0/a0,-(a7)
+    movem.l d0/a0/a1/a2/a3,-(a7)
+    lea     XM_BASE,a1
+    bsr     x_set_add_rep
+    lea     cursor_add,a2
+    lea     x_screen,a3
 .loop:
+    
     move.w  (a0)+,d0
     tst.b   d0
     beq     .end
-    jsr     x_print_char
+
+    cmp.b   #10,d0
+    bne     .s1
+    ;NL
+    bsr     x_print_NL
+    bsr     x_set_add_rep
+    jmp     .loop
+.s1:
+    cmp.b   #13,d0
+    bne     .s2
+    ;CR
+    bsr     x_print_CR
+    bsr     x_set_add_rep
+    jmp     .loop
+.s2:
+    cmp.b   #08,d0
+    bne     .s3
+    bsr     x_print_BS_DEL
+    bsr     x_set_add_rep
+    jmp     .loop
+.s3:
+    
+
+    movep   d0,(XM_DATA,a1)
+    move.l  #0,d1
+    move.w  (a2),d1
+    lsl.w   #1,d1
+    move.w  d0,(a3,d1.w)
+    addq.w  #1,(a2)
     jmp     .loop
 .end:
-    movem.l (a7)+,d0/a0
+    movem.l (a7)+,d0/a0/a1/a2/a3
     rts
-;input:
-;d1 - mode
-;MODE 0 - d0 is char, MODE 1 - a0 is string, MODE 2 - a0 is string (words), MODE 3 - screen update, MODE 4 - get cursor add ptr in a0
-_exc_trap_VID:
-    cmp     #0,d1
-    bne     .mode1tst
-;MODE 0
-    jsr     x_print_char
-    rte
-.mode1tst:
-    cmp     #1,d1
-    bne     .mode2tst
-    jsr     x_print_string
-    rte
-.mode2tst:
-    cmp     #2,d1
-    bne     .mode3tst
-    jsr     x_print_word_string
-    rte
-.mode3tst:
-    cmp     #3,d1
-    bne     .mode4tst
-    jsr     x_update_screen
-    rte
-.mode4tst:
-    lea     cursor_add,a0
-    rte
-_autovec_xosera:
-    movem.l d0/a0/a1,-(a7)
-    move    #'X',d0
-    jsr     send_byte
-    movem.l (a7)+,d0/a0/a1
-    rte
 
 
+;a0 - string(byte)
+x_print_byte_string:
+    movem.l d0/a0/a1/a2/a3,-(a7)
+    lea     XM_BASE,a1
+    bsr     x_set_add_rep
+    move.w  #0,d0
+    lea     cursor_add,a2
+    lea     x_screen,a3
+.loop:
+    move.b  (a0)+,d0
+    or.w    #(DEFAULT_BG<<4|DEFAULT_FR)<<8,d0
+    
+    tst.b   d0
+    beq     .end
+ 
+    cmp.b   #10,d0
+    bne     .s1
+    ;NL
+    bsr     x_print_NL
+    bsr     x_set_add_rep
+    jmp     .loop
+.s1:
+    cmp.b   #13,d0
+    bne     .s2
+    ;CR
+    bsr     x_print_CR
+    bsr     x_set_add_rep
+    jmp     .loop
+.s2:
+    cmp.b   #08,d0
+    bne     .s3
+    bsr     x_print_BS_DEL
+    bsr     x_set_add_rep
+    jmp     .loop
+.s3:
+    movep   d0,(XM_DATA,a1)
+    move.l  #0,d1
+    move.w  (a2),d1
+    lsl.w   #1,d1
+    move.w  d0,(a3,d1.w)
+    addq.w  #1,(a2)
+    
+    jmp     .loop
+.end:
+    movem.l (a7)+,d0/a0/a1/a2/a3
+    rts
 
+
+;d0 - hex
+x_print_hex:	
+	movem.l	d0/d1/d2/a0,-(a7)
+	lea		tmp_str,a0
+
+	move	#7,d2
+	move.l	d0,d1
+	andi.l	#$FFFF0000,d1	;see if long
+	tst.l	d1
+	bne		.l1
+
+	move	#3,d2
+	move	d0,d1
+	swap	d0
+	and.w	#$FF00,d1		;see if word
+	tst		d1
+	bne		.l1
+	;must be byte
+	lsl.l	#8,d0
+	move	#1,d2	;byte
+.l1:
+	move.l	d0,d1
+	swap	d1
+	lsr.w	#8,d1
+	lsr.w	#4,d1	
+	and.l	#$0000000F,d1	;mask 0-3 bits
+	lsl.l	#4,d0
+	;print hexa bits in d1 0-3
+
+	cmpi.b  #9,d1
+    ble     .digit
+    addi.b  #'A'-10,d1
+    bra     .send
+.digit:
+    addi.b  #'0',d1
+.send:
+	move.b	d1,(a0)+
+	dbra	d2,.l1
+	move.b	#0,(a0)+
+
+	lea		tmp_str,a0
+	move	#1,d1
+	bsr     x_print_byte_string
+	movem.l	(a7)+,d0/d1/d2/a0
+	rts

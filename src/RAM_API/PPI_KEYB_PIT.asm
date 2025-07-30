@@ -39,6 +39,7 @@ ppi_init:
 
     move.b  #$00,(PPI_PA_DDIR,a0)       ;Set all pins to input in port A
     move.b  #$FF,(PPI_PB_DDIR,a0)       ;Set all pins to output in port B
+    move.b  #$FF,(PPI_PC_DDIR,a0)
 
     move.b  #$00,(PPI_PC_DDIR,a0)       ;Set all pins to input in port C
     move.b  #$30,(PPI_PGC,a0)           ;Enable Ports A and B, MODE 0
@@ -47,7 +48,7 @@ ppi_init:
     rts
 kyb_get_key:    
     movem.l d1/d2/d3/a0/a1/a2/a3,-(a7)
-    jsr     kyb_get_key_current
+    bsr     kyb_get_key_current
     beq     .wait_for_key
 .wait_for_key_end:
     lea     kyb_last,a0
@@ -57,7 +58,7 @@ kyb_get_key:
     move.b  (a0),d1 ;last char
     cmp.b   d0,d1
     bne     .new_char
-    jsr     send_byte
+    bsr     send_byte
     move.l  (a1),d0 ;get FRAME TARGET
     
 .wait:
@@ -80,7 +81,7 @@ kyb_get_key:
     cmp.l   d0,d1
     blo     .wait       ;branch if lower - still waiting
     ;see if still pressed
-    jsr     kyb_get_key_current
+    bsr     kyb_get_key_current
     cmp.b   d0,d3
     bne     .wait_for_key
     ;end of wait
@@ -101,7 +102,7 @@ kyb_get_key:
     movem.l (a7)+,d1/d2/d3/a0/a1/a2/a3
     rts
 .wait_for_key:
-    jsr     kyb_get_key_current
+    bsr     kyb_get_key_current
     beq     .wait_for_key
     lea     kyb_last,a0
     move.b  #0,(a0) ;reset last key
@@ -115,7 +116,7 @@ kyb_get_key_current:
 .loop:  
     move    d2,d0
     addq    #$1,d2
-    jsr     get_key_in_row
+    bsr     get_key_in_row
     tst.b   d0
     bne     .end
     dbra    d1,.loop
@@ -130,7 +131,7 @@ kyb_get_key_current:
 get_key_in_row:
     movem.l d1/d2,-(a7)
     move    d0,d2
-    jsr     kyb_get_row_data
+    bsr     kyb_get_row_data
     cmp.b   #$FF,d0
     beq     .end_empty
     ;find where is 0 and add that bit's offset
@@ -143,7 +144,7 @@ get_key_in_row:
     jmp     .loop
 .end_loop: ;offset in d1
     move    d2,d0   ;row
-    jsr     get_key_from_matrix
+    bsr     get_key_from_matrix
     tst     d0  ;clear zero flag  
 .end: 
     movem.l (a7)+,d1/d2
@@ -223,7 +224,7 @@ KYB_ARROW_UP    equ     $B1
 KYB_ARROW_DOWN  equ     $B2
 KYB_ARROW_RIGHT equ     $B3  
 
-    section .rodata
+    ;section .rodata
 kyb_matrix_normal:
     ;Bit     0    1    2    3    4    5    6    7
     dc.b    '0', '1', '2', '3', '4', '5', '6', '7'  ;ROW 0
@@ -248,3 +249,79 @@ kyb_matrix_shifted:
     dc.b    ' ', $A8, $A7, $7F, $B0, $B1, $B2, $B3  ;ROW 8
 
 
+;Init timer in 68230 and set IRQ4 subrutine
+init_tmr:
+;set rutine
+    
+    move.w  #$2700,sr   ; disable all IRQ interrupts (IPL=7)
+    lea     _autovec_1,a0
+
+    lea     _IRQ1_subrutine,a1
+    move.l  a1,(a0)+
+    lea     _IRQ2_subrutine,a1
+    move.l  a1,(a0)+
+    lea     _IRQ3_subrutine,a1
+    move.l  a1,(a0)+
+    lea     _IRQ4_subrutine,a1
+    move.l  a1,(a0)+
+    lea     _IRQ5_subrutine,a1
+    move.l  a1,(a0)+
+    lea     _IRQ6_subrutine,a1
+    move.l  a1,(a0)+
+    lea     _IRQ7_subrutine,a1
+    move.l  a1,(a0)+
+
+
+
+
+;setup timer
+
+    lea     PPI_BASE,a0
+
+    move.l  #10000,d0  ;for 10ms
+    move.b  d0,(PPI_TMR_CNT_P_L,a0)
+    lsr.l   #8,d0
+    move.b  d0,(PPI_TMR_CNT_P_M,a0)
+    lsr.l   #8,d0
+    move.b  d0,(PPI_TMR_CNT_P_H,a0)
+
+    
+    move.b  #%11100001,(PPI_TMR_CTRL,a0)  ;timer enabled continues with interupt
+
+    move.w  #$2200,sr   ; disable all IRQ interrupts (IPL=7)
+    ;we are alive
+	rts
+
+_IRQ1_subrutine:
+    move    #'1',d0
+    jsr     send_byte
+    rte
+_IRQ2_subrutine:
+    move    #'2',d0
+    jsr     send_byte
+    rte
+_IRQ3_subrutine:
+    move    #'3',d0
+    jsr     send_byte
+    rte
+_IRQ4_subrutine:
+    move.b  #$01,(PPI_TMR_STAT+PPI_BASE)
+    bsr     cursor_update
+    rte
+_IRQ5_subrutine:
+    move    #'5',d0
+    jsr     send_byte
+    rte
+_IRQ6_subrutine:
+    move    #'6',d0
+    jsr     send_byte
+    rte
+_IRQ7_subrutine:
+    move    #'7',d0
+    jsr     send_byte
+    rte
+
+_IRQ_other:
+    move    #'O',d0
+    jsr     send_byte
+    rte
