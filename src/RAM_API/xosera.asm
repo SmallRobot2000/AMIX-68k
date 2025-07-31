@@ -70,12 +70,17 @@ x_set_border_color:
 ;d0 - color/char
 ;puts char in RAM map of VRAM display
 x_print_char_word:
+    STI
+    bsr     clear_cursor
     movem.l d1/a0/a1,-(a7)
+    move.w  (cursor_add),d1
+    move.w  d1,(last_cursor_add)
+    bsr     test_special    ;zero if normal
+    beq     .end        ;end if special
     lea     x_screen,a0
     lea     cursor_add,a1
-    move.w  (a1),d1
     lsl.w   #1,d1       ;*2 for even address
-    move.w  d0,(a0,d1)  ;make copy in RAM
+    move.w  d0,(a0,d1.w)  ;make copy in RAM
     lea     XM_BASE,a0
     move.w  (a1),d1
     add.w   #X_SCREEN_START,d1
@@ -84,6 +89,8 @@ x_print_char_word:
     movep   d1,(XM_WR_INCR,a0)
     movep   d0,(XM_DATA,a0)
     add.w   #1,(a1)
+.end:
+    CLI
     movem.l (a7)+,d1/a0/a1
     rts
 
@@ -93,61 +100,97 @@ x_print_char_byte:
     or.w    #(DEFAULT_BG<<4|DEFAULT_FR)<<8,d0
     jmp     x_print_char_word
 
+
+;zero if normal
+test_special   
+    movem.l d1/d2,-(a7)
+    cmp.b   #13,d0
+    bne     .s1
+    ;CR
+    bsr     x_print_CR
+    jmp     .end0
+.s1
+    cmp.b   #10,d0
+    bne     .s2
+    ;NL
+    bsr     x_print_NL
+    jmp     .end0
+.s2 
+    cmp.b   #8,d0
+    bne     .s3
+    ;Back space
+    bsr     x_print_BS_DEL
+    jmp     .end0
+.s3
+    cmp.b   #KYB_ARROW_RIGHT,d0
+    bne     .s4
+    addq.w  #1,(cursor_add)
+    jmp     .end0
+.s4
+    cmp.b   #KYB_ARROW_LEFT,d0
+    bne     .s5
+    tst.w     (cursor_add)
+    beq     .end0
+    subq.w  #1,(cursor_add)
+    
+    jmp     .end0
+.s5
+.end
+    tst     d0
+    movem.l (a7)+,d1/d2
+    rts
+.end0
+    
+    move    #0,d0
+    tst     d0
+    movem.l (a7)+,d1/d2
+    rts
+
+clear_cursor:
+    STI
+    btst    #0,(cursor_state)  ;if it is flipped
+    beq     .end
+    bsr     flip_cursor
+    bclr    #0,(cursor_state)
+    bclr    #1,(cursor_state)
+.end:
+    CLI
+    rts
 x_update_screen:
     
     bsr     x_send_screen
-    bsr     cursor_update
+
     rts
 
 ;updates the screen copy in ram
 cursor_update:
     movem.l d0/d1/d2/a0/a1/a2,-(a7)
+    STI
     lea     XM_BASE,a0
     lea     cursor_state,a1
-    and.w   #$02,(a1)       ;remove needed bit
-    movep   (XM_TIMER,a0),d0   ;get timer
-    btst    #XM_TIME_CUR_BIT,d0
-    beq     .skip_flip      ;chek needded state
-    or.w    #1,(a1)         ;flip cursor need state
-.skip_flip:
-;chek if last cursor was inverted if so on old cursro add flip colors
-    
-    lea     last_cursor_state,a0
-    btst    #$1,(a0) ;bit 1 what it was
-    beq     .skip_last_flip ;its not fliped so no need to change
 
-;here we flip last character
-    ;bsr     flip_last_cursor
-.skip_last_flip:
-    
-    ;update curent cursor state and colors
-    lea     cursor_state,a0
-    move.w  (a0),d0
-    move    d0,d1   ;d1 and d0 are the same state
-    lsr     #1,d1   ;what it is
-    and     #1,d0   ;only wanted
-    and     #1,d1   ;only what is
-    cmp.w   d0,d1   ;same?
-    beq     .skip_cur_flip
-    ;not same
-
-    eor.w   #$02,(a0)  ;flip cur state
-
+    ;bset    #0,(cursor_state)
+    ;bset    #1,(cursor_state)
+    move.b  (cursor_state),d0
+    tst.b   d0
+    beq     .skip_flip  ;both are 0
+    bchg    #0,d0
+    bchg    #1,d0
+    tst.b   d0
+    beq     .skip_flip  ;both are 1
 
     bsr     flip_cursor
-.skip_cur_flip:
-    ;update last cursor if not same
-    lea     cursor_add,a0
-    lea     last_cursor_add,a1
-    move.w  (a0),d0
-    move.w  (a1),d1
-    cmp.w   d0,d1
-    beq     .end
-    move.w  (a0),(a1)
-    lea     cursor_state,a0
-    lea     last_cursor_state,a1
-    move.w  (a0),(a1)
-.end:
+
+    bchg    #0,(cursor_state)
+.skip_flip:
+;update needed bit
+    bclr    #1,(cursor_state)
+    movep   (XM_TIMER,a0),d0    ;get timer
+    btst    #XM_TIME_CUR_BIT,d0
+    beq     .skip_need          ;chek needded state
+    bset    #1,(cursor_state)   ;flip cursor need state
+.skip_need:
+    CLI
     movem.l (a7)+,d0/d1/d2/a0/a1/a2
     rts
  
@@ -227,8 +270,9 @@ x_get_cursor_xy:
 	movem.l	(a7)+,a0
 	rts
 
-;New line
+;New line and CR because UNIX like
 x_print_NL:
+    bsr     x_print_CR
     movem.l	d0/d1,-(a7)
 	bsr		x_get_cursor_xy
 	add.w	#1,d1
@@ -244,40 +288,25 @@ x_print_CR:
 	movem.l (a7)+,d0/d1
     rts
 ;Back space
-x_print_BS:
-    movem.l	d0/d1,-(a7)
-    bsr     x_get_cursor_xy
-    tst     d0
-    beq     .s1
-    subq.w  #1,d0
-    bsr     x_set_cursor_xy
-	movem.l (a7)+,d0/d1
-    rts
-.s1:
-    move.w  #79,d0
-    subq.w  #1,d1
-    bsr     x_set_cursor_xy
-    movem.l (a7)+,d0/d1
-    rts
-
-;Back space with delete
 x_print_BS_DEL:
     movem.l	d0/d1,-(a7)
-    bsr     x_get_cursor_xy
-    tst     d0
+    tst.w   (cursor_add)
     beq     .s1
-    subq.w  #1,d0
-    bsr     x_set_cursor_xy
+    
+    
+    bsr     clear_cursor
+    STI     ;temp disable irqs
+    subq.w  #1,(cursor_add)
+    move.b  #' ',d0
+    jsr     x_print_char_byte   ;clear acual character
+    subq.w  #1,(cursor_add)
+    CLI     ;enable irqs
 	movem.l (a7)+,d0/d1
     rts
 .s1:
-    move.w  #79,d0
-    subq.w  #1,d1
-    bsr     x_set_cursor_xy
-
     move    #' ',d0
-    jsr     x_print_char_byte
-    bsr     x_set_cursor_xy
+    bsr     x_print_char_byte
+    subq.w  #1,(cursor_add)
     movem.l (a7)+,d0/d1
     rts
 
@@ -399,6 +428,7 @@ s:
 ;a0 - string (words)
 x_print_word_string:
     movem.l d0/a0/a1/a2/a3,-(a7)
+    STI
     lea     XM_BASE,a1
     bsr     x_set_add_rep
     lea     cursor_add,a2
@@ -439,6 +469,7 @@ x_print_word_string:
     addq.w  #1,(a2)
     jmp     .loop
 .end:
+    CLI
     movem.l (a7)+,d0/a0/a1/a2/a3
     rts
 
@@ -446,6 +477,7 @@ x_print_word_string:
 ;a0 - string(byte)
 x_print_byte_string:
     movem.l d0/a0/a1/a2/a3,-(a7)
+    STI
     lea     XM_BASE,a1
     bsr     x_set_add_rep
     move.w  #0,d0
@@ -487,6 +519,7 @@ x_print_byte_string:
     
     jmp     .loop
 .end:
+    CLI
     movem.l (a7)+,d0/a0/a1/a2/a3
     rts
 
@@ -536,3 +569,4 @@ x_print_hex:
 	bsr     x_print_byte_string
 	movem.l	(a7)+,d0/d1/d2/a0
 	rts
+

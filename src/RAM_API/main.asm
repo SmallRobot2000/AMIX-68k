@@ -31,10 +31,24 @@ API_SEND_STR		equ		$05
 API_GET_CURSOR_XY	equ		$06
 API_SET_CURSOR_XY	equ		$07
 
+; Macro to disable all maskable interrupts by setting IPL = 7
+    macro STI
+    move.w  #$2700,sr    ; Disable all interrupts (IPL=7), Supervisor mode on
+    endm
+
+; Macro to enable all interrupts by clearing IPL to 0
+    macro CLI
+    move.w  #$2200,sr    ; Enable all interrupts (IPL=0), Supervisor mode on
+    endm
+
 _start:
 	bsr		init_trap0
 	bsr		ppi_init
 	bsr		init_tmr
+
+
+	;Illegal
+	bsr     x_print_hex
 	move.w	#0,(cursor_add)
 	lea		msg,a0
 	move	#API_PRINT_STR_BYTE,d1
@@ -67,7 +81,11 @@ _start:
 	move.w	#API_SET_CURSOR_XY,d1
 	TRAP	#0
 
+	move.l	#$11223344,d0
+	bsr     x_print_hex
 .l:
+	bsr		kyb_get_key
+	bsr		x_print_char_byte
 	jmp		.l
 
 
@@ -139,10 +157,12 @@ TRAP0_handler:
 	cmp.b	#$8,d1
 	bne		.s8
 	;Chek key (1 or 0)
+	bsr		kyb_get_key
 .s8:
 	cmp.b	#$9,d1
 	bne		.s9
 	;Read sectors (byte cnt)
+	bsr		kyb_get_key_current
 .s9:
 	cmp.b	#$A,d1
 	bne		.sA
@@ -169,7 +189,16 @@ msg_OK:
 	dc.b 13,10,"Memory test OK",13,10,0
 msg_chk:
 	dc.b 13,"Checking...  "
-
+	align 2
+msg_illegal_w:
+	dc.w $0450,$0441,$044E,$0449,$0443,$0420,$047C,$0420,$0449,$046C,$046C,$0465,$0467,$0461,$046C,$0420,$0469,$046E,$0473,$0474,$0472,$0475,$0463,$0474,$0469,$046F,$046E,$0000
+msg_illegal:
+	dc.b "PANIC | Illegal instruction"
+msg_add_err:
+	dc.b 13,10,"PANIC | Address error!",0
+msg_add_err_w
+	dc.w $0450,$0441,$044E,$0449,$0443,$0420,$047C,$0420,$0441,$0464,$0464,$0472,$0465,$0473,$0473,$0420,$0465,$0472,$0472,$046F,$0472,$0421,$0400
+msg_a
 	align 4
 	INCLUDE		"UART.asm"
 	INCLUDE		"xosera.asm"
