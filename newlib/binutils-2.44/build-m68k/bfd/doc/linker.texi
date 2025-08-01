@@ -1,0 +1,1 @@
+/home/lovro/Desktop/68k/newlib/binutils-2.44/build-m68k/bfd/../../bfd/doc/linker.texi

@@ -349,7 +349,7 @@ YACC = bison -y
 FLEX = flex
 LEX = flex
 M4 = m4
-MAKEINFO = /home/lovro/Desktop/68k/newlib/newlib-4.5.0.20241231/missing makeinfo
+MAKEINFO = makeinfo
 EXPECT = expect
 RUNTEST = runtest
 
@@ -491,7 +491,7 @@ do-compare3 = $(do-compare)
 
 AR_FOR_TARGET=m68k-elf-ar
 AS_FOR_TARGET=m68k-elf-as
-CC_FOR_TARGET=$(STAGE_CC_WRAPPER) m68k-elf-cc
+CC_FOR_TARGET=$(STAGE_CC_WRAPPER) m68k-elf-gcc
 
 # If GCC_FOR_TARGET is not overriden on the command line, then this
 # variable is passed down to the gcc Makefile, where it is used to

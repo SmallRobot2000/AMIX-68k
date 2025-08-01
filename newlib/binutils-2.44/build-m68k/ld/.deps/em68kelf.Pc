@@ -1,0 +1,1 @@
+em68kelf.c: ../../ld/emulparams/m68kelf.sh ../../ld/scripttempl/elf.sc ../../ld/scripttempl/misc-sections.sc ../../ld/scripttempl/DWARF.sc ../../ld/emultempl/elf.em ../../ld/emultempl/elf-generic.em ../../ld/emultempl/m68kelf.em ../../ld/emultempl/emulation.em

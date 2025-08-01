@@ -47,11 +47,12 @@ SHELL =	/bin/sh
 
 mkinstalldirs = $(SHELL) $(srcroot)/mkinstalldirs
 
-CC = @CC@
+export CC=m68k-elf-gcc
 
-AS = @AS@
-AR = @AR@
-LD = @LD@
+
+AS = m68k-elfs-as
+AR = m68k-elf-ar
+LD = m68k-elf-ld
 RANLIB = @RANLIB@
 AR_FLAGS = qv
 
@@ -117,6 +118,17 @@ IDP_OBJS=	leds.o idp-inbyte.o idp-outbyte.o mc68ec.o
 IDPGDB_LDFLAGS=	-L${srcdir} -Tidpgdb.ld
 IDPGDB_BSP=	libidpgdb.a
 IDPGDB_OBJS=	leds.o idp-inbyte.o idp-gdb-outbyte.o mc68ec.o
+
+#
+# here's all the AMIX target stuff
+#
+AMIX_LDFLAGS = -L${srcdir} -Tamix.ld
+AMIX_BSP = libamix.a
+AMIX_CRT0 = amix-crt0.o
+AMIX_OBJS = amix-syscalls.o
+
+
+
 
 #
 # here's all the ColdFire boards
@@ -435,6 +447,21 @@ install_m68k::
 	$(INSTALL_DATA) ${srcdir}/mvme162.ld $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/mvme162.ld
 	$(INSTALL_DATA) ${srcdir}/sbc5204.ld $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/sbc5204.ld
 	$(INSTALL_DATA) ${srcdir}/sbc5206.ld $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/sbc5206.ld
+
+
+.PHONY: all_amix
+all_amix :: ${AMIX_CRT0} ${AMIX_BSP}
+
+${AMIX_BSP}: ${AMIX_OBJS}
+	${AR} ${AR_FLAGS} $@ ${AMIX_OBJS}
+	${RANLIB} $@
+
+install_amix::
+	${mkinstalldirs} ${DESTDIR}${tooldir}/lib${MULTISUBDIR}
+	$(INSTALL_PROGRAM) $(AMIX_CRT0) $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/$(AMIX_CRT0)
+	$(INSTALL_PROGRAM) $(AMIX_BSP) $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/$(AMIX_BSP)
+	$(INSTALL_DATA) ${srcdir}/amix.ld $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/amix.ld
+
 
 .PHONY: install_cf
 install_cf:: install_io
