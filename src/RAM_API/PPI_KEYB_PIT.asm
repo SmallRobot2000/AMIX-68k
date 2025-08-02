@@ -396,16 +396,22 @@ _exec_addr_err:
     jmp     *
 
 _IRQ1_subrutine:
+    move.l  d0,-(a7)
     move    #'1',d0
     jsr     send_byte
+    move.l  (a7)+,d0
     rte
 _IRQ2_subrutine:
+    move.l  d0,-(a7)
     move    #'2',d0
     jsr     send_byte
+    move.l  (a7)+,d0
     rte
 _IRQ3_subrutine:
+    move.l  d0,-(a7)
     move    #'3',d0
     jsr     send_byte
+    move.l  (a7)+,d0
     rte
 _IRQ4_subrutine:
     addq.l  #1,(tmr_cnt)
@@ -417,16 +423,22 @@ _IRQ4_subrutine:
     bsr     update_kyb_leds
     rte
 _IRQ5_subrutine:
+    move.l  d0,-(a7)
     move    #'5',d0
     jsr     send_byte
+    move.l  (a7)+,d0
     rte
 _IRQ6_subrutine:
+    move.l  d0,-(a7)
     move    #'6',d0
     jsr     send_byte
+    move.l  (a7)+,d0
     rte
 _IRQ7_subrutine:
+    move.l  d0,-(a7)
     move    #'7',d0
     jsr     send_byte
+    move.l  (a7)+,d0
     rte
 
 _IRQ_other:

@@ -13,7 +13,7 @@ Archive member included to satisfy reference by file (symbol)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
                               /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o) (__sread)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
-                              /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o) (_impure_ptr)
+                              syscalls.o (_impure_ptr)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
                               syscalls.o (memcpy)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
@@ -112,7 +112,7 @@ Archive member included to satisfy reference by file (symbol)
 Discarded input sections
 
  .bss           0x0000000000000000        0x0 crt0.o
- .debug_line    0x0000000000000000       0x53 crt0.o
+ .debug_line    0x0000000000000000       0x4f crt0.o
  .debug_info    0x0000000000000000       0x26 crt0.o
  .debug_abbrev  0x0000000000000000       0x14 crt0.o
  .debug_aranges
@@ -138,15 +138,28 @@ Discarded input sections
  .text._stat_r  0x0000000000000000       0x16 syscalls.o
  .text._gettimeofday_r
                 0x0000000000000000        0xa syscalls.o
- .debug_info    0x0000000000000000      0xf2c syscalls.o
- .debug_abbrev  0x0000000000000000      0x289 syscalls.o
+ .text._write   0x0000000000000000       0x20 syscalls.o
+ .debug_info    0x0000000000000000      0xf7f syscalls.o
+ .debug_abbrev  0x0000000000000000      0x28e syscalls.o
  .debug_loc     0x0000000000000000       0xb8 syscalls.o
  .debug_aranges
-                0x0000000000000000       0x88 syscalls.o
- .debug_ranges  0x0000000000000000       0x78 syscalls.o
- .debug_line    0x0000000000000000      0x2a9 syscalls.o
- .debug_str     0x0000000000000000      0x7be syscalls.o
- .debug_frame   0x0000000000000000      0x16c syscalls.o
+                0x0000000000000000       0x90 syscalls.o
+ .debug_ranges  0x0000000000000000       0x80 syscalls.o
+ .debug_line    0x0000000000000000      0x2bb syscalls.o
+ .debug_str     0x0000000000000000      0x7c4 syscalls.o
+ .debug_frame   0x0000000000000000      0x184 syscalls.o
+ .text          0x0000000000000000        0x0 sys.o
+ .data          0x0000000000000000        0x0 sys.o
+ .bss           0x0000000000000000        0x0 sys.o
+ .debug_info    0x0000000000000000      0x158 sys.o
+ .debug_abbrev  0x0000000000000000       0xa6 sys.o
+ .debug_loc     0x0000000000000000       0x7e sys.o
+ .debug_aranges
+                0x0000000000000000       0x30 sys.o
+ .debug_ranges  0x0000000000000000       0x50 sys.o
+ .debug_line    0x0000000000000000       0x8c sys.o
+ .debug_str     0x0000000000000000       0xf2 sys.o
+ .debug_frame   0x0000000000000000       0x68 sys.o
  .data          0x0000000000000000        0x0 syscalls_asm.o
  .bss           0x0000000000000000        0x0 syscalls_asm.o
  .debug_line    0x0000000000000000       0x84 syscalls_asm.o
@@ -880,6 +893,7 @@ Linker script and memory map
 LOAD crt0.o
 LOAD main.o
 LOAD syscalls.o
+LOAD sys.o
 LOAD syscalls_asm.o
 LOAD /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a
 LOAD /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libm.a
@@ -896,418 +910,425 @@ END GROUP
                 [!provide]                        PROVIDE (__stack = ((ORIGIN (ram) + LENGTH (ram)) - 0x8))
                 [!provide]                        PROVIDE (hardware_init_hook = 0x0)
                 [!provide]                        PROVIDE (software_init_hook = 0x0)
-                0x0000000000000000                PROVIDE (__INIT_SECTION__ = 0x0)
+                [!provide]                        PROVIDE (__INIT_SECTION__ = 0x0)
                 0x0000000000000000                PROVIDE (__FINI_SECTION__ = 0x0)
 
-.text           0x0000000000130000     0x93ac
+.text           0x0000000000130000     0x9454
  *(.text.startup)
  *(.text .text.*)
- .text          0x0000000000130000       0x5c crt0.o
+ .text          0x0000000000130000       0x4c crt0.o
                 0x0000000000130000                _start
  .text.startup.main
-                0x000000000013005c       0x20 main.o
-                0x000000000013005c                main
+                0x000000000013004c       0x20 main.o
+                0x000000000013004c                main
  .text._write_r
-                0x000000000013007c       0x58 syscalls.o
-                0x000000000013007c                _write_r
- .text._read_r  0x00000000001300d4       0x30 syscalls.o
-                0x00000000001300d4                _read_r
- .text._exit    0x0000000000130104       0x5c syscalls.o
-                0x0000000000130104                _exit
- .text._sbrk_r  0x0000000000130160       0x2c syscalls.o
-                0x0000000000130160                _sbrk_r
+                0x000000000013006c       0x58 syscalls.o
+                0x000000000013006c                _write_r
+ .text._read_r  0x00000000001300c4       0x30 syscalls.o
+                0x00000000001300c4                _read_r
+ .text._exit    0x00000000001300f4       0x5c syscalls.o
+                0x00000000001300f4                _exit
+ .text._sbrk_r  0x0000000000130150       0x2c syscalls.o
+                0x0000000000130150                _sbrk_r
  .text._close_r
-                0x000000000013018c        0xa syscalls.o
-                0x000000000013018c                _close_r
+                0x000000000013017c        0xa syscalls.o
+                0x000000000013017c                _close_r
  .text._fstat_r
-                0x0000000000130196       0x16 syscalls.o
-                0x0000000000130196                _fstat_r
+                0x0000000000130186       0x16 syscalls.o
+                0x0000000000130186                _fstat_r
  .text._isatty_r
-                0x00000000001301ac       0x16 syscalls.o
-                0x00000000001301ac                _isatty_r
+                0x000000000013019c       0x16 syscalls.o
+                0x000000000013019c                _isatty_r
  .text._lseek_r
-                0x00000000001301c2        0xa syscalls.o
-                0x00000000001301c2                _lseek_r
+                0x00000000001301b2        0xa syscalls.o
+                0x00000000001301b2                _lseek_r
  .text._getpid_r
-                0x00000000001301cc        0xa syscalls.o
-                0x00000000001301cc                _getpid_r
- .text._kill_r  0x00000000001301d6       0x12 syscalls.o
-                0x00000000001301d6                _kill_r
- .text          0x00000000001301e8       0xca syscalls_asm.o
-                0x00000000001301e8                syscall_trap0
-                0x00000000001301f8                sys_print_screen
-                0x0000000000130206                sys_print_uart
-                0x0000000000130214                sys_get_keyboard
-                0x000000000013021e                sys_write_screen_string
-                0x000000000013024a                sys_write_uart_string
-                0x0000000000130270                sys_read_keyboard_string
- .text.atexit   0x00000000001302b2       0x16 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-atexit.o)
-                0x00000000001302b2                atexit
- .text.exit     0x00000000001302c8       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-exit.o)
-                0x00000000001302c8                exit
+                0x00000000001301bc        0xa syscalls.o
+                0x00000000001301bc                _getpid_r
+ .text._kill_r  0x00000000001301c6       0x12 syscalls.o
+                0x00000000001301c6                _kill_r
+ .text.sys_write_screen_string
+                0x00000000001301d8       0x3c sys.o
+                0x00000000001301d8                sys_write_screen_string
+ .text.sys_write_uart_string
+                0x0000000000130214       0x3c sys.o
+                0x0000000000130214                sys_write_uart_string
+ .text.sys_read_keyboard_string
+                0x0000000000130250       0x3e sys.o
+                0x0000000000130250                sys_read_keyboard_string
+ *fill*         0x000000000013028e        0x2 
+ .text          0x0000000000130290       0xca syscalls_asm.o
+                0x0000000000130290                syscall_trap0
+                0x00000000001302a0                sys_print_screen
+                0x00000000001302ae                sys_print_uart
+                0x00000000001302bc                sys_get_keyboard
+ .text.atexit   0x000000000013035a       0x16 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-atexit.o)
+                0x000000000013035a                atexit
+ .text.exit     0x0000000000130370       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-exit.o)
+                0x0000000000130370                exit
  .text.stdio_exit_handler
-                0x00000000001302f0       0x1e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x0000000000130398       0x1e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
  .text.cleanup_stdio
-                0x000000000013030e       0x52 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00000000001303b6       0x52 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
  .text.global_stdio_init.part.0
-                0x0000000000130360      0x178 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
- .text.__sinit  0x00000000001304d8       0x22 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x00000000001304d8                __sinit
+                0x0000000000130408      0x178 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+ .text.__sinit  0x0000000000130580       0x22 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x0000000000130580                __sinit
  .text.__sfp_lock_acquire
-                0x00000000001304fa        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x00000000001304fa                __sfp_lock_acquire
+                0x00000000001305a2        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00000000001305a2                __sfp_lock_acquire
  .text.__sfp_lock_release
-                0x00000000001304fc        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x00000000001304fc                __sfp_lock_release
+                0x00000000001305a4        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00000000001305a4                __sfp_lock_release
  .text._fwalk_sglue
-                0x00000000001304fe       0x56 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
-                0x00000000001304fe                _fwalk_sglue
- .text.printf   0x0000000000130554       0x26 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
-                0x0000000000130554                printf
- .text.__sread  0x000000000013057a       0x38 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
-                0x000000000013057a                __sread
+                0x00000000001305a6       0x56 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
+                0x00000000001305a6                _fwalk_sglue
+ .text.printf   0x00000000001305fc       0x26 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+                0x00000000001305fc                printf
+ .text.__sread  0x0000000000130622       0x38 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+                0x0000000000130622                __sread
  .text.__swrite
-                0x00000000001305b2       0x86 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
-                0x00000000001305b2                __swrite
- .text.__sseek  0x0000000000130638       0x40 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
-                0x0000000000130638                __sseek
+                0x000000000013065a       0x86 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+                0x000000000013065a                __swrite
+ .text.__sseek  0x00000000001306e0       0x40 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+                0x00000000001306e0                __sseek
  .text.__sclose
-                0x0000000000130678       0x12 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
-                0x0000000000130678                __sclose
- *fill*         0x000000000013068a        0x2 
- .text          0x000000000013068c       0x6e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
-                0x000000000013068c                memcpy
- *fill*         0x00000000001306fa        0x2 
- .text          0x00000000001306fc       0x72 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
-                0x00000000001306fc                memset
+                0x0000000000130720       0x12 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+                0x0000000000130720                __sclose
+ *fill*         0x0000000000130732        0x2 
+ .text          0x0000000000130734       0x6e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
+                0x0000000000130734                memcpy
+ *fill*         0x00000000001307a2        0x2 
+ .text          0x00000000001307a4       0x72 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
+                0x00000000001307a4                memset
  .text.__register_exitproc
-                0x000000000013076e       0x96 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-__atexit.o)
-                0x000000000013076e                __register_exitproc
+                0x0000000000130816       0x96 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-__atexit.o)
+                0x0000000000130816                __register_exitproc
  .text.__call_exitprocs
-                0x0000000000130804       0xbc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-__call_atexit.o)
-                0x0000000000130804                __call_exitprocs
+                0x00000000001308ac       0xbc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-__call_atexit.o)
+                0x00000000001308ac                __call_exitprocs
  .text._malloc_r
-                0x00000000001308c0      0x842 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00000000001308c0                _malloc_r
+                0x0000000000130968      0x842 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x0000000000130968                _malloc_r
  .text.__malloc_lock
-                0x0000000000131102        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
-                0x0000000000131102                __malloc_lock
+                0x00000000001311aa        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
+                0x00000000001311aa                __malloc_lock
  .text.__malloc_unlock
-                0x0000000000131104        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
-                0x0000000000131104                __malloc_unlock
+                0x00000000001311ac        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
+                0x00000000001311ac                __malloc_unlock
  .text._vfprintf_r
-                0x0000000000131106     0x1d04 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
-                0x0000000000131106                _vfprintf_r
+                0x00000000001311ae     0x1d04 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x00000000001311ae                _vfprintf_r
  .text.__sbprintf
-                0x0000000000132e0a       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x0000000000132eb2       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .text.__sprint_r
-                0x0000000000132eae       0x36 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
-                0x0000000000132eae                __sprint_r
+                0x0000000000132f56       0x36 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
+                0x0000000000132f56                __sprint_r
  .text._fclose_r
-                0x0000000000132ee4       0xd8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
-                0x0000000000132ee4                _fclose_r
+                0x0000000000132f8c       0xd8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
+                0x0000000000132f8c                _fclose_r
  .text.__sflush_r
-                0x0000000000132fbc      0x1ba /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
-                0x0000000000132fbc                __sflush_r
+                0x0000000000133064      0x1ba /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+                0x0000000000133064                __sflush_r
  .text._fflush_r
-                0x0000000000133176       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
-                0x0000000000133176                _fflush_r
+                0x000000000013321e       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+                0x000000000013321e                _fflush_r
  .text.__sfvwrite_r
-                0x00000000001331ba      0x3b6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
-                0x00000000001331ba                __sfvwrite_r
+                0x0000000000133262      0x3b6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
+                0x0000000000133262                __sfvwrite_r
  .text.__swsetup_r
-                0x0000000000133570      0x128 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
-                0x0000000000133570                __swsetup_r
- .text.memchr   0x0000000000133698       0x9c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
-                0x0000000000133698                memchr
- .text.memmove  0x0000000000133734       0xf8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
-                0x0000000000133734                memmove
+                0x0000000000133618      0x128 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
+                0x0000000000133618                __swsetup_r
+ .text.memchr   0x0000000000133740       0x9c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
+                0x0000000000133740                memchr
+ .text.memmove  0x00000000001337dc       0xf8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
+                0x00000000001337dc                memmove
  .text._localeconv_r
-                0x000000000013382c        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
-                0x000000000013382c                _localeconv_r
- .text.strlen   0x0000000000133834       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
-                0x0000000000133834                strlen
- .text.quorem   0x0000000000133848      0x1a2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
- .text._dtoa_r  0x00000000001339ea     0x196a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
-                0x00000000001339ea                _dtoa_r
+                0x00000000001338d4        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
+                0x00000000001338d4                _localeconv_r
+ .text.strlen   0x00000000001338dc       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
+                0x00000000001338dc                strlen
+ .text.quorem   0x00000000001338f0      0x1a2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+ .text._dtoa_r  0x0000000000133a92     0x196a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+                0x0000000000133a92                _dtoa_r
  .text._malloc_trim_r
-                0x0000000000135354       0xda /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
-                0x0000000000135354                _malloc_trim_r
- .text._free_r  0x000000000013542e      0x352 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
-                0x000000000013542e                _free_r
- .text._Balloc  0x0000000000135780       0x90 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000000000135780                _Balloc
- .text._Bfree   0x0000000000135810       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000000000135810                _Bfree
+                0x00000000001353fc       0xda /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+                0x00000000001353fc                _malloc_trim_r
+ .text._free_r  0x00000000001354d6      0x352 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+                0x00000000001354d6                _free_r
+ .text._Balloc  0x0000000000135828       0x90 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000000000135828                _Balloc
+ .text._Bfree   0x00000000001358b8       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00000000001358b8                _Bfree
  .text.__multadd
-                0x0000000000135834       0xfc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000000000135834                __multadd
+                0x00000000001358dc       0xfc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00000000001358dc                __multadd
  .text.__hi0bits
-                0x0000000000135930       0x66 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000000000135930                __hi0bits
+                0x00000000001359d8       0x66 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00000000001359d8                __hi0bits
  .text.__lo0bits
-                0x0000000000135996       0x76 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000000000135996                __lo0bits
- .text.__i2b    0x0000000000135a0c       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000000000135a0c                __i2b
+                0x0000000000135a3e       0x76 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000000000135a3e                __lo0bits
+ .text.__i2b    0x0000000000135ab4       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000000000135ab4                __i2b
  .text.__multiply
-                0x0000000000135ab0      0x20a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000000000135ab0                __multiply
+                0x0000000000135b58      0x20a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000000000135b58                __multiply
  .text.__pow5mult
-                0x0000000000135cba       0xfc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000000000135cba                __pow5mult
+                0x0000000000135d62       0xfc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000000000135d62                __pow5mult
  .text.__lshift
-                0x0000000000135db6      0x112 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000000000135db6                __lshift
- .text.__mcmp   0x0000000000135ec8       0x4e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000000000135ec8                __mcmp
- .text.__mdiff  0x0000000000135f16      0x1d0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000000000135f16                __mdiff
- .text.__d2b    0x00000000001360e6      0x122 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00000000001360e6                __d2b
+                0x0000000000135e5e      0x112 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000000000135e5e                __lshift
+ .text.__mcmp   0x0000000000135f70       0x4e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000000000135f70                __mcmp
+ .text.__mdiff  0x0000000000135fbe      0x1d0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000000000135fbe                __mdiff
+ .text.__d2b    0x000000000013618e      0x122 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x000000000013618e                __d2b
  .text._realloc_r
-                0x0000000000136208      0x5f0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
-                0x0000000000136208                _realloc_r
+                0x00000000001362b0      0x5f0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
+                0x00000000001362b0                _realloc_r
  .text.__swhatbuf_r
-                0x00000000001367f8       0xb6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
-                0x00000000001367f8                __swhatbuf_r
+                0x00000000001368a0       0xb6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+                0x00000000001368a0                __swhatbuf_r
  .text.__smakebuf_r
-                0x00000000001368ae       0xde /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
-                0x00000000001368ae                __smakebuf_r
+                0x0000000000136956       0xde /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+                0x0000000000136956                __smakebuf_r
  .text.__assert_func
-                0x000000000013698c       0x6c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
-                0x000000000013698c                __assert_func
+                0x0000000000136a34       0x6c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
+                0x0000000000136a34                __assert_func
  .text._calloc_r
-                0x00000000001369f8      0x13a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
-                0x00000000001369f8                _calloc_r
+                0x0000000000136aa0      0x13a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
+                0x0000000000136aa0                _calloc_r
  .text.__ascii_mbtowc
-                0x0000000000136b32       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
-                0x0000000000136b32                __ascii_mbtowc
+                0x0000000000136bda       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
+                0x0000000000136bda                __ascii_mbtowc
  .text.__ascii_wctomb
-                0x0000000000136b76       0x2e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
-                0x0000000000136b76                __ascii_wctomb
+                0x0000000000136c1e       0x2e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+                0x0000000000136c1e                __ascii_wctomb
  .text.fiprintf
-                0x0000000000136ba4       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
-                0x0000000000136ba4                fiprintf
+                0x0000000000136c4c       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+                0x0000000000136c4c                fiprintf
  .text._vfiprintf_r
-                0x0000000000136bc8      0xdce /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
-                0x0000000000136bc8                _vfiprintf_r
+                0x0000000000136c70      0xdce /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+                0x0000000000136c70                _vfiprintf_r
  .text.__sbprintf
-                0x0000000000137996       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
- .text.__errno  0x0000000000137a3a        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
-                0x0000000000137a3a                __errno
- .text.abort    0x0000000000137a42       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
-                0x0000000000137a42                abort
- .text.raise    0x0000000000137a56       0x7e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
-                0x0000000000137a56                raise
- .text          0x0000000000137ad4       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
-                0x0000000000137ad4                __mulsi3
- *fill*         0x0000000000137af6        0x2 
- .text          0x0000000000137af8       0x5c /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
-                0x0000000000137af8                __udivsi3
- .text          0x0000000000137b54       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
-                0x0000000000137b54                __divsi3
- *fill*         0x0000000000137b82        0x2 
- .text          0x0000000000137b84       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
-                0x0000000000137b84                __umodsi3
- *fill*         0x0000000000137bb2        0x2 
- .text          0x0000000000137bb4       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
-                0x0000000000137bb4                __modsi3
- *fill*         0x0000000000137be2        0x2 
- .text          0x0000000000137be4      0x9cc /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
-                0x0000000000137c3e                __subdf3
-                0x0000000000137c44                __adddf3
-                0x0000000000137fda                __muldf3
-                0x0000000000138188                __divdf3
-                0x00000000001383fc                __negdf2
-                0x000000000013845a                __cmpdf2_internal
-                0x000000000013852a                __cmpdf2
- .text          0x00000000001385b0       0x6a /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
-                0x00000000001385b0                __clear_sticky_bit
-                0x00000000001385be                $_exception_handler
- *fill*         0x000000000013861a        0x2 
- .text          0x000000000013861c       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
-                0x000000000013861c                __eqdf2
- *fill*         0x000000000013863e        0x2 
- .text          0x0000000000138640       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
-                0x0000000000138640                __nedf2
- *fill*         0x0000000000138662        0x2 
- .text          0x0000000000138664       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
-                0x0000000000138664                __gtdf2
- *fill*         0x0000000000138686        0x2 
- .text          0x0000000000138688       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
-                0x0000000000138688                __ltdf2
- *fill*         0x00000000001386aa        0x2 
- .text          0x00000000001386ac       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
-                0x00000000001386ac                __ledf2
- *fill*         0x00000000001386ce        0x2 
- .text          0x00000000001386d0      0x4ba /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
-                0x00000000001386d0                __unordsf2
-                0x0000000000138730                __unorddf2
-                0x00000000001387a2                __floatunsidf
-                0x000000000013880e                __floatsidf
-                0x00000000001388d8                __floatunsisf
-                0x00000000001388f2                __floatsisf
-                0x000000000013890c                __extendsfdf2
-                0x0000000000138988                __truncdfsf2
-                0x0000000000138ada                __fixdfsi
-                0x0000000000138b70                __fixsfsi
- *fill*         0x0000000000138b8a        0x2 
- .text          0x0000000000138b8c      0x81e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
-                0x0000000000138b8c                __unordxf2
-                0x0000000000138c10                __extenddfxf2
-                0x0000000000138d26                __truncxfdf2
-                0x0000000000138e0e                __extendsfxf2
-                0x0000000000138e52                __truncxfsf2
-                0x0000000000138e7a                __floatsixf
-                0x0000000000138ec0                __floatunsixf
-                0x0000000000138f06                __fixxfsi
-                0x0000000000138f2e                __addxf3
-                0x0000000000138fa4                __subxf3
-                0x000000000013901a                __mulxf3
-                0x0000000000139090                __divxf3
-                0x0000000000139106                __negxf2
-                0x000000000013915e                __cmpxf2
-                0x00000000001391b2                __eqxf2
-                0x0000000000139206                __nexf2
-                0x000000000013925a                __ltxf2
-                0x00000000001392ae                __lexf2
-                0x0000000000139302                __gtxf2
-                0x0000000000139356                __gexf2
+                0x0000000000137a3e       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+ .text.__errno  0x0000000000137ae2        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
+                0x0000000000137ae2                __errno
+ .text.abort    0x0000000000137aea       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
+                0x0000000000137aea                abort
+ .text.raise    0x0000000000137afe       0x7e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
+                0x0000000000137afe                raise
+ .text          0x0000000000137b7c       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
+                0x0000000000137b7c                __mulsi3
+ *fill*         0x0000000000137b9e        0x2 
+ .text          0x0000000000137ba0       0x5c /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
+                0x0000000000137ba0                __udivsi3
+ .text          0x0000000000137bfc       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
+                0x0000000000137bfc                __divsi3
+ *fill*         0x0000000000137c2a        0x2 
+ .text          0x0000000000137c2c       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
+                0x0000000000137c2c                __umodsi3
+ *fill*         0x0000000000137c5a        0x2 
+ .text          0x0000000000137c5c       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
+                0x0000000000137c5c                __modsi3
+ *fill*         0x0000000000137c8a        0x2 
+ .text          0x0000000000137c8c      0x9cc /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
+                0x0000000000137ce6                __subdf3
+                0x0000000000137cec                __adddf3
+                0x0000000000138082                __muldf3
+                0x0000000000138230                __divdf3
+                0x00000000001384a4                __negdf2
+                0x0000000000138502                __cmpdf2_internal
+                0x00000000001385d2                __cmpdf2
+ .text          0x0000000000138658       0x6a /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
+                0x0000000000138658                __clear_sticky_bit
+                0x0000000000138666                $_exception_handler
+ *fill*         0x00000000001386c2        0x2 
+ .text          0x00000000001386c4       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
+                0x00000000001386c4                __eqdf2
+ *fill*         0x00000000001386e6        0x2 
+ .text          0x00000000001386e8       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
+                0x00000000001386e8                __nedf2
+ *fill*         0x000000000013870a        0x2 
+ .text          0x000000000013870c       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
+                0x000000000013870c                __gtdf2
+ *fill*         0x000000000013872e        0x2 
+ .text          0x0000000000138730       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
+                0x0000000000138730                __ltdf2
+ *fill*         0x0000000000138752        0x2 
+ .text          0x0000000000138754       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
+                0x0000000000138754                __ledf2
+ *fill*         0x0000000000138776        0x2 
+ .text          0x0000000000138778      0x4ba /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
+                0x0000000000138778                __unordsf2
+                0x00000000001387d8                __unorddf2
+                0x000000000013884a                __floatunsidf
+                0x00000000001388b6                __floatsidf
+                0x0000000000138980                __floatunsisf
+                0x000000000013899a                __floatsisf
+                0x00000000001389b4                __extendsfdf2
+                0x0000000000138a30                __truncdfsf2
+                0x0000000000138b82                __fixdfsi
+                0x0000000000138c18                __fixsfsi
+ *fill*         0x0000000000138c32        0x2 
+ .text          0x0000000000138c34      0x81e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
+                0x0000000000138c34                __unordxf2
+                0x0000000000138cb8                __extenddfxf2
+                0x0000000000138dce                __truncxfdf2
+                0x0000000000138eb6                __extendsfxf2
+                0x0000000000138efa                __truncxfsf2
+                0x0000000000138f22                __floatsixf
+                0x0000000000138f68                __floatunsixf
+                0x0000000000138fae                __fixxfsi
+                0x0000000000138fd6                __addxf3
+                0x000000000013904c                __subxf3
+                0x00000000001390c2                __mulxf3
+                0x0000000000139138                __divxf3
+                0x00000000001391ae                __negxf2
+                0x0000000000139206                __cmpxf2
+                0x000000000013925a                __eqxf2
+                0x00000000001392ae                __nexf2
+                0x0000000000139302                __ltxf2
+                0x0000000000139356                __lexf2
+                0x00000000001393aa                __gtxf2
+                0x00000000001393fe                __gexf2
  *(.init*)
  *(.fini*)
-                0x00000000001393ac                . = ALIGN (0x4)
- *fill*         0x00000000001393aa        0x2 
-                0x00000000001393ac                _etext = .
+                0x0000000000139454                . = ALIGN (0x4)
+ *fill*         0x0000000000139452        0x2 
+                0x0000000000139454                _etext = .
 
-.got            0x00000000001393ac        0x0
-                0x00000000001393ac                _GLOBAL_OFFSET_TABLE_ = .
+.got            0x0000000000139454        0x0
+                0x0000000000139454                _GLOBAL_OFFSET_TABLE_ = .
  *(.got.plt)
  *(.got)
 
 .plt
  *(.plt)
 
-.rodata         0x00000000001393ac      0x34f
+.rodata         0x0000000000139454      0x34f
  *(.rodata .rodata.*)
  .rodata.main.str1.1
-                0x00000000001393ac        0x6 main.o
+                0x0000000000139454        0x6 main.o
  .rodata._exit.str1.1
-                0x00000000001393b2       0x1c syscalls.o
+                0x000000000013945a       0x1c syscalls.o
  .rodata._vfprintf_r.str1.1
-                0x00000000001393ce       0x3b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x0000000000139476       0x3b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .rodata.zeroes.0
-                0x0000000000139409       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x00000000001394b1       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .rodata.blanks.1
-                0x0000000000139419       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x00000000001394c1       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .rodata._dtoa_r.str1.1
-                0x0000000000139429       0x46 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+                0x00000000001394d1       0x46 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
                                          0x48 (size before relaxing)
  .rodata.__multadd.str1.1
-                0x000000000013946f       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000000000139517       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
                                          0x3a (size before relaxing)
- .rodata.p05.0  0x0000000000139498        0xc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+ .rodata.p05.0  0x0000000000139540        0xc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
  .rodata.__mprec_bigtens
-                0x00000000001394a4       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00000000001394a4                __mprec_bigtens
+                0x000000000013954c       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x000000000013954c                __mprec_bigtens
  .rodata.__mprec_tens
-                0x00000000001394cc       0xc8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00000000001394cc                __mprec_tens
+                0x0000000000139574       0xc8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000000000139574                __mprec_tens
  .rodata._setlocale_r.str1.1
-                0x0000000000139594        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+                0x000000000013963c        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
                                           0x9 (size before relaxing)
  .rodata.str1.1
-                0x000000000013959c        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+                0x0000000000139644        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
  .rodata.__assert_func.str1.1
-                0x000000000013959e       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
+                0x0000000000139646       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
                                          0x3d (size before relaxing)
  .rodata._ctype_
-                0x00000000001395da      0x101 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
-                0x00000000001395da                _ctype_
+                0x0000000000139682      0x101 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
+                0x0000000000139682                _ctype_
  .rodata._vfiprintf_r.str1.1
-                0x00000000001396db       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+                0x0000000000139783       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
  .rodata.zeroes.0
-                0x00000000001396db       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+                0x0000000000139783       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
  .rodata.blanks.1
-                0x00000000001396eb       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+                0x0000000000139793       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
 
-.data           0x00000000001396fc      0x6c8
-                0x00000000001396fc                _data_start = .
-                0x00000000001396fc                __CTOR_LIST__ = .
+.data           0x00000000001397a4      0x6c8
+                0x00000000001397a4                _data_start = .
+                0x00000000001397a4                __CTOR_LIST__ = .
  *crtbegin*.o(.ctors)
  *(SORT_BY_NAME(.ctors.*))
  *(.ctors)
  *crtend*.o(.ctors)
-                0x00000000001396fc        0x4 LONG 0x0
-                0x0000000000139700                __CTOR_END__ = .
-                0x0000000000139700                __DTOR_LIST__ = .
+                0x00000000001397a4        0x4 LONG 0x0
+                0x00000000001397a8                __CTOR_END__ = .
+                0x00000000001397a8                __DTOR_LIST__ = .
  *crtbegin*.o(.dtors)
  *(SORT_BY_NAME(.dtors.*))
  *(.dtors)
  *crtend*.o(.dtors)
-                0x0000000000139700        0x4 LONG 0x0
-                0x0000000000139704                __DTOR_END__ = .
+                0x00000000001397a8        0x4 LONG 0x0
+                0x00000000001397ac                __DTOR_END__ = .
  *(.data .data.*)
- .data          0x0000000000139704        0x4 crt0.o
- .data.__sglue  0x0000000000139708        0xc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x0000000000139708                __sglue
+ .data          0x00000000001397ac        0x4 crt0.o
+ .data.__sglue  0x00000000001397b0        0xc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00000000001397b0                __sglue
  .data._impure_ptr
-                0x0000000000139714        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
-                0x0000000000139714                _impure_ptr
+                0x00000000001397bc        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
+                0x00000000001397bc                _impure_ptr
  .data._impure_data
-                0x0000000000139718      0x116 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
-                0x0000000000139718                _impure_data
+                0x00000000001397c0      0x116 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
+                0x00000000001397c0                _impure_data
  .data.__malloc_sbrk_base
-                0x000000000013982e        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x000000000013982e                __malloc_sbrk_base
+                0x00000000001398d6        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x00000000001398d6                __malloc_sbrk_base
  .data.__malloc_trim_threshold
-                0x0000000000139832        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x0000000000139832                __malloc_trim_threshold
+                0x00000000001398da        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x00000000001398da                __malloc_trim_threshold
  .data.__malloc_av_
-                0x0000000000139836      0x408 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x0000000000139836                __malloc_av_
+                0x00000000001398de      0x408 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x00000000001398de                __malloc_av_
  .data.__global_locale
-                0x0000000000139c3e      0x168 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
-                0x0000000000139c3e                __global_locale
- *fill*         0x0000000000139da6        0x2 
- .data          0x0000000000139da8       0x1c /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
-                0x0000000000139da8                _fpCCR
-                0x0000000000139dc4                . = ALIGN (0x4)
-                0x0000000000139dc4                _edata = .
+                0x0000000000139ce6      0x168 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+                0x0000000000139ce6                __global_locale
+ *fill*         0x0000000000139e4e        0x2 
+ .data          0x0000000000139e50       0x1c /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
+                0x0000000000139e50                _fpCCR
+                0x0000000000139e6c                . = ALIGN (0x4)
+                0x0000000000139e6c                _edata = .
 
-.bss            0x0000000000139dc4      0x308
-                0x0000000000139dc4                __bss_start = .
-                0x0000000000139dc4                _bss_start = .
+.bss            0x0000000000139e6c      0x308
+                0x0000000000139e6c                __bss_start = .
+                0x0000000000139e6c                _bss_start = .
  *(.bss .bss.*)
  .bss.heap_end.2744
-                0x0000000000139dc4        0x4 syscalls.o
- .bss.__sf      0x0000000000139dc8      0x138 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x0000000000139dc8                __sf
+                0x0000000000139e6c        0x4 syscalls.o
+ .bss.__sf      0x0000000000139e70      0x138 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x0000000000139e70                __sf
  .bss.__stdio_exit_handler
-                0x0000000000139f00        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x0000000000139f00                __stdio_exit_handler
+                0x0000000000139fa8        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x0000000000139fa8                __stdio_exit_handler
  .bss.__atexit0
-                0x0000000000139f04      0x190 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-__atexit.o)
-                0x0000000000139f04                __atexit0
- .bss.__atexit  0x000000000013a094        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-__call_atexit.o)
-                0x000000000013a094                __atexit
+                0x0000000000139fac      0x190 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-__atexit.o)
+                0x0000000000139fac                __atexit0
+ .bss.__atexit  0x000000000013a13c        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-__call_atexit.o)
+                0x000000000013a13c                __atexit
  .bss.__malloc_current_mallinfo
-                0x000000000013a098       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x000000000013a098                __malloc_current_mallinfo
+                0x000000000013a140       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x000000000013a140                __malloc_current_mallinfo
  .bss.__malloc_max_total_mem
-                0x000000000013a0c0        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x000000000013a0c0                __malloc_max_total_mem
+                0x000000000013a168        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x000000000013a168                __malloc_max_total_mem
  .bss.__malloc_max_sbrked_mem
-                0x000000000013a0c4        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x000000000013a0c4                __malloc_max_sbrked_mem
+                0x000000000013a16c        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x000000000013a16c                __malloc_max_sbrked_mem
  .bss.__malloc_top_pad
-                0x000000000013a0c8        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x000000000013a0c8                __malloc_top_pad
+                0x000000000013a170        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x000000000013a170                __malloc_top_pad
  *(COMMON)
-                0x000000000013a0cc                . = ALIGN (0x4)
-                0x000000000013a0cc                _end = .
-                0x000000000013a0cc                __end = .
-                0x000000000013a0cc                _heap_start = _end
+                0x000000000013a174                . = ALIGN (0x4)
+                0x000000000013a174                _end = .
+                0x000000000013a174                __end = .
+                0x000000000013a174                _heap_start = _end
                 0x000000000032e000                _heap_end = ((ORIGIN (ram) + LENGTH (ram)) - 0x2000)
 
 .stab
@@ -1336,6 +1357,7 @@ OUTPUT(program.elf elf32-m68k)
  .comment       0x0000000000000000       0x11 main.o
                                          0x12 (size before relaxing)
  .comment       0x0000000000000011       0x12 syscalls.o
+ .comment       0x0000000000000011       0x12 sys.o
  .comment       0x0000000000000011       0x1b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-atexit.o)
                                          0x1c (size before relaxing)
  .comment       0x000000000000002c       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-exit.o)

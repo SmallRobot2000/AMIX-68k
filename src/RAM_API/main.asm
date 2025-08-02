@@ -44,7 +44,7 @@ prog_start 	equ	RAM_START+$30000	;lots of space
     endm
 
 _start:
-	bsr		init_trap0
+	bsr		init_traps
 	bsr		ppi_init
 	bsr		init_tmr
 
@@ -68,9 +68,26 @@ _start:
 
 
 ;Set trap to subrutine
-init_trap0:
+init_traps:
+	lea		_exc_trap_0,a1
 	lea		TRAP0_handler,a0
-	move.l	a0,(_exc_trap_0)
+	move.l	a0,(a1)+	;TRAP #1
+	lea		TRAP_empty,a0
+	move.l	a0,(a1)+	;TRAP #2
+	move.l	a0,(a1)+	;TRAP #3
+	move.l	a0,(a1)+	;TRAP #4
+	move.l	a0,(a1)+	;TRAP #5
+	move.l	a0,(a1)+	;TRAP #6
+	move.l	a0,(a1)+	;TRAP #7
+	move.l	a0,(a1)+	;TRAP #8
+	move.l	a0,(a1)+	;TRAP #9
+	move.l	a0,(a1)+	;TRAP #10
+	move.l	a0,(a1)+	;TRAP #11
+	move.l	a0,(a1)+	;TRAP #12
+	move.l	a0,(a1)+	;TRAP #13
+	move.l	a0,(a1)+	;TRAP #14
+	move.l	a0,(a1)+	;TRAP #15
+	
 	rts
 ;	Desc			D1		  D0			D2			A0			A1
 ;	Print char		$0		(byte)			XX			XX			XX
@@ -149,6 +166,15 @@ TRAP0_handler:
 
 	movem.l	(a7)+,d1
 	rte
+
+TRAP_empty:	
+	movem.l	d0/a0,-(a7)
+	lea		msg_empty_trap,a0
+	bsr		send_string
+	lea		msg_empty_trap,a0
+	bsr		x_print_byte_string
+	movem.l (a7)+,d0/a0
+	rte
 msg:
 	dc.b "Hello form 68k! in RAM",13,10,0
 	align 2
@@ -176,7 +202,9 @@ msg_add_err:
 msg_add_err_w
 	dc.w $0450,$0441,$044E,$0449,$0443,$0420,$047C,$0420,$0441,$0464,$0464,$0472,$0465,$0473,$0473,$0420,$0465,$0472,$0472,$046F,$0472,$0421,$0400
 msg_press_enter:
-	dc.b 13,10,"Press ENTER key ..."
+	dc.b 13,10,"Press ENTER key ...",0
+msg_empty_trap:
+	dc.b 13,10,"Empty TRAP",0
 	align	4
 
 	align 4

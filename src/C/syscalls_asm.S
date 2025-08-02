@@ -56,7 +56,7 @@ sys_get_keyboard:
 
 # Write string to screen
 # int sys_write_screen_string(const char *str, int len)
-.globl sys_write_screen_string
+#.globl sys_write_screen_string
 sys_write_screen_string:
     movem.l %d1-%d3/%a0, -(%sp)
     
@@ -83,7 +83,7 @@ sys_write_screen_string:
 
 # Write string to UART
 # int sys_write_uart_string(const char *str, int len)
-.globl sys_write_uart_string
+#.globl sys_write_uart_string
 sys_write_uart_string:
     movem.l %d1-%d3/%a0, -(%sp)
     
@@ -107,7 +107,7 @@ sys_write_uart_string:
 2:  move.l  %d2, %d0        /* Return number of characters printed */
 
 # String input from keyboard - SIMPLIFIED
-.globl sys_read_keyboard_string
+#.globl sys_read_keyboard_string
 sys_read_keyboard_string:
     movem.l %d1-%d2/%a0, -(%sp)
     

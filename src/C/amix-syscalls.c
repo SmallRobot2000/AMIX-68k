@@ -25,7 +25,6 @@ extern int sys_read_keyboard_string(char *buf, int maxlen);
 // Newlib system calls using your TRAP #0 interface
 int _write_r(struct _reent *r, int fd, const char *buf, size_t len) {
     int result = 0;
-    
     switch (fd) {
         case STDOUT_FILENO:
             result = sys_write_screen_string(buf, len);
@@ -109,6 +108,7 @@ int _lseek_r(struct _reent *r, int fd, off_t pos, int whence) {
     return 0; 
 }
 
+
 // Process control - minimal implementations
 int _getpid_r(struct _reent *r) { return 1; }
 int _kill_r(struct _reent *r, int pid, int sig) { r->_errno = ENOSYS; return -1; }
@@ -116,3 +116,9 @@ int _link_r(struct _reent *r, const char *old, const char *new) { r->_errno = EM
 int _unlink_r(struct _reent *r, const char *name) { r->_errno = ENOENT; return -1; }
 int _stat_r(struct _reent *r, const char *file, struct stat *st) { st->st_mode = S_IFCHR; return 0; }
 int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp) { return 0; }
+
+
+/* POSIX‐style _write stub that calls the reentrant version */
+int _write(int fd, const void *buf, size_t count) {
+    return _write_r(_REENT, fd, buf, count);
+}

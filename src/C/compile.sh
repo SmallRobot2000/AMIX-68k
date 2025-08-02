@@ -1,13 +1,14 @@
 #!/bin/bash
 
-if [ $# -ne 3 ]; then
-  echo "Usage: $0 <source.c> <crt0.S> <linker_script.ld>"
+if [ $# -ne 4 ]; then
+  echo "Usage: $0 <source.c> <crt0.S> <linker_script.ld> <sys.c>"
   exit 1
 fi
 
 SRC_C=$1
 CRT0_S=$2
 LDSCRIPT=$3
+SRC_SYS=$4
 
 CROSS=m68k-elf-
 CC=${CROSS}gcc
@@ -27,13 +28,14 @@ rm -f *.o *.elf *.bin *.srec *.map
 COMMON_CFLAGS="-Os -g -m68000 -ffunction-sections -fdata-sections -Wall -I${INCDIR}"
 
 $CC $COMMON_CFLAGS -c $SRC_C        -o main.o -I ./include
+$CC $COMMON_CFLAGS -c $SRC_SYS      -o sys.o -I ./include
 $CC $COMMON_CFLAGS -c $CRT0_S       -o crt0.o
 $CC $COMMON_CFLAGS -c amix-syscalls.c   -o syscalls.o
 $CC $COMMON_CFLAGS -c syscalls_asm.S     -o syscalls_asm.o
 
 echo "Linking..."
 $CC -nostartfiles \
-   crt0.o main.o syscalls.o syscalls_asm.o \
+   crt0.o main.o syscalls.o sys.o syscalls_asm.o \
    -T $LDSCRIPT \
    -L${LIBDIR} \
    -Wl,-Map=program.map,--gc-sections \

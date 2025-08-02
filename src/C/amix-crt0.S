@@ -49,9 +49,6 @@ _start:
 	 * Default to using the value of %sp as set by the caller.
 	 */
 	/* set up initial stack frame */
-    move  	IMM('C'),d0
-	move  	IMM(0),d1
-	trap	IMM(0)
 	link	a6, IMM(-8)
 
 /*
@@ -86,7 +83,7 @@ _start:
 	movel	IMM (__FINI_SECTION__),(sp)
 	PICCALL	SYM (atexit)
 
-	PICCALL	__INIT_SECTION__
+	//PICCALL	__INIT_SECTION__
 
         pea     0
 	PICPEA	SYM (environ),a0
