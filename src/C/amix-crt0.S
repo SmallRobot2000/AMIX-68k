@@ -42,16 +42,16 @@ SYM (environ):
 /*
  * set things up so the application will run. This *must* be called start.
  */
-	.global SYM (start)
+	.global _start
 
-SYM (start):
+_start:
 	/* 
 	 * Default to using the value of %sp as set by the caller.
 	 */
 	/* set up initial stack frame */
     move  	IMM('C'),d0
 	move  	IMM(0),d1
-	trap	#0
+	trap	IMM(0)
 	link	a6, IMM(-8)
 
 /*

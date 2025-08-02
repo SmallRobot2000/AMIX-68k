@@ -20,7 +20,7 @@
  * XXX when compiling assembly code.
  */
 #ifndef __USER_LABEL_PREFIX__
-/* #define __USER_LABEL_PREFIX__ ""	/* no underscore for coff */
+// #define __USER_LABEL_PREFIX__ ""	/* no underscore for coff */
 #define __USER_LABEL_PREFIX__ _		/* leading underscore for aout */
 #endif
 

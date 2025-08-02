@@ -1,97 +1,122 @@
-/* Linker script for m68k with Newlib, no IDP library by default */
-/* Replace or add your own BSP library in GROUP() below if needed */
+/* amix.ld - Linker script for m68k program at 0x130000 */
 
-STARTUP(crt0.o)
+ENTRY(_start)
 OUTPUT_ARCH(m68k)
-
-/* Uncomment this if you want S-record output */
-/* OUTPUT_FORMAT(srec) */
 
 SEARCH_DIR(.)
 
-/* Group of libraries linked in order:  
-   - Your BSP (Board Support Package) library here (optional)
-   - C standard library (Newlib libc)
-   - GCC support library (libgcc)
-*/
-GROUP(-lyourbsp -lc -lgcc)
+GROUP(-lc -lm -lgcc)
 
-/* Explicitly disable dynamic linking (common in bare-metal) */
 __DYNAMIC = 0;
 
-/* Memory layout definitions:
-   Adjust ORIGIN and LENGTH to match your hardware RAM/ROM */
 MEMORY
 {
-    ram (rwx) : ORIGIN = 0x00010000, LENGTH = 2M
-    rom (rx)  : ORIGIN = 0x00000000, LENGTH = 1M
+    ram (rwx) : ORIGIN = 0x130000, LENGTH = 2M
+    rom (rx)  : ORIGIN = 0x000000, LENGTH = 1M
 }
 
-/* Provide default stack pointer location */
+/* Provide symbols - place close to avoid PC16 overflow */
 PROVIDE(__stack = ORIGIN(ram) + LENGTH(ram) - 8);
-
-/* Provide optional BSP hooks; set to 0 if unused */
 PROVIDE(hardware_init_hook = 0);
 PROVIDE(software_init_hook = 0);
+PROVIDE(__INIT_SECTION__ = 0);
+PROVIDE(__FINI_SECTION__ = 0);
 
 SECTIONS
 {
-    /* Text section in RAM (or you can place in ROM based on your board) */
-    .text :
+    /* Code section starts at 0x130000 */
+    .text ORIGIN(ram) : ALIGN(4)
     {
-        /* Setup for constructors and destructors */
-        KEEP (*crtbegin.o(.ctors))
-        KEEP (*(SORT(.ctors.*)))
-        KEEP (*(.ctors))
-        KEEP (*crtbegin.o(.dtors))
-        KEEP (*(SORT(.dtors.*)))
-        KEEP (*(.dtors))
-
+        /* Keep startup code first */
+        KEEP(*(.text.startup))
         *(.text .text.*)
-
+        KEEP(*(.init*))
+        KEEP(*(.fini*))
         . = ALIGN(4);
         _etext = .;
-
-        /* Read-only data */
-        *(.rodata .rodata.*)
-
-        . = ALIGN(4);
-
-        /* Exception handling frames */
-        *(.gcc_except_table)
-
-        . = ALIGN(4);
-
-        *(.eh_frame)
     } > ram
 
-    /* Data section in RAM */
-    .data :
+    /* Place GOT immediately after .text to avoid GOT16 overflow */
+    .got : ALIGN(4)
     {
-        *(.got.plt) /* Global Offset Table for PIC if used */
+        _GLOBAL_OFFSET_TABLE_ = .;
+        *(.got.plt)
         *(.got)
+    } > ram
+
+    /* PLT section if needed */
+    .plt : ALIGN(4)
+    {
+        *(.plt)
+    } > ram
+
+    /* Read-only data */
+    .rodata : ALIGN(4)
+    {
+        *(.rodata .rodata.*)
+    } > ram
+
+    /* Initialized data */
+    .data : ALIGN(4)
+    {
+        _data_start = .;
+        
+        /* Constructor/Destructor tables */
+        __CTOR_LIST__ = .;
+        KEEP(*crtbegin*.o(.ctors))
+        KEEP(*(SORT(.ctors.*)))
+        KEEP(*(.ctors))
+        KEEP(*crtend*.o(.ctors))
+        LONG(0)
+        __CTOR_END__ = .;
+
+        __DTOR_LIST__ = .;
+        KEEP(*crtbegin*.o(.dtors))
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        KEEP(*crtend*.o(.dtors))
+        LONG(0)
+        __DTOR_END__ = .;
+
         *(.data .data.*)
+        . = ALIGN(4);
         _edata = .;
     } > ram
 
-    /* Zero-initialized BSS section in RAM */
-    .bss :
+    /* Uninitialized data */
+    .bss : ALIGN(4)
     {
-        . = ALIGN(4);
         __bss_start = .;
+        _bss_start = .;
         *(.bss .bss.*)
         *(COMMON)
-        _end = ALIGN(8);
+        . = ALIGN(4);
+        _end = .;
+        __end = .;
     } > ram
 
-    /* Optional debug symbols discarded */
-    .stab 0 (NOLOAD) :
-    {
-        *(.stab)
-    }
+    /* Heap area - leave space for stack */
+    _heap_start = _end;
+    _heap_end = ORIGIN(ram) + LENGTH(ram) - 0x2000;  /* 8KB stack space */
 
-    .stabstr 0 (NOLOAD) :
-    {
-        *(.stabstr)
-    }
+    /* Debug sections (not loaded into memory) */
+    .stab 0 (NOLOAD) : { *(.stab) }
+    .stabstr 0 (NOLOAD) : { *(.stabstr) }
+    .debug_info 0 (NOLOAD) : { *(.debug_info) }
+    .debug_abbrev 0 (NOLOAD) : { *(.debug_abbrev) }
+    .debug_line 0 (NOLOAD) : { *(.debug_line) }
+    .debug_str 0 (NOLOAD) : { *(.debug_str) }
+    .debug_ranges 0 (NOLOAD) : { *(.debug_ranges) }
 }
+
+/* Memory layout summary */
+/*
+ * 0x130000 - .text (code)
+ * xxxxxxxx - .got (Global Offset Table)
+ * xxxxxxxx - .plt (Procedure Linkage Table)
+ * xxxxxxxx - .rodata (read-only data)
+ * xxxxxxxx - .data (initialized data)
+ * xxxxxxxx - .bss (uninitialized data)
+ * xxxxxxxx - heap starts here
+ * 0x32FFFF - stack (grows downward from top of 2MB)
+ */

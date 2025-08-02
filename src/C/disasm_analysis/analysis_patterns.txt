@@ -1,0 +1,126 @@
+=== TRAP Instructions (System Calls) ===
+disasm_analysis/disassembly_full.txt:10:  130008:	4e40           	trap #0
+disasm_analysis/disassembly_full.txt:160:  1301ea:	4e40           	trap #0
+disasm_analysis/disassembly_full.txt:166:  1301f8:	4e40           	trap #0
+disasm_analysis/disassembly_full.txt:172:  130206:	4e40           	trap #0
+disasm_analysis/disassembly_full.txt:177:  130210:	4e40           	trap #0
+disasm_analysis/disassembly_full.txt:189:  130232:	4e40           	trap #0
+disasm_analysis/disassembly_full.txt:204:  13025e:	4e40           	trap #0
+disasm_analysis/disassembly_full.txt:215:  13027e:	4e40           	trap #0
+disasm_analysis/disassembly_full.txt:10906:  138608:	4e4f           	trap #15
+disasm_analysis/disassembly_with_source.txt:10:  130008:	4e40           	trap #0
+disasm_analysis/disassembly_with_source.txt:160:  1301ea:	4e40           	trap #0
+disasm_analysis/disassembly_with_source.txt:166:  1301f8:	4e40           	trap #0
+disasm_analysis/disassembly_with_source.txt:172:  130206:	4e40           	trap #0
+disasm_analysis/disassembly_with_source.txt:177:  130210:	4e40           	trap #0
+disasm_analysis/disassembly_with_source.txt:189:  130232:	4e40           	trap #0
+disasm_analysis/disassembly_with_source.txt:204:  13025e:	4e40           	trap #0
+disasm_analysis/disassembly_with_source.txt:215:  13027e:	4e40           	trap #0
+disasm_analysis/disassembly_with_source.txt:10906:  138608:	4e4f           	trap #15
+
+=== Jump/Branch Instructions ===
+disasm_analysis/disassembly_full.txt:15:  13001c:	670c           	beqs 0x13002a
+disasm_analysis/disassembly_full.txt:22:  130030:	4eb9 0013 02aa 	jsr 0x1302aa
+disasm_analysis/disassembly_full.txt:23:  130036:	4eb9 0000 0000 	jsr 0x0
+disasm_analysis/disassembly_full.txt:28:  13004e:	4eb9 0013 005c 	jsr 0x13005c
+disasm_analysis/disassembly_full.txt:30:  130056:	4eb9 0013 02c0 	jsr 0x1302c0
+disasm_analysis/disassembly_full.txt:33:  130066:	4eb9 0013 054c 	jsr 0x13054c
+disasm_analysis/disassembly_full.txt:45:  13008c:	670c           	beqs 0x13009a
+disasm_analysis/disassembly_full.txt:48:  130092:	6718           	beqs 0x1300ac
+disasm_analysis/disassembly_full.txt:51:  130098:	6624           	bnes 0x1300be
+disasm_analysis/disassembly_full.txt:56:  1300a6:	4ef9 0013 0216 	jmp 0x130216
+disasm_analysis/disassembly_full.txt:61:  1300b8:	4ef9 0013 0242 	jmp 0x130242
+disasm_analysis/disassembly_full.txt:73:  1300de:	6610           	bnes 0x1300f0
+disasm_analysis/disassembly_full.txt:77:  1300ea:	4ef9 0013 0268 	jmp 0x130268
+disasm_analysis/disassembly_full.txt:91:  130116:	4eb9 0013 0684 	jsr 0x130684
+disasm_analysis/disassembly_full.txt:94:  130122:	4eb9 0013 0216 	jsr 0x130216
+disasm_analysis/disassembly_full.txt:103:  130144:	4e92           	jsr %a2@
+disasm_analysis/disassembly_full.txt:106:  13014a:	4e92           	jsr %a2@
+disasm_analysis/disassembly_full.txt:108:  13014e:	60fe           	bras 0x13014e
+disasm_analysis/disassembly_full.txt:110:  130154:	60ee           	bras 0x130144
+disasm_analysis/disassembly_full.txt:113:  130160:	660a           	bnes 0x13016c
+
+=== PC-Relative Instructions ===
+disasm_analysis/disassembly_full.txt:1464:  131258:	303b 0806      	movew %pc@(0x131260,%d0:l),%d0
+disasm_analysis/disassembly_full.txt:1465:  13125c:	4efb 0002      	jmp %pc@(0x131260,%d0:w)
+disasm_analysis/disassembly_full.txt:8810:  136ccc:	303b 0806      	movew %pc@(0x136cd4,%d0:l),%d0
+disasm_analysis/disassembly_full.txt:8811:  136cd0:	4efb 0002      	jmp %pc@(0x136cd4,%d0:w)
+disasm_analysis/disassembly_full.txt:10244:  137de2:	41fa 0020      	lea %pc@(0x137e04),%a0
+disasm_analysis/disassembly_full.txt:10288:  137e66:	41fa 0020      	lea %pc@(0x137e88),%a0
+disasm_analysis/disassembly_full.txt:10728:  1383a4:	41fa 0020      	lea %pc@(0x1383c6),%a0
+disasm_analysis/disassembly_full.txt:11157:  1388d8:	4eba fec0      	jsr %pc@(0x13879a)
+disasm_analysis/disassembly_full.txt:11160:  1388e0:	4eba 009e      	jsr %pc@(0x138980)
+disasm_analysis/disassembly_full.txt:11166:  1388f2:	4eba ff12      	jsr %pc@(0x138806)
+disasm_analysis/disassembly_full.txt:11169:  1388fa:	4eba 0084      	jsr %pc@(0x138980)
+disasm_analysis/disassembly_full.txt:11397:  138b70:	4eba fd92      	jsr %pc@(0x138904)
+disasm_analysis/disassembly_full.txt:11400:  138b78:	4eba ff58      	jsr %pc@(0x138ad2)
+disasm_analysis/disassembly_full.txt:11624:  138e22:	4eba fde4      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_full.txt:11640:  138e5a:	4eba fec2      	jsr %pc@(0x138d1e)
+disasm_analysis/disassembly_full.txt:11655:  138e8e:	4eba fd78      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_full.txt:11677:  138ed4:	4eba fd32      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_full.txt:11694:  138f0e:	4eba fe0e      	jsr %pc@(0x138d1e)
+disasm_analysis/disassembly_full.txt:11703:  138f30:	47fa fdec      	lea %pc@(0x138d1e),%a3
+disasm_analysis/disassembly_full.txt:11724:  138f74:	4eba fc92      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_full.txt:11739:  138fa6:	47fa fd76      	lea %pc@(0x138d1e),%a3
+disasm_analysis/disassembly_full.txt:11760:  138fea:	4eba fc1c      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_full.txt:11775:  13901c:	47fa fd00      	lea %pc@(0x138d1e),%a3
+disasm_analysis/disassembly_full.txt:11796:  139060:	4eba fba6      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_full.txt:11811:  139092:	47fa fc8a      	lea %pc@(0x138d1e),%a3
+disasm_analysis/disassembly_full.txt:11832:  1390d6:	4eba fb30      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_full.txt:11851:  139114:	4eba fc08      	jsr %pc@(0x138d1e)
+disasm_analysis/disassembly_full.txt:11858:  13912c:	4eba fada      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_full.txt:11876:  13916a:	45fa fbb2      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_full.txt:11898:  1391be:	45fa fb5e      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_full.txt:11920:  139212:	45fa fb0a      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_full.txt:11942:  139266:	45fa fab6      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_full.txt:11964:  1392ba:	45fa fa62      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_full.txt:11986:  13930e:	45fa fa0e      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_full.txt:12008:  139362:	45fa f9ba      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_with_source.txt:1464:  131258:	303b 0806      	movew %pc@(0x131260,%d0:l),%d0
+disasm_analysis/disassembly_with_source.txt:1465:  13125c:	4efb 0002      	jmp %pc@(0x131260,%d0:w)
+disasm_analysis/disassembly_with_source.txt:8810:  136ccc:	303b 0806      	movew %pc@(0x136cd4,%d0:l),%d0
+disasm_analysis/disassembly_with_source.txt:8811:  136cd0:	4efb 0002      	jmp %pc@(0x136cd4,%d0:w)
+disasm_analysis/disassembly_with_source.txt:10244:  137de2:	41fa 0020      	lea %pc@(0x137e04),%a0
+disasm_analysis/disassembly_with_source.txt:10288:  137e66:	41fa 0020      	lea %pc@(0x137e88),%a0
+disasm_analysis/disassembly_with_source.txt:10728:  1383a4:	41fa 0020      	lea %pc@(0x1383c6),%a0
+disasm_analysis/disassembly_with_source.txt:11157:  1388d8:	4eba fec0      	jsr %pc@(0x13879a)
+disasm_analysis/disassembly_with_source.txt:11160:  1388e0:	4eba 009e      	jsr %pc@(0x138980)
+disasm_analysis/disassembly_with_source.txt:11166:  1388f2:	4eba ff12      	jsr %pc@(0x138806)
+disasm_analysis/disassembly_with_source.txt:11169:  1388fa:	4eba 0084      	jsr %pc@(0x138980)
+disasm_analysis/disassembly_with_source.txt:11397:  138b70:	4eba fd92      	jsr %pc@(0x138904)
+disasm_analysis/disassembly_with_source.txt:11400:  138b78:	4eba ff58      	jsr %pc@(0x138ad2)
+disasm_analysis/disassembly_with_source.txt:11624:  138e22:	4eba fde4      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_with_source.txt:11640:  138e5a:	4eba fec2      	jsr %pc@(0x138d1e)
+disasm_analysis/disassembly_with_source.txt:11655:  138e8e:	4eba fd78      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_with_source.txt:11677:  138ed4:	4eba fd32      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_with_source.txt:11694:  138f0e:	4eba fe0e      	jsr %pc@(0x138d1e)
+disasm_analysis/disassembly_with_source.txt:11703:  138f30:	47fa fdec      	lea %pc@(0x138d1e),%a3
+disasm_analysis/disassembly_with_source.txt:11724:  138f74:	4eba fc92      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_with_source.txt:11739:  138fa6:	47fa fd76      	lea %pc@(0x138d1e),%a3
+disasm_analysis/disassembly_with_source.txt:11760:  138fea:	4eba fc1c      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_with_source.txt:11775:  13901c:	47fa fd00      	lea %pc@(0x138d1e),%a3
+disasm_analysis/disassembly_with_source.txt:11796:  139060:	4eba fba6      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_with_source.txt:11811:  139092:	47fa fc8a      	lea %pc@(0x138d1e),%a3
+disasm_analysis/disassembly_with_source.txt:11832:  1390d6:	4eba fb30      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_with_source.txt:11851:  139114:	4eba fc08      	jsr %pc@(0x138d1e)
+disasm_analysis/disassembly_with_source.txt:11858:  13912c:	4eba fada      	jsr %pc@(0x138c08)
+disasm_analysis/disassembly_with_source.txt:11876:  13916a:	45fa fbb2      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_with_source.txt:11898:  1391be:	45fa fb5e      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_with_source.txt:11920:  139212:	45fa fb0a      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_with_source.txt:11942:  139266:	45fa fab6      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_with_source.txt:11964:  1392ba:	45fa fa62      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_with_source.txt:11986:  13930e:	45fa fa0e      	lea %pc@(0x138d1e),%a2
+disasm_analysis/disassembly_with_source.txt:12008:  139362:	45fa f9ba      	lea %pc@(0x138d1e),%a2
+
+=== Move Instructions ===
+disasm_analysis/disassembly_full.txt:8:  130000:	303c 0043      	movew #67,%d0
+disasm_analysis/disassembly_full.txt:9:  130004:	323c 0000      	movew #0,%d1
+disasm_analysis/disassembly_full.txt:12:  13000e:	223c 0013 9dbc 	movel #1285564,%d1
+disasm_analysis/disassembly_full.txt:13:  130014:	203c 0013 a0c4 	movel #1286340,%d0
+disasm_analysis/disassembly_full.txt:16:  13001e:	2041           	moveal %d1,%a0
+disasm_analysis/disassembly_full.txt:21:  13002a:	2ebc 0000 0000 	movel #0,%sp@
+disasm_analysis/disassembly_full.txt:29:  130054:	2f00           	movel %d0,%sp@-
+disasm_analysis/disassembly_full.txt:34:  13006c:	7000           	moveq #0,%d0
+disasm_analysis/disassembly_full.txt:38:  130076:	2f02           	movel %d2,%sp@-
+disasm_analysis/disassembly_full.txt:39:  130078:	226e 0008      	moveal %fp@(8),%a1
+

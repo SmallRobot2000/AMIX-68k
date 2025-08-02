@@ -31,6 +31,8 @@ API_SEND_STR		equ		$05
 API_GET_CURSOR_XY	equ		$06
 API_SET_CURSOR_XY	equ		$07
 
+prog_start 	equ	RAM_START+$30000	;lots of space
+
 ; Macro to disable all maskable interrupts by setting IPL = 7
     macro STI
     move.w  #$2700,sr    ; Disable all interrupts (IPL=7), Supervisor mode on
@@ -47,45 +49,20 @@ _start:
 	bsr		init_tmr
 
 
-	;Illegal
-	bsr     x_print_hex
-	move.w	#0,(cursor_add)
-	lea		msg,a0
-	move	#API_PRINT_STR_BYTE,d1
-	TRAP	#0
-	;bsr		x_print_byte_string
-	lea		msg,a0
-	move	#API_PRINT_STR_BYTE,d1
-	TRAP	#0
-	;bsr		x_print_byte_string
-	lea		msg_w,a0
-	move	#API_PRINT_STR_WORD,d1
-	TRAP	#0
-	;bsr		x_print_word_string
-	lea		msg_w,a0
-	move	#API_PRINT_STR_WORD,d1
-	TRAP	#0
-	;bsr		x_print_word_string
-	move	#$7E42,d0
-	move	#API_PRINT_WORD,d1
-	TRAP	#0
-	TRAP	#0
-	;bsr		x_print_char_word
-	;bsr		x_print_char_byte
-	move	#$7E42,d0
-	move	#API_SEND_BYTE,d1
-	TRAP	#0
-	;bsr		send_string
-	move.w	#1,d0
-	move.w	#2,d2
-	move.w	#API_SET_CURSOR_XY,d1
+	lea		msg_press_enter,a0
+	move	#3,d1
 	TRAP	#0
 
-	move.l	#$11223344,d0
-	bsr     x_print_hex
 .l:
 	bsr		kyb_get_key
+	cmp.b	#10,d0
+	bne		.l
 	bsr		x_print_char_byte
+	lea		prog_start,a0
+	bsr		xmodem_receve
+	bsr		kyb_get_key
+	lea		prog_start,a0
+	jsr		(a0)
 	jmp		.l
 
 
@@ -198,10 +175,14 @@ msg_add_err:
 	dc.b 13,10,"PANIC | Address error!",0
 msg_add_err_w
 	dc.w $0450,$0441,$044E,$0449,$0443,$0420,$047C,$0420,$0441,$0464,$0464,$0472,$0465,$0473,$0473,$0420,$0465,$0472,$0472,$046F,$0472,$0421,$0400
-msg_a
+msg_press_enter:
+	dc.b 13,10,"Press ENTER key ..."
+	align	4
+
 	align 4
 	INCLUDE		"UART.asm"
 	INCLUDE		"xosera.asm"
+	INCLUDE		"xmodem.asm"
 	INCLUDE		"PPI_KEYB_PIT.asm"
 	INCLUDE		"IDE.asm"
 	INCLUDE		"../common/bss.asm"

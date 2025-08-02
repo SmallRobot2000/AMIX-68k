@@ -88,11 +88,24 @@ pa_loop:
     bsr     send_byte   ;sends cancle
     lea     msg_xmodem_error,a0
     bsr     send_string ;print error
-    move    d2,a0
-    bsr     print_hex_add
+    move    d2,d0
+    bsr     x_print_hex
     rts
 
-    section .rodata
+
+;wait 
+receve_byte:
+	move.l 	a0,-(a7)           ; Save registers
+	lea		UART_BASE,a0
+.loop:
+	move.b 	(UART_LSR,a0),d0
+	btst	#0,d0 ;test bit 5 of d1 register
+	beq		.loop ;if 0 loop
+	
+	move.b  (UART_RBR,a0),d0
+	movem.l	(a7)+,a0
+	rts
+
 msg_xmodem_error:
     dc.b    13,10,"Error during transfer aborting",13,10,0
 msg_xmodem_ok:

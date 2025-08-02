@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Example shell script to compile and link a simple m68k program with Newlib and custom BSP
-
-# Usage: ./build.sh test.c amix-crt0.S amix.ld
-
 if [ $# -ne 3 ]; then
   echo "Usage: $0 <source.c> <crt0.S> <linker_script.ld>"
   exit 1
@@ -13,47 +9,48 @@ SRC_C=$1
 CRT0_S=$2
 LDSCRIPT=$3
 
-# Cross compiler prefix
 CROSS=m68k-elf-
-
 CC=${CROSS}gcc
+STRIP=${CROSS}strip
 OBJCOPY=${CROSS}objcopy
 
-# Directories for includes and libs - adjust as needed
-INCDIR=/usr/local/m68k-elf/m68k-elf/include
-LIBDIR=/usr/local/m68k-elf/m68k-elf/lib
+NEWLIB_BASE="$HOME/opt/cross-newlib"
+TARGET_PREFIX="m68k-elf-rosco"
+INCDIR="${NEWLIB_BASE}/${TARGET_PREFIX}/include"
+LIBDIR="${NEWLIB_BASE}/${TARGET_PREFIX}/lib"
 
-# Output file names
-OBJS="main.o crt0.o"
-TARGET=program.elf
+echo "=== Custom TRAP #0 Size-Optimized Build ==="
 
-echo "Compiling $SRC_C ..."
-$CC -O2 -g -Wall -m68000 -nostdinc -I${INCDIR} -c $SRC_C -o main.o
-if [ $? -ne 0 ]; then
-  echo "Error: compiling $SRC_C failed"
-  exit 2
-fi
+# Clean
+rm -f *.o *.elf *.bin *.srec *.map
 
-echo "Assembling $CRT0_S ..."
-$CC -O2 -g -Wall -m68000 -nostdinc -I${INCDIR} -c $CRT0_S -o crt0.o
-if [ $? -ne 0 ]; then
-  echo "Error: assembling $CRT0_S failed"
-  exit 3
-fi
+COMMON_CFLAGS="-Os -g -m68000 -ffunction-sections -fdata-sections -Wall -I${INCDIR}"
 
-echo "Linking ..."
-$CC main.o crt0.o -T $LDSCRIPT -L${LIBDIR} -Lamix -lc -lgcc -nostartfiles -o $TARGET
-if [ $? -ne 0 ]; then
-  echo "Error: linking failed"
-  exit 4
-fi
+$CC $COMMON_CFLAGS -c $SRC_C        -o main.o -I ./include
+$CC $COMMON_CFLAGS -c $CRT0_S       -o crt0.o
+$CC $COMMON_CFLAGS -c amix-syscalls.c   -o syscalls.o
+$CC $COMMON_CFLAGS -c syscalls_asm.S     -o syscalls_asm.o
 
-echo "Build complete: $TARGET"
+echo "Linking..."
+$CC -nostartfiles \
+   crt0.o main.o syscalls.o syscalls_asm.o \
+   -T $LDSCRIPT \
+   -L${LIBDIR} \
+   -Wl,-Map=program.map,--gc-sections \
+   -lc -lm -lgcc \
+   -Wl,--strip-all \
+   -o program.elf
 
-echo "Generating binary and srec files ..."
-$OBJCOPY -O binary $TARGET program.bin
-$OBJCOPY -O srec $TARGET program.srec
+echo "Stripping symbols..."
+$STRIP --strip-all program.elf
 
-echo "Generated program.bin and program.srec"
+echo "Build complete: program.elf"
 
-exit 0
+echo "Size:"
+${CROSS}size program.elf
+
+echo "Generating program.bin and program.srec..."
+$OBJCOPY -O binary program.elf program.bin
+$OBJCOPY -O srec program.elf program.srec
+
+echo "Done."
