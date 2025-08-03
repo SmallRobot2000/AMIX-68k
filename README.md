@@ -22,8 +22,27 @@ But somehow this is the first time working with 68k chip, I known for 68k style 
 
 # Present (problems)
 For now the keyboard, Video output, UART and DISK work.
-Xosera has problems reading and making interrupts, PCB is flawed, will continue testing.
 
-#Future
-Planned are (offcorse) to fix all the above issues, make a C compiler working, nice API,
-libc and that adn hopefully simple OS the AMIX OS
+Xosera has problems reading and making interrupts, but i fixed this by using PIT interrupts.
+
+PCB is flawed, will continue testing and changing the schematic/pcb design.
+
+Started porting newlib got printf and string stuff working
+# Future (TODO)
+
+Fix all the above issues
+
+~~make a C compiler working~~
+
+C memory allocation
+
+nice API (kinda not full)
+
+~~libc (newlib)~~
+
+relocatable programs
+
+some sort of kernel
+
+simple OS the AMIX OS
+
