@@ -7,55 +7,14 @@
 #include <sys/time.h>
 #include <stdio.h>
 
-// External assembly functions
-extern long syscall_trap0(long syscall_num, long param);
-extern void sys_print_screen(char c);
-extern void sys_print_uart(char c);
-extern char sys_get_keyboard(void);
-extern int sys_write_screen_string(const char *str, int len);
-extern int sys_write_uart_string(const char *str, int len);
-extern int sys_read_keyboard_string(char *buf, int maxlen);
+//Sys stuff
+#include<sys_amix.h>
 
 // File descriptor definitions
 #define STDIN_FILENO    0
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
 #define UART_FILENO     3    // Custom: UART output
-
-// Newlib system calls using your TRAP #0 interface
-int _write_r(struct _reent *r, int fd, const char *buf, size_t len) {
-    int result = 0;
-    switch (fd) {
-        case STDOUT_FILENO:
-            result = sys_write_screen_string(buf, len);
-            break;
-        case STDERR_FILENO:
-            // Write to screen
-            result = sys_write_screen_string(buf, len);
-            break;
-            
-        case UART_FILENO:
-            // Write to UART
-            result = sys_write_uart_string(buf, len);
-            break;
-            
-        default:
-            r->_errno = EBADF;
-            return -1;
-    }
-    
-    return result;
-}
-
-int _read_r(struct _reent *r, int fd, char *buf, size_t len) {
-    if (fd == STDIN_FILENO) {
-        // Read from keyboard
-        return sys_read_keyboard_string(buf, len);
-    } else {
-        r->_errno = EBADF;
-        return -1;
-    }
-}
 
 void _exit(int status) {
     // Print exit message to screen
@@ -76,6 +35,26 @@ void _exit(int status) {
     }
 }
 
+/* Reentrant write stub using TRAP #0 */
+int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
+    const char *cbuf = buf;
+    size_t i;
+    
+    switch (fd) {
+    case STDOUT_FILENO:
+    case STDERR_FILENO:
+        for (i = 0; i < count; i++) {
+            /* TRAP #0, D1 = syscall number (0 = write char),
+               D0 = character, A0 = unused here */
+            syscall_trap0(0L, (long)(unsigned char)cbuf[i], 0L);
+        }
+        return (int)count;  /* Number of bytes written */
+
+    default:
+        r->_errno = EBADF;
+        return -1;
+    }
+}
 // Memory management
 void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
     extern char _end;
@@ -120,5 +99,31 @@ int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp) 
 
 /* POSIX‐style _write stub that calls the reentrant version */
 int _write(int fd, const void *buf, size_t count) {
-    return _write_r(_REENT, fd, buf, count);
+    const char *cbuf = buf;
+    size_t i;
+    switch (fd) {
+    case STDOUT_FILENO:
+    case STDERR_FILENO:
+        for (i = 0; i < count; i++) {
+            // Using newlib’s reentrant stub:
+            _write_r(_REENT, fd, &cbuf[i], 1);
+            // Or if you bypass it:
+            // syscall_trap0(3, (long)cbuf[i], 0);
+        }
+        return count;   // Return bytes written
+
+    default:
+        // Indicate unsupported FD
+        errno = EBADF;
+        return -1;
+    }
+}
+
+int _read(int fd, char *buf, size_t len) {
+    if (fd == STDIN_FILENO) {
+        // Read from keyboard
+        return sys_read_keyboard_string(buf, len);
+    } else {
+        return -1;
+    }
 }

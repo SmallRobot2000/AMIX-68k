@@ -135,4 +135,8 @@ kyb_flags:
 	ds.w 1
 buffer:
 	ds.w $2000
-    
+_stack_tmp:
+	ds.l 1
+_sys_stack_end:
+    ds.w 256
+_sys_stack_start:

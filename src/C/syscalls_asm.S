@@ -9,18 +9,22 @@
 .set SYS_GET_KEYBOARD,  8
 
 # Generic TRAP #0 interface
-# long syscall_trap0(long syscall_num, long param)
+# long syscall_trap0(long syscall_num, long d0, long a0)
 .globl syscall_trap0
 syscall_trap0:
-    move.l  %d1, -(%sp)
+    movem.l %d1/%a0, -(%sp)           
     
-    move.l  12(%sp), %d1    /* syscall_num from stack */
-    move.l  8(%sp), %d0     /* param from stack */
+    move.l  12(%sp), %d1              
+    move.l  16(%sp), %d0             
+    move.l  20(%sp), %a0           
     
-    trap    #0
+    trap    #0                       
     
-    move.l  (%sp)+, %d1
+    movem.l (%sp)+, %d1/%a0          
     rts
+
+asm_test:
+.asciz "This a test asm"
 
 # Print character to screen
 # void sys_print_screen(char c)

@@ -407,7 +407,8 @@ _IRQ2_subrutine:
     jsr     send_byte
     move.l  (a7)+,d0
     rte
-_IRQ3_subrutine:
+_IRQ3_subrutine:    
+    rte
     move.l  d0,-(a7)
     move    #'3',d0
     jsr     send_byte

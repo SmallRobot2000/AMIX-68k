@@ -43,7 +43,7 @@ prog_start 	equ	RAM_START+$30000	;lots of space
     move.w  #$2200,sr    ; Enable all interrupts (IPL=0), Supervisor mode on
     endm
 
-_start:
+_start:	
 	bsr		init_traps
 	bsr		ppi_init
 	bsr		init_tmr
@@ -60,7 +60,7 @@ _start:
 	bsr		x_print_char_byte
 	lea		prog_start,a0
 	bsr		xmodem_receve
-	bsr		kyb_get_key
+	;bsr		kyb_get_key
 	lea		prog_start,a0
 	jsr		(a0)
 	jmp		.l
@@ -105,6 +105,9 @@ init_traps:
 ;	Write sectors	$C (1st sector LBA)(sector cnt)	   PTR			XX
 
 TRAP0_handler:
+	STI
+	;move.l	a7,(_stack_tmp)
+	;lea  	_sys_stack_start,a7
 	movem.l	d1,-(a7)
 	cmp.b	#$0,d1
 	bne		.s0
@@ -165,6 +168,8 @@ TRAP0_handler:
 	
 
 	movem.l	(a7)+,d1
+	;move.l	(_stack_tmp),a7
+	CLI
 	rte
 
 TRAP_empty:	

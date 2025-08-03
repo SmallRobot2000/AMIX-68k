@@ -1,5 +1,5 @@
 // External assembly functions
-extern long syscall_trap0(long syscall_num, long param);
+extern long syscall_trap0(long syscall_num, long d0, void* a0);
 extern void sys_print_screen(char c);
 extern void sys_print_uart(char c);
 extern char sys_get_keyboard(void);

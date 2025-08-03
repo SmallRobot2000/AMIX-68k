@@ -71,8 +71,8 @@ x_set_border_color:
 ;puts char in RAM map of VRAM display
 x_print_char_word:
     STI
+    movem.l d0-d7/a0-a6,-(a7)
     bsr     clear_cursor
-    movem.l d1/a0/a1,-(a7)
     move.w  (cursor_add),d1
     move.w  d1,(last_cursor_add)
     bsr     test_special    ;zero if normal
@@ -91,7 +91,7 @@ x_print_char_word:
     add.w   #1,(a1)
 .end:
     CLI
-    movem.l (a7)+,d1/a0/a1
+    movem.l (a7)+,d0-d7/a0-a6
     rts
 
 ;d0 - byte char

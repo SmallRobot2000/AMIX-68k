@@ -30,7 +30,7 @@ COMMON_CFLAGS="-Os -g -m68000 -ffunction-sections -fdata-sections -Wall -I${INCD
 $CC $COMMON_CFLAGS -c $SRC_C        -o main.o -I ./include
 $CC $COMMON_CFLAGS -c $SRC_SYS      -o sys.o -I ./include
 $CC $COMMON_CFLAGS -c $CRT0_S       -o crt0.o
-$CC $COMMON_CFLAGS -c amix-syscalls.c   -o syscalls.o
+$CC $COMMON_CFLAGS -c amix-syscalls.c   -o syscalls.o -I ./include
 $CC $COMMON_CFLAGS -c syscalls_asm.S     -o syscalls_asm.o
 
 echo "Linking..."
