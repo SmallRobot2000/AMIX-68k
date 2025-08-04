@@ -15,8 +15,7 @@ MEMORY
     rom (rx)  : ORIGIN = 0x000000, LENGTH = 1M
 }
 
-/* Provide symbols - place close to avoid PC16 overflow */
-PROVIDE(__stack = ORIGIN(ram) + LENGTH(ram) - 8);
+/* Stack positioned after BSS, heap grows upward from there */
 PROVIDE(hardware_init_hook = 0);
 PROVIDE(software_init_hook = 0);
 PROVIDE(__INIT_SECTION__ = 0);
@@ -95,9 +94,15 @@ SECTIONS
         __end = .;
     } > ram
 
-    /* Heap area - leave space for stack */
-    _heap_start = _end;
-    _heap_end = ORIGIN(ram) + LENGTH(ram) - 0x2000;  /* 8KB stack space */
+    /* Stack area - fixed size after BSS */
+    . = ALIGN(8);
+    _stack_start = .;
+    . = . + 0x2000;  /* 8KB stack space */
+    __stack = .;     /* Top of stack (SP starts here) */
+    
+    /* Heap starts after stack, grows upward */
+    _heap_start = .;
+    _heap_end = ORIGIN(ram) + 0x2000;  /* Use 8K heap */
 
     /* Debug sections (not loaded into memory) */
     .stab 0 (NOLOAD) : { *(.stab) }
@@ -117,6 +122,6 @@ SECTIONS
  * xxxxxxxx - .rodata (read-only data)
  * xxxxxxxx - .data (initialized data)
  * xxxxxxxx - .bss (uninitialized data)
- * xxxxxxxx - heap starts here
- * 0x32FFFF - stack (grows downward from top of 2MB)
+ * xxxxxxxx - stack (16KB, grows downward from __stack)
+ * xxxxxxxx - heap (grows upward to end of RAM)
  */

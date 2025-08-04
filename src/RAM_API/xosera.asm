@@ -51,7 +51,7 @@ XR_PB_LINE_ADDR	equ     $1F	    ;-/W	playfield B scanline start address (start o
 ;0x5000-0x53FF	8x8 hexadecimal debug font (showing TILE number in hex)
 X_SCREEN_START  equ     $1000
 SCREEN_WIDTH    equ     80
-SCREEN_HIGHT    equ     32
+SCREEN_HIGHT    equ     30
 DEFAULT_FR      equ     $02 ;green
 DEFAULT_BG      equ     $00 ;black
 XM_TIME_CUR_BIT equ     12  ;speed of cursor
@@ -90,8 +90,9 @@ x_print_char_word:
     movep   d0,(XM_DATA,a0)
     add.w   #1,(a1)
 .end:
-    CLI
+    bsr     clear_cursor
     movem.l (a7)+,d0-d7/a0-a6
+    CLI
     rts
 
 ;d0 - byte char
@@ -327,7 +328,7 @@ x_send_screen:
     move    #1,d0
     movep   d0,(XM_WR_INCR,a0)
 
-    move    #SCREEN_HIGHT*SCREEN_WIDTH-1,d1
+    move    #(SCREEN_HIGHT*SCREEN_WIDTH)-1,d1
 .loop:
     move.w  (a1)+,d0
     movep   d0,(XM_DATA,a0)
@@ -336,21 +337,44 @@ x_send_screen:
     rts
 
 ;d0 - how much
-screen_scrool:
+screen_scroll:
+    STI
+    bsr     clear_cursor
+    movem.l d0-d1/a0-a1,-(a7)
     tst     d0
     beq     .end    ;if zero end
+    bsr     scroll_clear_invis_line
     subq    #1,d0
 .loop0:
     lea     x_screen,a0
-    lea     x_screen+SCREEN_WIDTH,a1
-    move    #SCREEN_WIDTH*SCREEN_HIGHT-SCREEN_WIDTH,d1 ;24 lines skips first
+    lea     x_screen+(SCREEN_WIDTH*2),a1
+    move    #SCREEN_WIDTH*SCREEN_HIGHT,d1
 .loop1:
     move.w  (a1)+,(a0)+
     dbra    d1,.loop1
     dbra    d0,.loop0
+    lea     x_screen,a0
+    
+    
+    
 .end
+    bsr     x_send_screen
+    movem.l (a7)+,d0-d1/a0-a1
+    CLI
     rts
-
+scroll_clear_invis_line:    
+    movem.l d0,-(a7)
+    lea     x_screen+(SCREEN_WIDTH*2*(SCREEN_WIDTH-1)),a0
+    move    #$20,d0
+    move    #DEFAULT_FR,d1
+    move    #DEFAULT_BG,d2
+    bsr     set_char_colors
+    move    #(SCREEN_WIDTH)-1,d1
+.loop:
+    move.w  d0,(a0)+
+    dbra    d1,.loop
+    movem.l (a7)+,d0
+    rts
 ;d0 - X
 ;d1 - Y (used)
 ;d0 - address offset output
@@ -429,6 +453,7 @@ s:
 x_print_word_string:
     movem.l d0/a0/a1/a2/a3,-(a7)
     STI
+    bsr     clear_cursor
     lea     XM_BASE,a1
     bsr     x_set_add_rep
     lea     cursor_add,a2
@@ -478,6 +503,7 @@ x_print_word_string:
 x_print_byte_string:
     movem.l d0/a0/a1/a2/a3,-(a7)
     STI
+    bsr     clear_cursor
     lea     XM_BASE,a1
     bsr     x_set_add_rep
     move.w  #0,d0

@@ -39,6 +39,17 @@ SYM (environ):
 	.extern __bss_start
 	.extern _end
 
+//my macro
+// Macro to disable all maskable interrupts by setting IPL = 7
+    .macro STI
+    move.w  #0x2700,sr    // Disable all interrupts (IPL=7), Supervisor mode on
+    .endm
+
+// Macro to enable all interrupts by clearing IPL to 0
+    .macro CLI
+    move.w  #0x2200,sr    // Enable all interrupts (IPL=0), Supervisor mode on
+    .endm
+
 /*
  * set things up so the application will run. This *must* be called start.
  */
@@ -46,8 +57,13 @@ SYM (environ):
 
 _start:
 	/* 
-	 * Default to using the value of %sp as set by the caller.
+	 * Default to using the __stack for SP.
 	 */
+	STI
+	move	#0,d1
+	move	#13,d0
+	trap 	#0		//Needs to be here idk why
+	lea		__stack,a7	//setup SP
 	/* set up initial stack frame */
 	link	a6, IMM(-8)
 
@@ -83,12 +99,13 @@ _start:
 	movel	IMM (__FINI_SECTION__),(sp)
 	PICCALL	SYM (atexit)
 
-	//PICCALL	__INIT_SECTION__
+	PICCALL	__INIT_SECTION__
 
         pea     0
 	PICPEA	SYM (environ),a0
         pea     sp@(4)
         pea     0
+	CLI	
 	PICCALL	SYM (main)
 	movel	d0, sp@-
 

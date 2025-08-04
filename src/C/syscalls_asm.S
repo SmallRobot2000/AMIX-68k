@@ -14,14 +14,41 @@
 syscall_trap0:
     movem.l %d1/%a0, -(%sp)           
     
-    move.l  12(%sp), %d1              
-    move.l  16(%sp), %d0             
-    move.l  20(%sp), %a0           
+    move.l  12(%sp), %d1   
+    move.l  16(%sp), %d0  
+    move.l  20(%sp), %a0
     
-    trap    #0                       
+    trap    #0       
+            
     
     movem.l (%sp)+, %d1/%a0          
     rts
+
+
+#long return hi is d1 lo is d0
+#extern long syscall_trap0_double(long syscall_num,
+#                                 long d0_in,
+#                                 long a0_in);
+
+.globl syscall_trap0_double
+syscall_trap0_double:
+    movem.l %d1/%a0, -(%sp)           
+    
+    move.l  12(%sp), %d1   
+    move.l  16(%sp), %d0  
+    move.l  20(%sp), %a0
+    
+    trap    #0       
+
+    swap    %d0
+    move.w  %d1,%d0
+    swap    %d0
+
+    
+    movem.l (%sp)+, %d1/%a0     
+    rts
+
+
 
 asm_test:
 .asciz "This a test asm"

@@ -14,7 +14,7 @@
 #define STDIN_FILENO    0
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
-#define UART_FILENO     3    // Custom: UART output
+#define UART_FILENO     3    // Custom: UART i/os
 
 void _exit(int status) {
     // Print exit message to screen
@@ -39,7 +39,7 @@ void _exit(int status) {
 int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
     const char *cbuf = buf;
     size_t i;
-    
+    sys_update_scrool();
     switch (fd) {
     case STDOUT_FILENO:
     case STDERR_FILENO:
@@ -49,12 +49,48 @@ int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
             syscall_trap0(0L, (long)(unsigned char)cbuf[i], 0L);
         }
         return (int)count;  /* Number of bytes written */
+    case UART_FILENO:
+        for (i = 0; i < count; i++) {
+            /* TRAP #0, D1 = syscall number (2 = write char UART),
+               D0 = character, A0 = unused here */
+            syscall_trap0(0L, (long)(unsigned char)cbuf[i], 0L);
+        }
+        
+    default:
+        r->_errno = EBADF;
+        return -1;
+    }
+}
+
+/* Reentrant read stub using TRAP #0 */
+int _read_r(struct _reent *r, int fd, void *buf, size_t count) {
+    char *cbuf = (char *)buf;
+    size_t i;
+    long result;
+
+    switch (fd) {
+    case STDIN_FILENO:
+        for (i = 0; i < count; i++) {
+            /* TRAP #0, D1 = syscall number (8 = read char from keyboard),
+               D0 = unused, A0 = unused, returns char in D0 */
+            result = syscall_trap0(8, 0L, 0L);
+            
+            cbuf[i] = (char)(result & 0xFF);
+            
+            /* Stop on newline/carriage return for line-buffered input */
+            if (cbuf[i] == '\n' || cbuf[i] == '\r') {
+                return (int)(i + 1);
+            }
+        }
+        return (int)count;  /* Number of bytes read */
 
     default:
         r->_errno = EBADF;
         return -1;
     }
 }
+
+
 // Memory management
 void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
     extern char _end;
@@ -111,7 +147,14 @@ int _write(int fd, const void *buf, size_t count) {
             // syscall_trap0(3, (long)cbuf[i], 0);
         }
         return count;   // Return bytes written
-
+    case UART_FILENO:
+        for (i = 0; i < count; i++) {
+            // Using newlib’s reentrant stub:
+            _write_r(_REENT, fd, &cbuf[i], 1);
+            // Or if you bypass it:
+            // syscall_trap0(3, (long)cbuf[i], 0);
+        }
+        return count;   // Return bytes written
     default:
         // Indicate unsupported FD
         errno = EBADF;
@@ -119,11 +162,17 @@ int _write(int fd, const void *buf, size_t count) {
     }
 }
 
-int _read(int fd, char *buf, size_t len) {
-    if (fd == STDIN_FILENO) {
-        // Read from keyboard
-        return sys_read_keyboard_string(buf, len);
-    } else {
+int _read(int fd, char *buf, size_t count) {
+    size_t i;
+    switch (fd)
+    {
+    case STDIN_FILENO:
+        _read_r(_REENT, fd, buf, count);
+        return i;
+    
+    
+    default:
+        errno = EBADF;
         return -1;
     }
 }

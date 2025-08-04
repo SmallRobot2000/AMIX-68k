@@ -55,9 +55,9 @@ _start:
 
 .l:
 	bsr		kyb_get_key
-	cmp.b	#10,d0
-	bne		.l
-	bsr		x_print_char_byte
+	;cmp.b	#10,d0
+	;bne		.l
+	;bsr		x_print_char_byte
 	lea		prog_start,a0
 	bsr		xmodem_receve
 	;bsr		kyb_get_key
@@ -100,15 +100,15 @@ init_traps:
 ;	Set cursor X,Y	$7	   (X,word)		 (Y,word)		XX			XX
 ;	Get key			$8		(byte)			XX			XX			XX
 ;	Peek key		$9	  (byte or 0)		XX			XX			XX
-;	Chek key		$A	(byte, 0 or 1)		XX			XX			XX
+;	Scroll up by d0	$A		(word)			XX			XX			XX
 ;	Read sectors	$B (1st sector LBA)(sector cnt)	   PTR			XX
 ;	Write sectors	$C (1st sector LBA)(sector cnt)	   PTR			XX
 
 TRAP0_handler:
 	STI
-	;move.l	a7,(_stack_tmp)
-	;lea  	_sys_stack_start,a7
-	movem.l	d1,-(a7)
+	move.l	a7,(_stack_tmp)
+	lea  	_sys_stack_start,a7
+
 	cmp.b	#$0,d1
 	bne		.s0
 	;Print char (byte)
@@ -144,31 +144,55 @@ TRAP0_handler:
 	;Get cursor X/Y (word, word)
 	bsr		x_get_cursor_xy
 	move.w	d1,d2	;Y
+	jmp		.end
 .s6:
 	cmp.b	#$7,d1
 	bne		.s7
 	;Set cursor X/Y (word, word)
 	move.w	d2,d1	;Y
 	bsr		x_set_cursor_xy
+	jmp		.end
 .s7:
 	cmp.b	#$8,d1
 	bne		.s8
 	;Chek key (1 or 0)
 	bsr		kyb_get_key
+	jmp		.end
 .s8:
 	cmp.b	#$9,d1
 	bne		.s9
 	;Read sectors (byte cnt)
 	bsr		kyb_get_key_current
+	jmp		.end
 .s9:
 	cmp.b	#$A,d1
 	bne		.sA
-	;write sectors (byte cnt)
+	;scroll up by d0 (byte cnt)
+	bsr		screen_scroll
+	jmp		.end
 .sA:
+	cmp.b	#$B,d1
+	bne		.sB
+	;scroll up by d0 (byte cnt)
+	bsr		x_get_cursor_xy
+	jmp		.end
+.sB:
+	cmp.b	#$C,d1
+	bne		.sC
+	;d0 -Y/X
+	;set xy d0 - x d1 - y
+	swap	d0
+	move.w	d0,d1
+	swap	d0
+	and.l	#$0000FFFF,d0
+	bsr		x_set_cursor_xy
+	jmp		.end
+.sC:
+
 	
 
-	movem.l	(a7)+,d1
-	;move.l	(_stack_tmp),a7
+.end:
+	move.l	(_stack_tmp),a7
 	CLI
 	rte
 
