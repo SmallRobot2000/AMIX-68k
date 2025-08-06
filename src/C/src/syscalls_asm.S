@@ -48,6 +48,25 @@ syscall_trap0_double:
     movem.l (%sp)+, %d1/%a0     
     rts
 
+.globl syscall_trap0_triple
+syscall_trap0_triple:
+    movem.l %d1/%d2/%a0, -(%sp)           
+    
+    move.l  16(%sp), %d1   
+    move.l  20(%sp), %d0
+    move.l  24(%sp), %d2  
+    move.l  28(%sp), %a0
+    
+    trap    #0       
+
+    swap    %d0
+    move.w  %d1,%d0
+    swap    %d0
+
+    
+    movem.l (%sp)+, %d1/%d2/%a0     
+    rts
+
 
 
 asm_test:

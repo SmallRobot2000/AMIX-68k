@@ -260,7 +260,7 @@ kyb_matrix_shifted:
 init_tmr:
 ;set rutine
     
-    move.w  #$2700,sr   ; disable all IRQ interrupts (IPL=7)
+    STI
     lea     _autovec_1,a0
 
     lea     _IRQ1_subrutine,a1
@@ -299,8 +299,7 @@ init_tmr:
     
     move.b  #%11100001,(PPI_TMR_CTRL,a0)  ;timer enabled continues with interupt
 
-    move.w  #$2200,sr   ; enable some IRQ interrupts (IPL=7)
-    ;we are alive
+    
 	rts
 
 update_kyb_leds:
@@ -442,9 +441,5 @@ _IRQ7_subrutine:
     move.l  (a7)+,d0
     rte
 
-_IRQ_other:
-    move    #'O',d0
-    jsr     send_byte
-    rte
 
-    ;0084800C
+

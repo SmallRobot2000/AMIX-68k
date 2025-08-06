@@ -1,16 +1,16 @@
 
 
 Pin 19 = /nVPA        XOR = 0   AC1 = 0
-  0  ---x ---- ---- ---- ---- ---- ---- ----
-  1  ---- -x-- ---- ---- ---- ---- ---- ----
-  2  -x-- ---- ---- ---- ---- ---- ---- ----
+  0  ---- ---- ---- ---- ---- ---- ---- ----
+  1  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
+  2  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
   3  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
   4  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
   5  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
   6  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
   7  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
 
-Pin 18 = /nIACK       XOR = 1   AC1 = 0
+Pin 18 = /nIACK       XOR = 0   AC1 = 0
   8  ---- ---- ---- x--- x--- x--- x--- ----
   9  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  10  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
@@ -20,7 +20,7 @@ Pin 18 = /nIACK       XOR = 1   AC1 = 0
  14  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  15  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
 
-Pin 17 = /nDMAIACK    XOR = 1   AC1 = 0
+Pin 17 = /nDMAIACK    XOR = 0   AC1 = 0
  16  ---- ---- ---- x--- x--- x--- x--- ----
  17  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  18  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx

@@ -5,9 +5,9 @@ IRQ
 NC       	NC  	    NC          NC          NC          /IRQRX   	/nDMAIACK 	/nIACK 	    /nVPA 	VCC
 
 
-nVPA = nIRQX + nIRQIDE + nIRQUART
-/nIACK = FC0 * FC1 * FC2 * A23
-/nDMAIACK = FC0 * FC1 * FC2 * A23
+nVPA = VCC;nIRQX + nIRQIDE + nIRQUART
+nIACK = FC0 * FC1 * FC2 * A23
+nDMAIACK = FC0 * FC1 * FC2 * A23
 IRQRX   =   FC0 * FC1 * FC2 * nAS
 DESCRIPTION
 Dodat A23

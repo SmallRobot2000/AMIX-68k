@@ -44,15 +44,19 @@ prog_start 	equ	RAM_START+$30000	;lots of space
     endm
 
 _start:	
-	bsr		init_traps
 	bsr		ppi_init
+	bsr		init_traps
 	bsr		init_tmr
 
+	STI
 
+
+	
 	lea		msg_press_enter,a0
 	move	#3,d1
-	TRAP	#0
-
+	bsr		x_print_byte_string
+	;TRAP	#0
+	STI
 .l:
 	bsr		kyb_get_key
 	;cmp.b	#10,d0
@@ -188,7 +192,30 @@ TRAP0_handler:
 	bsr		x_set_cursor_xy
 	jmp		.end
 .sC:
-
+	cmp.b	#$D,d1
+	bne		.sD
+	;write sector
+	;D0 - LBA d2 - cnt
+	
+	move.l	d2,d1;cnt
+	move.w	#1,d0
+	move.w	#1,d1
+	bsr		IDE_write_sectors_LBA
+	lea		msg_done,a0
+	bsr		x_print_byte_string
+	jmp		.end
+.sD:
+	cmp.b	#$E,d1
+	bne		.sE
+	;read sector
+	;D0 - LBA d2 - cnt
+	;jmp		.end
+	move.l	d2,d1;cnt
+	bsr		IDE_read_sectors_LBA
+	lea		msg_done,a0
+	bsr		x_print_byte_string
+	jmp		.end
+.sE:
 	
 
 .end:
