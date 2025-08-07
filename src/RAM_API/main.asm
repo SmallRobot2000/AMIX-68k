@@ -216,7 +216,45 @@ TRAP0_handler:
 	bsr		x_print_byte_string
 	jmp		.end
 .sE:
-	
+	cmp.b	#$F,d1
+	bne		.sF
+	;Print byte buffer with lenght in d0, ptr in a0
+	bsr		x_print_byte_buffer
+	jmp		.end
+.sF:
+	cmp.b	#$10,d1
+	bne		.s10
+	bsr		receve_byte
+	jmp		.end
+.s10:
+	cmp.b	#$11,d1
+	bne		.s11
+	bsr		peek_byte
+	jmp		.end
+.s11:
+	cmp.b	#$12,d1
+	bne		.s12
+	move.l	(tmr_cnt),d0
+	jmp		.end
+.s12:
+	cmp.b	#$13,d1
+	bne		.s13
+	;Uart receve block d0.w bytes
+	CLI ;needed
+	move.w	d0,d1
+	move.l	(tmr_cnt),d2
+	add.l	#100,d2
+.13l:
+	cmp.l	(tmr_cnt),d2
+	beq		.end
+	;move.b 	(UART_LSR+UART_BASE),d0
+	btst	#0,d0 ;test bit 5 of d1 register
+	beq		.13l ;if 0 loop
+	move.b  (UART_RBR+UART_BASE),d0
+	move.b	d0,(a0)+
+	dbra	d1,.13l
+	jmp		.end
+.s13:
 
 .end:
 	move.l	(_stack_tmp),a7

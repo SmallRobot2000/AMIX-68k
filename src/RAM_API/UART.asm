@@ -30,3 +30,36 @@ send_string:
 .end:
 	movem.l	(a7)+,d0/a1
 	rts
+
+
+;wait 
+receve_byte:
+	move.l 	a0,-(a7)           ; Save registers
+	lea		UART_BASE,a0
+.loop:
+	move.b 	(UART_LSR,a0),d0
+	btst	#0,d0
+	beq		.loop ;if 0 loop
+	
+	move.b  (UART_RBR,a0),d0
+	movem.l	(a7)+,a0
+	rts
+
+;no wait
+peek_byte:
+	move.l 	a0,-(a7)           ; Save registers
+	lea		UART_BASE,a0
+	move.l	#0,d0
+.loop:
+	move.b 	(UART_LSR,a0),d0
+	btst	#0,d0 ;test bit 5 of d1 register
+	beq		.nothing ;if 0 loop
+	
+	move.b  (UART_RBR,a0),d0
+	movem.l	(a7)+,a0
+	rts
+.nothing:
+	move.l	#$FFFFFFFF,d0
+	movem.l	(a7)+,a0
+	rts
+	

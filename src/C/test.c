@@ -5,16 +5,47 @@
 #include <sys_amix.h>
 #include <ff.h>
 #include <stdint.h>
+#include <xmodem.h>
 uint8_t * buffer;
 PARTITION VolToPart[FF_VOLUMES] = {
         {0, 1},    /* "0:" ==> 1st partition in physical drive 0 */
         {0, 2}     /* "1:" ==> 2nd partition in physical drive 0 */
     };
-LBA_t plist[] = {50, 50, 0};  /* Divide the drive by 2 */
+LBA_t plist[] = {100, 0, 0};  /* Divide the drive to one full volume and one empty */
 
 BYTE work[FF_MAX_SS];         /* Working buffer */
 
 FATFS fs;
+
+FRESULT list_dir (const char *path)
+{
+    FRESULT res;
+    DIR dir;
+    FILINFO fno;
+    int nfile, ndir;
+
+
+    res = f_opendir(&dir, path);                   /* Open the directory */
+    if (res == FR_OK) {
+        nfile = ndir = 0;
+        for (;;) {
+            res = f_readdir(&dir, &fno);           /* Read a directory item */
+            if (fno.fname[0] == 0) break;          /* Error or end of dir */
+            if (fno.fattrib & AM_DIR) {            /* It is a directory */
+                printf("   <DIR>   %s\n", fno.fname);
+                ndir++;
+            } else {                               /* It is a file */
+                printf("%10lu %s\n", fno.fsize, fno.fname);
+                nfile++;
+            }
+        }
+        f_closedir(&dir);
+        printf("%d dirs, %d files.\n", ndir, nfile);
+    } else {
+        printf("Failed to open \"%s\". (%u)\n", path, res);
+    }
+    return res;
+}
 void parse_line(char* line)
 {
     char * linePtr = strtok(line, " ");
@@ -31,29 +62,110 @@ void parse_line(char* line)
 
     }else if(strcmp(linePtr,"getfree") == 0)
     {
-        DWORD clusters;
-        printf("Result of getfree: %d\n",f_getfree("0",&clusters,NULL));            /* Divide the physical drive 0 */
-        printf("Free clusters: %lu\n",clusters);
+        DWORD fre_clust, fre_sect, tot_sect;
+        FATFS *fatfs;
+        if(f_getfree("0",&fre_clust,&fatfs)){printf("Error!");}            /* Divide the physical drive 0 */
+        /* Get total sectors and free sectors */
+        tot_sect = (fatfs->n_fatent - 2) * fatfs->csize;
+        fre_sect = fre_clust * fatfs->csize;
+        /* Print the free space (assuming 512 bytes/sector) */
+        printf("%10lu KiB total drive space.\n%10lu KiB available.\n", tot_sect / 2, fre_sect / 2);
+        
     }else if(strcmp(linePtr,"mkfs") == 0)
     {
         
         printf("Result of mkfs: %d\n",f_mkfs("0:",NULL,work,FF_MAX_SS)); //default params
-    }else if(strcmp(linePtr,"test") == 0)
-    {
-        ide_init();
-        sys_write_sectors(2,buffer,0x021);
-        sys_read_sectors(2,buffer+1024,0x21);
-        for(int i = 0; i <1024; i++)
-        {
-            if(buffer[i] != buffer[i+1024])
-            {
-                printf("Error @%x = %d, got %x wanted %x",i,i,buffer[1024+i],buffer[i]);
-            }
-        }
-        printf("Done\n");
     }else if(strcmp(linePtr,"mnt") == 0)
     {
         printf("Result of mnt: %d\n",f_mount(&fs,"0:",0)); //default params
+    }else if(strcmp(linePtr,"print") == 0)
+    {
+        char * arg;
+        arg = strtok(NULL," ");
+        printf("\n%s\n",arg);
+    }else if(strcmp(linePtr,"mkdir") == 0)
+    {
+        char * arg;
+        arg = strtok(NULL," ");
+        if(f_mkdir(arg)){printf("Error");}
+        printf("\n");
+    }else if(strcmp(linePtr,"cd") == 0)
+    {
+        char * arg;
+        arg = strtok(NULL," ");
+        if(f_chdir(arg)){printf("Error");}
+        printf("\n");
+    }else if(strcmp(linePtr,"ls") == 0)
+    {
+        char * arg;
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            arg = ".";
+        }
+        printf("\n");
+        if(list_dir(arg)){printf("Error");}
+        
+    }else if(strcmp(linePtr,"pwd") == 0)
+    {
+        char path[80];
+        printf("\n");
+        if(f_getcwd(path, 80)){printf("Error");}
+        printf("%s\n",path);
+        
+    }else if(strcmp(linePtr,"xmodem") == 0)
+    {
+        char * arg;
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            printf("Usage: xmodem <file_name>");
+            return;
+        }
+        xmodem_receive(arg);
+        
+    }else if(strcmp(linePtr,"cat") == 0)
+    {
+        char * arg;
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            printf("Usage: xmodem <file_name>");
+            return;
+        }
+        FIL fp;
+        FRESULT res = f_open(&fp, arg, FA_READ);
+        if(res)
+        {
+            printf("Error opening file %s\n",arg);
+        }
+        char cbuf[32];
+        unsigned int bw;
+        while(1)
+        {
+            res = f_read(&fp, cbuf, 32, &bw);
+            if(res)
+            {
+                printf("Error reading file\n");
+                f_close(&fp);
+                return;
+            }
+            if(bw == 0)
+            {
+                break;
+            }
+            for(int i = 0; i < bw; i++)
+            {
+                printf("%c",cbuf[i]);
+            }
+        }
+        printf("\n");
+    }else if(strcmp(linePtr,"shutdown") == 0)
+    {
+        *(uint8_t *)0xFFFFFF = 0xFF;
+    }else
+    {
+        printf("\n");
     }
 
 }

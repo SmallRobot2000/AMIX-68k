@@ -1,4 +1,5 @@
 // External assembly functions
+#include <stdint.h>
 #ifndef AMIX_SYS
 #define AMIX_SYS
 extern long syscall_trap0(long syscall_num, long d0, void* a0);
@@ -18,6 +19,12 @@ void sys_update_scrool(void);
 //DISK I/O
 void sys_write_sectors(int cnt, const void* buffer, long LBA);
 void sys_read_sectors(int cnt, void* buffer, long LBA);
+//UART
+uint8_t sys_get_UART(void);
+int sys_peek_UART(void);
+int sys_send_UART(uint8_t ch);
+void sys_flush_fifo_UART(void);
 
+long sys_get_timer(void);
 int ide_init(void);
 #endif

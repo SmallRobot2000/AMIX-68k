@@ -1,0 +1,29 @@
+There are 20 section headers, starting at offset 0x13284:
+
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        00010000 002000 0019cc 00  AX  0   0  4
+  [ 2] .got              PROGBITS        000119cc 0039cc 000028 04  WA  0   0  4
+  [ 3] .data             PROGBITS        000119f4 0039f4 000544 00  WA  0   0  4
+  [ 4] .bss              NOBITS          00011f38 003f38 000308 00  WA  0   0  4
+  [ 5] .debug_info       PROGBITS        00000000 003f38 006d5d 00      0   0  1
+  [ 6] .debug_abbrev     PROGBITS        00000000 00ac95 001d92 00      0   0  1
+  [ 7] .debug_aranges    PROGBITS        00000000 00ca28 0002d0 00      0   0  8
+  [ 8] .debug_ranges     PROGBITS        00000000 00ccf8 000010 00      0   0  1
+  [ 9] .debug_line       PROGBITS        00000000 00cd08 002ae5 00      0   0  1
+  [10] .debug_str        PROGBITS        00000000 00f7ed 000e73 01  MS  0   0  1
+  [11] .comment          PROGBITS        00000000 010660 00002c 01  MS  0   0  1
+  [12] .debug_frame      PROGBITS        00000000 01068c 00077c 00      0   0  4
+  [13] .debug_loc        PROGBITS        00000000 010e08 0000a2 00      0   0  1
+  [14] .debug_rnglists   PROGBITS        00000000 010eaa 000223 00      0   0  1
+  [15] .debug_loclists   PROGBITS        00000000 0110cd 001363 00      0   0  1
+  [16] .debug_line_str   PROGBITS        00000000 012430 000076 01  MS  0   0  1
+  [17] .symtab           SYMTAB          00000000 0124a8 000800 10     18  48  4
+  [18] .strtab           STRTAB          00000000 012ca8 00050a 00      0   0  1
+  [19] .shstrtab         STRTAB          00000000 0131b2 0000d0 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  p (processor specific)

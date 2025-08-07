@@ -6,7 +6,7 @@
 #include <sys/errno.h>
 #include <sys/time.h>
 #include <stdio.h>
-
+#include <string.h>
 //Sys stuff
 #include<sys_amix.h>
 
@@ -36,24 +36,28 @@ void _exit(int status) {
 }
 
 /* Reentrant write stub using TRAP #0 */
+    char * cbuf[256];
 int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
-    const char *cbuf = buf;
     size_t i;
-    sys_update_scrool();
+    memcpy(cbuf,buf, count);
+    cbuf[count] = 0; //end of string
     switch (fd) {
     case STDOUT_FILENO:
     case STDERR_FILENO:
-        for (i = 0; i < count; i++) {
+        //for (i = 0; i < count; i++) {
+            //sys_update_scrool();
             /* TRAP #0, D1 = syscall number (0 = write char),
                D0 = character, A0 = unused here */
-            syscall_trap0(0L, (long)(unsigned char)cbuf[i], 0L);
-        }
+            //syscall_trap0(0L, (long)(unsigned char)cbuf[i], 0L);
+            if(count != 0){syscall_trap0(0xFL, count, cbuf);} //print string
+            
+        //}
         return (int)count;  /* Number of bytes written */
     case UART_FILENO:
         for (i = 0; i < count; i++) {
             /* TRAP #0, D1 = syscall number (2 = write char UART),
                D0 = character, A0 = unused here */
-            syscall_trap0(0L, (long)(unsigned char)cbuf[i], 0L);
+            syscall_trap0(0L, (long)cbuf[i], 0L);
         }
         
     default:
@@ -148,12 +152,12 @@ int _write(int fd, const void *buf, size_t count) {
         }
         return count;   // Return bytes written
     case UART_FILENO:
-        for (i = 0; i < count; i++) {
+        //for (i = 0; i < count; i++) {
             // Using newlib’s reentrant stub:
-            _write_r(_REENT, fd, &cbuf[i], 1);
+            _write_r(_REENT, fd, cbuf, count);
             // Or if you bypass it:
             // syscall_trap0(3, (long)cbuf[i], 0);
-        }
+        //}
         return count;   // Return bytes written
     default:
         // Indicate unsupported FD
@@ -163,12 +167,11 @@ int _write(int fd, const void *buf, size_t count) {
 }
 
 int _read(int fd, char *buf, size_t count) {
-    size_t i;
     switch (fd)
     {
     case STDIN_FILENO:
         _read_r(_REENT, fd, buf, count);
-        return i;
+        return count;
     
     
     default:

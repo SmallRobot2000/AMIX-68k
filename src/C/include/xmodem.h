@@ -1,0 +1,1 @@
+int xmodem_receive(const char* fname);

@@ -90,13 +90,16 @@ x_print_char_word:
     movep   d0,(XM_DATA,a0)
     add.w   #1,(a1)
 .end:
+    STI
     bsr     clear_cursor
+    bsr     update_scroll
     movem.l (a7)+,d0-d7/a0-a6
     CLI
     rts
 
 ;d0 - byte char
 x_print_char_byte:
+    STI
     andi.w  #$00FF,d0
     or.w    #(DEFAULT_BG<<4|DEFAULT_FR)<<8,d0
     jmp     x_print_char_word
@@ -152,10 +155,9 @@ clear_cursor:
     btst    #0,(cursor_state)  ;if it is flipped
     beq     .end
     bsr     flip_cursor
-    bclr    #0,(cursor_state)
-    bclr    #1,(cursor_state)
+    move.w  #0,(cursor_state)
 .end:
-    CLI
+    
     rts
 x_update_screen:
     
@@ -246,12 +248,14 @@ flip_last_cursor:
 ;d1 - Y
 x_set_cursor_xy:
 	movem.l	d0/d1/a0,-(a7)
+    STI
+    bsr     clear_cursor
 	mulu.w	#80,d1
 	add.w	d1,d0
 
 	lea     cursor_add,a0
 	move.w	d0,(a0)
-
+    
 	movem.l	(a7)+,d0/d1/a0
 	rts
 ;d0 - X
@@ -273,6 +277,7 @@ x_get_cursor_xy:
 
 ;New line and CR because UNIX like
 x_print_NL:
+    STI
     bsr     x_print_CR
     movem.l	d0/d1,-(a7)
 	bsr		x_get_cursor_xy
@@ -282,6 +287,7 @@ x_print_NL:
     rts
 ;Carrige return
 x_print_CR:
+    STI
     movem.l	d0/d1,-(a7)
 	bsr		x_get_cursor_xy
 	move.w	#0,d0
@@ -301,7 +307,6 @@ x_print_BS_DEL:
     move.b  #' ',d0
     jsr     x_print_char_byte   ;clear acual character
     subq.w  #1,(cursor_add)
-    CLI     ;enable irqs
 	movem.l (a7)+,d0/d1
     rts
 .s1:
@@ -360,11 +365,11 @@ screen_scroll:
 .end
     bsr     x_send_screen
     movem.l (a7)+,d0-d1/a0-a1
-    CLI
+    
     rts
 scroll_clear_invis_line:    
     movem.l d0,-(a7)
-    lea     x_screen+(SCREEN_WIDTH*2*(SCREEN_WIDTH-1)),a0
+    lea     x_screen+(SCREEN_WIDTH*2*(SCREEN_HIGHT)),a0
     move    #$20,d0
     move    #DEFAULT_FR,d1
     move    #DEFAULT_BG,d2
@@ -482,6 +487,7 @@ x_print_word_string:
     bne     .s3
     bsr     x_print_BS_DEL
     bsr     x_set_add_rep
+    bsr     update_scroll
     jmp     .loop
 .s3:
     
@@ -542,7 +548,7 @@ x_print_byte_string:
     lsl.w   #1,d1
     move.w  d0,(a3,d1.w)
     addq.w  #1,(a2)
-    
+    bsr     update_scroll
     jmp     .loop
 .end:
     CLI
@@ -596,3 +602,29 @@ x_print_hex:
 	movem.l	(a7)+,d0/d1/d2/a0
 	rts
 
+;Scrolls if needed
+update_scroll:
+    movem.l d0/d1/a0,-(a7)
+    move.w  (cursor_add),d0
+    cmp.w   #(SCREEN_HIGHT-4)*SCREEN_WIDTH,d0
+    blo     .end    ;Branch if end_add > d0
+    move    #1,d0
+    bsr     screen_scroll
+    move.w  #(SCREEN_HIGHT-5)*(SCREEN_WIDTH),(cursor_add)
+.end:
+    movem.l (a7)+,d0/d1/a0
+    rts
+
+x_print_byte_buffer:
+    movem.l d0/d1/d2/a0/a1/a2/a3,-(a7)
+    STI
+    move.l  d0,d2   ;CNT
+    subq.l  #1,d2
+.loop:
+    move.b  (a0)+,d0
+    bsr     x_print_char_byte
+    dbra    d2,.loop
+.end:
+    CLI
+    movem.l (a7)+,d0/d1/d2/a0/a1/a2/a3
+    rts
