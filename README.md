@@ -21,22 +21,22 @@ But somehow this is the first time working with 68k chip, I known for 68k style 
 |TIME & TIMERS| Tmers in Xosera and 68230, and RTC (SparkFun BOB-10160)|
 
 # Present (problems)
-For now the keyboard, Video output, UART and DISK work.
+Now everything except RTC works, i think even Xosera IRQs can work but I wont know because i dont need them any more.
 
-Xosera has problems reading and making interrupts, but i fixed this by using PIT interrupts.
+~~Xosera has problems reading and making interrupts, but i fixed this by using PIT interrupts.~~
 
 PCB is flawed, will continue testing and changing the schematic/pcb design.
 
-Started porting newlib got printf and string stuff working
+Ported newlib except for process stuff(offcorse) and disk I/O is purly through FatFS
 # Future (TODO)
 
 Fix all the above issues
 
 ~~make a C compiler working~~
 
-C memory allocation
+C memory allocation(it seems it depends on heap but will try to do it in a better way)
 
-nice API (kinda not full)
+~~nice API (kinda not full)~~
 
 ~~libc (newlib)~~
 
