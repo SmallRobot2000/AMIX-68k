@@ -1,5 +1,7 @@
 #include<sys_amix.h>
 #include<stdio.h>
+#include <stdint.h>
+#include <ctype.h>
 int sys_write_screen_string(const char *str, int len)
 {
     for(int i = 0; i < len;i++)
@@ -112,5 +114,48 @@ __attribute__((optimize("O0"))) void sys_flush_fifo_UART(void) {
     while (*(volatile uint8_t *)UART_LSR & 0x01) { // While Data Ready bit set
         volatile uint8_t dummy = *(volatile uint8_t *)UART_RBR; // Read and discard
         (void)dummy; // Avoid unused variable warning
+    }
+}
+
+/*
+ * dump_memory
+ *   addr: start address of memory to dump
+ *   len : number of bytes to dump
+ *
+ * Prints a hex + ASCII dump similar to hexdump.
+ */
+void dump_memory(const void *addr, size_t len) {
+    const uint8_t *data = (const uint8_t *)addr;
+    const size_t bytes_per_line = 16;
+
+    for (size_t offset = 0; offset < len; offset += bytes_per_line) {
+        // Print address
+        printf("%08lX  ", (unsigned long)(uintptr_t)(data + offset));
+
+        // Print hex bytes
+        for (size_t i = 0; i < bytes_per_line; i++) {
+            size_t idx = offset + i;
+            if (idx < len) {
+                printf("%02X ", data[idx]);
+            } else {
+                printf("   ");
+            }
+            if (i == 7) {
+                printf(" ");  // extra space in middle
+            }
+        }
+
+        // Print ASCII characters
+        printf(" |");
+        for (size_t i = 0; i < bytes_per_line; i++) {
+            size_t idx = offset + i;
+            if (idx < len) {
+                char c = data[idx];
+                printf("%c", isprint((unsigned char)c) ? c : '.');
+            } else {
+                printf(" ");
+            }
+        }
+        printf("|\n");
     }
 }

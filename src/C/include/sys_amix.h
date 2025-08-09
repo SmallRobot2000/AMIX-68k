@@ -1,5 +1,7 @@
 // External assembly functions
+#include <stdio.h>
 #include <stdint.h>
+#include <ctype.h>
 #ifndef AMIX_SYS
 #define AMIX_SYS
 extern long syscall_trap0(long syscall_num, long d0, void* a0);
@@ -27,4 +29,6 @@ void sys_flush_fifo_UART(void);
 
 long sys_get_timer(void);
 int ide_init(void);
+
+void dump_memory(const void *addr, size_t len);
 #endif

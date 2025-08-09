@@ -9,6 +9,7 @@
 #include <string.h>
 //Sys stuff
 #include<sys_amix.h>
+#include <stdint.h>
 
 // File descriptor definitions
 #define STDIN_FILENO    0
@@ -94,20 +95,29 @@ int _read_r(struct _reent *r, int fd, void *buf, size_t count) {
     }
 }
 
-
 // Memory management
 void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
-    extern char _end;
-    static char *heap_end = 0;
-    
+    extern char _heap_start;
+    static uintptr_t heap_end = 0;
+
     if (heap_end == 0) {
-        heap_end = &_end;
+        heap_end = (uintptr_t)&_heap_start;
+        // align initial heap_end up to next 4-byte boundary
+        heap_end = (heap_end + 3) & ~((uintptr_t)3);
     }
-    
-    char *prev_heap_end = heap_end;
-    heap_end += incr;
-    return (void *)prev_heap_end;
+
+    // calculate new end, then align it
+    uintptr_t new_end = heap_end + incr;
+    new_end = (new_end + 3) & ~((uintptr_t)3);
+
+    uintptr_t prev = heap_end;
+    heap_end = new_end;
+
+    //printf("\nSBRK last 0x%08lx new 0x%08lx\n",prev, new_end);
+
+    return (void *)prev;
 }
+
 
 // File operations - minimal implementations
 int _close_r(struct _reent *r, int fd) { 

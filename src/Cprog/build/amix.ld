@@ -11,8 +11,8 @@ __DYNAMIC = 0;
 
 MEMORY
 {
-    ram (rwx) : ORIGIN = 0x130000, LENGTH = 2M
-    rom (rx)  : ORIGIN = 0x000000, LENGTH = 1M
+    ram (rwx) : ORIGIN = 0x000000, LENGTH = 512K
+
 }
 
 /* Stack positioned after BSS, heap grows upward from there */

@@ -60,10 +60,7 @@ _start:
 	 * Default to using the __stack for SP.
 	 */
 	STI
-	move	#0,d1
-	move	#13,d0
-	trap 	#0		//Needs to be here idk why
-	lea		__stack,a7	//setup SP
+	
 	/* set up initial stack frame */
 	link	a6, IMM(-8)
 
@@ -84,34 +81,26 @@ _start:
 
 	
 3:
-
 /*
  * call the main routine from the application to get it going.
  * main (argc, argv, environ)
  * we pass argv as a pointer to NULL.
  */
 
-#ifdef ADD_DTORS
-	/* put __do_global_dtors in the atexit list so the destructors get run */
-	movel	IMM (SYM(__do_global_dtors)),(sp)
-	PICCALL	SYM (atexit)
-#endif
-	movel	IMM (__FINI_SECTION__),(sp)
-	PICCALL	SYM (atexit)
 
-	PICCALL	__INIT_SECTION__
-
-        pea     0
-	PICPEA	SYM (environ),a0
-        pea     sp@(4)
-        pea     0
+       // pea     0
+	//PICPEA	SYM (environ),a0
+        //pea     sp@(4)
+        //pea     0
 	CLI	
 	PICCALL	SYM (main)
-	movel	d0, sp@-
+	//movel	d0, sp@-
 
 /*
  * drop down into exit incase the user doesn't. This should drop
  * control back to the ROM monitor, if there is one. This calls the
  * exit() from the C library so the C++ tables get cleaned up right.
  */
-	PICCALL	SYM (exit)
+	//PICCALL	SYM (exit)
+	unlk	a6
+	rts

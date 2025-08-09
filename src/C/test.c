@@ -1,4 +1,6 @@
+#include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 #include <string.h>
 #include <stdint.h>
 #include <malloc.h>
@@ -6,6 +8,9 @@
 #include <ff.h>
 #include <stdint.h>
 #include <xmodem.h>
+#include <elf_loader.h>
+
+#define PRG_MIN_ADD 0x180000
 uint8_t * buffer;
 PARTITION VolToPart[FF_VOLUMES] = {
         {0, 1},    /* "0:" ==> 1st partition in physical drive 0 */
@@ -16,14 +21,13 @@ LBA_t plist[] = {100, 0, 0};  /* Divide the drive to one full volume and one emp
 BYTE work[FF_MAX_SS];         /* Working buffer */
 
 FATFS fs;
-
 FRESULT list_dir (const char *path)
 {
     FRESULT res;
     DIR dir;
     FILINFO fno;
     int nfile, ndir;
-
+    
 
     res = f_opendir(&dir, path);                   /* Open the directory */
     if (res == FR_OK) {
@@ -45,6 +49,14 @@ FRESULT list_dir (const char *path)
         printf("Failed to open \"%s\". (%u)\n", path, res);
     }
     return res;
+}
+
+typedef int (*prog_main_t)(void);
+int call_address(uint32_t add)
+{
+    prog_main_t prog_main = (prog_main_t)add;
+    int result = prog_main();
+    return result;
 }
 void parse_line(char* line)
 {
@@ -160,9 +172,135 @@ void parse_line(char* line)
             }
         }
         printf("\n");
-    }else if(strcmp(linePtr,"shutdown") == 0)
+    }else if(strcmp(linePtr,"load") == 0)
     {
-        *(uint8_t *)0xFFFFFF = 0xFF;
+        printf("\n");
+        char * arg;
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            printf("Usage: load <.elf file> <address>\n");
+            return;
+        }
+        char path[128];
+        memcpy(path, arg, strlen(arg)+1);
+
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            printf("Usage: load <.elf file> <address>\n");
+            return;
+        }
+        char *end;
+        long add = strtol(arg, &end, 0);
+
+        if (errno == ERANGE) {
+            printf("Error converting address\n");
+            return;
+        }
+        if(end == arg || add < PRG_MIN_ADD)
+        {
+            printf("Invalid address\n");
+            return;
+        }
+        
+        printf("Load exit code: %lu\n", load_elf(path, (void*)add));
+    }else if(strcmp(linePtr,"run") == 0)
+    {
+        printf("\n");
+        char * arg;
+        arg = strtok(NULL," ");
+        char *end;
+        
+        if(arg == NULL)
+        {
+            printf("Usage: run <address>\n");
+            return;
+        }
+        long add = strtol(arg, &end, 0);
+
+        if (errno == ERANGE) {
+            printf("Error converting address\n");
+            return;
+        }
+        if(end == arg || add < PRG_MIN_ADD)
+        {
+            printf("Invalid address\n");
+            return;
+        }
+        printf("Running at 0x%08lx\n",add);
+        printf("Return exit code: 0x%04x\n", call_address(add));
+        
+    }else if(strcmp(linePtr,"dump") == 0)
+    {
+        printf("\n");
+        char * arg;
+        arg = strtok(NULL," ");
+        char *end;
+        
+        if(arg == NULL)
+        {
+            printf("Usage: dump <address> <lenght>\n");
+            return;
+        }
+        long add = strtol(arg, &end, 0);
+
+        if (errno == ERANGE) {
+            printf("Error converting address\n");
+            return;
+        }
+        if(end == arg)
+        {
+            printf("Invalid address\n");
+            return;
+        }
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            printf("Usage: dump <address> <lenght>\n");
+            return;
+        }
+        long len = strtol(arg, &end, 0);
+
+        if (errno == ERANGE) {
+            printf("Error converting address\n");
+            return;
+        }
+        if(end == arg)
+        {
+            printf("Invalid address\n");
+            return;
+        }
+
+        printf("Dumping at 0x%08lx lengh 0x%08lx\n",add, len);
+        dump_memory((void *)add, (size_t)len);
+        printf("\n");
+        
+    }else if(strcmp(linePtr,"rm") == 0)
+    {
+        printf("\n");
+        char *arg = strtok(NULL, " ");
+        if(arg == NULL)
+        {
+            printf("Usage: rm <path>\n");
+        }
+        FRESULT res = f_unlink(arg);
+        if(res)
+        {
+            printf("Error removing file\n");
+        }
+    }else if(strcmp(linePtr,"umnt") == 0)
+    {
+        char *arg = strtok(NULL, " ");
+        if(arg == NULL)
+        {
+            printf("Usage: rm <path>\n");
+        }
+        FRESULT res = f_unmount(arg);
+        if(res)
+        {
+            printf("Error unmounting drive %d\n",res);
+        }
     }else
     {
         printf("\n");
