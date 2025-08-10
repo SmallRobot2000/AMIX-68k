@@ -11,6 +11,7 @@
 #include <elf_loader.h>
 
 #define PRG_MIN_ADD 0x180000
+#define PRG_FOLDER "/bin/"
 uint8_t * buffer;
 PARTITION VolToPart[FF_VOLUMES] = {
         {0, 1},    /* "0:" ==> 1st partition in physical drive 0 */
@@ -294,16 +295,44 @@ void parse_line(char* line)
         char *arg = strtok(NULL, " ");
         if(arg == NULL)
         {
-            printf("Usage: rm <path>\n");
+            printf("Usage: umnt <path>\n");
         }
         FRESULT res = f_unmount(arg);
         if(res)
         {
             printf("Error unmounting drive %d\n",res);
         }
+        return;
+    }else if(strcmp(linePtr, "mv") == 0)
+    {
+        printf("\n");
+        char *arg = strtok(NULL, " ");
+        char *arg1 = strtok(NULL, " ");
+        if(arg == NULL || arg1 == NULL)
+        {
+            printf("Usage: mv <old path> <new path>\n");
+        }
+        FRESULT res = f_rename(arg,arg1);
+        if(res)
+        {
+            printf("Fs error %d",res);
+        }
     }else
     {
         printf("\n");
+        char prgPath[256];
+        strcpy(prgPath, "");
+        strcat(prgPath,PRG_FOLDER);
+        strcat(prgPath,linePtr);
+        //printf("\nTrying %s\n",linePtr);
+        uint32_t add = load_elf(prgPath, (void *)PRG_MIN_ADD);
+        if(add == (uint32_t)-1)
+        {
+            printf("Load error\n");
+            return;
+        }
+        call_address(add);
+        
     }
 
 }

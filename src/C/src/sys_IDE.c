@@ -167,7 +167,7 @@ void sys_read_sectors(int cnt, void *buffer, long lba) {
     ide_outb(IDE_CYL_HIGH,     (uint8_t)((lba >> 16) & 0xFF));
 
     ide_outb(IDE_COMMAND, IDE_CMD_READ_SECTORS);
-    ide_delay_400ns();
+    //ide_delay_400ns();
 
     for (int i = 0; i < n; i++) {
         if (ide_wait_drq() < 0) {

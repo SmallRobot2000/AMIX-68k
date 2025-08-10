@@ -570,80 +570,80 @@ END GROUP
 .plt
  *(.plt)
 
-.rodata         0x0000260c       0x1a
+.rodata         0x0000260c       0x1f
  *(.rodata .rodata.*)
  .rodata.main.str1.1
-                0x0000260c       0x18 ../bin/main.o
+                0x0000260c       0x1d ../bin/main.o
  .rodata._puts_r.str1.1
-                0x00002624        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-puts.o)
+                0x00002629        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-puts.o)
 
-.data           0x00002628      0x540
-                0x00002628                        _data_start = .
-                0x00002628                        __CTOR_LIST__ = .
+.data           0x0000262c      0x540
+                0x0000262c                        _data_start = .
+                0x0000262c                        __CTOR_LIST__ = .
  *crtbegin*.o(.ctors)
  *(SORT_BY_NAME(.ctors.*))
  *(.ctors)
  *crtend*.o(.ctors)
-                0x00002628        0x4 LONG 0x0
-                0x0000262c                        __CTOR_END__ = .
-                0x0000262c                        __DTOR_LIST__ = .
+                0x0000262c        0x4 LONG 0x0
+                0x00002630                        __CTOR_END__ = .
+                0x00002630                        __DTOR_LIST__ = .
  *crtbegin*.o(.dtors)
  *(SORT_BY_NAME(.dtors.*))
  *(.dtors)
  *crtend*.o(.dtors)
-                0x0000262c        0x4 LONG 0x0
-                0x00002630                        __DTOR_END__ = .
+                0x00002630        0x4 LONG 0x0
+                0x00002634                        __DTOR_END__ = .
  *(.data .data.*)
  .data._impure_ptr
-                0x00002630        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
-                0x00002630                _impure_ptr
+                0x00002634        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
+                0x00002634                _impure_ptr
  .data._impure_data
-                0x00002634      0x116 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
-                0x00002634                _impure_data
- .data.__sglue  0x0000274a        0xc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x0000274a                __sglue
+                0x00002638      0x116 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
+                0x00002638                _impure_data
+ .data.__sglue  0x0000274e        0xc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x0000274e                __sglue
  .data.__malloc_sbrk_base
-                0x00002756        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00002756                __malloc_sbrk_base
- .data.__malloc_trim_threshold
                 0x0000275a        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x0000275a                __malloc_trim_threshold
+                0x0000275a                __malloc_sbrk_base
+ .data.__malloc_trim_threshold
+                0x0000275e        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x0000275e                __malloc_trim_threshold
  .data.__malloc_av_
-                0x0000275e      0x408 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x0000275e                __malloc_av_
-                0x00002b68                        . = ALIGN (0x4)
- *fill*         0x00002b66        0x2 
-                0x00002b68                        _edata = .
+                0x00002762      0x408 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x00002762                __malloc_av_
+                0x00002b6c                        . = ALIGN (0x4)
+ *fill*         0x00002b6a        0x2 
+                0x00002b6c                        _edata = .
 
-.bss            0x00002b68      0x574
-                0x00002b68                        __bss_start = .
-                0x00002b68                        _bss_start = .
+.bss            0x00002b6c      0x574
+                0x00002b6c                        __bss_start = .
+                0x00002b6c                        _bss_start = .
  *(.bss .bss.*)
  .bss.heap_end.2984
-                0x00002b68        0x4 ../bin/amix-syscalls.o
- .bss.__sf      0x00002b6c      0x138 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x00002b6c                __sf
+                0x00002b6c        0x4 ../bin/amix-syscalls.o
+ .bss.__sf      0x00002b70      0x138 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00002b70                __sf
  .bss.__stdio_exit_handler
-                0x00002ca4        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x00002ca4                __stdio_exit_handler
+                0x00002ca8        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00002ca8                __stdio_exit_handler
  .bss.__malloc_current_mallinfo
-                0x00002ca8       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00002ca8                __malloc_current_mallinfo
+                0x00002cac       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x00002cac                __malloc_current_mallinfo
  .bss.__malloc_max_total_mem
-                0x00002cd0        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00002cd0                __malloc_max_total_mem
- .bss.__malloc_max_sbrked_mem
                 0x00002cd4        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00002cd4                __malloc_max_sbrked_mem
- .bss.__malloc_top_pad
+                0x00002cd4                __malloc_max_total_mem
+ .bss.__malloc_max_sbrked_mem
                 0x00002cd8        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00002cd8                __malloc_top_pad
+                0x00002cd8                __malloc_max_sbrked_mem
+ .bss.__malloc_top_pad
+                0x00002cdc        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x00002cdc                __malloc_top_pad
  *(COMMON)
- COMMON         0x00002cdc      0x400 ../bin/amix-syscalls.o
-                0x00002cdc                cbuf
-                0x000030dc                        . = ALIGN (0x4)
-                0x000030dc                        _end = .
-                0x000030dc                        __end = .
+ COMMON         0x00002ce0      0x400 ../bin/amix-syscalls.o
+                0x00002ce0                cbuf
+                0x000030e0                        . = ALIGN (0x4)
+                0x000030e0                        _end = .
+                0x000030e0                        __end = .
                 0x000030e0                        . = ALIGN (0x8)
                 0x000030e0                        _stack_start = .
                 0x000050e0                        . = (. + 0x2000)

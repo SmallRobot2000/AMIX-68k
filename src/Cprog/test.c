@@ -7,6 +7,6 @@
 #include <stdint.h>
 
 int main(void) {
-    printf("Hello from new program!\n");
-    return 0;
+    printf("Hello from new program! TATA\n");
+    return 1;
 }
