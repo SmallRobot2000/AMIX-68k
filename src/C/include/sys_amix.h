@@ -31,4 +31,7 @@ long sys_get_timer(void);
 int ide_init(void);
 
 void dump_memory(const void *addr, size_t len);
+
+#define     KYB_ARROW_UP    0xB1
+#define     KYB_ARROW_DOWN  0xB2
 #endif

@@ -6,7 +6,8 @@
 #include <ff.h>
 #include <stdint.h>
 
-int main(void) {
-    printf("Hello from new program! TATA\n");
+int main(int argc, char *argv[])
+{
+    printf("Hello from new program!\nMe name is:%s\n",argv[0]);
     return 1;
 }

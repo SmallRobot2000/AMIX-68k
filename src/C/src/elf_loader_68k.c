@@ -9,10 +9,10 @@
 #include "ff.h"      // FatFS
 
 #define BIGBUF_SIZE   (128 * 1024)
-
+    /* Buffer for entire file */
+    uint8_t bigbuf[BIGBUF_SIZE];
 uint32_t load_elf(const char *path, void *base_addr) {
-    /* Local buffer for entire file */
-    uint8_t bigbuf[128 * 1024];
+
     
     FIL fil;
     
@@ -32,13 +32,16 @@ uint32_t load_elf(const char *path, void *base_addr) {
         return (uint32_t)-1;
     }
     f_close(&fil);
-
     /* 3) Fast ELF validation */
     Elf32_Ehdr *ehdr = (Elf32_Ehdr*)bigbuf;
-    if (*(uint32_t*)ehdr->e_ident != *(uint32_t*)ELFMAG ||
-        ehdr->e_ident[EI_CLASS] != ELFCLASS32) {
+    /* Compare the first 4 magic bytes */
+    if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG) != 0)
         return (uint32_t)-1;
-    }
+
+    /* Check class is 32-bit */
+    if (ehdr->e_ident[EI_CLASS] != ELFCLASS32)
+        return (uint32_t)-1;
+
 
     /* 4) Load PT_LOAD segments */
     uint8_t *phdrs_base = bigbuf + ehdr->e_phoff;

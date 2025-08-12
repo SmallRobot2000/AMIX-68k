@@ -60,9 +60,12 @@ _start:
 	 * Default to using the __stack for SP.
 	 */
 	STI
-	
+	movel	4(sp),d0	//argv
+	movel	8(sp),d1 	//argc
 	/* set up initial stack frame */
 	link	a6, IMM(-8)
+	movel	d1,-(sp)
+	movel	d0,-(sp)
 
 /*
  * zero out the bss section.

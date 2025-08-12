@@ -65,7 +65,8 @@ $CC -nostartfiles \
     -o "$BIN_DIR/program.elf"
 
 echo "Stripping debug symbols only..."
-$STRIP --strip-debug "$BIN_DIR/program.elf"
+$STRIP --strip-unneeded "$BIN_DIR/program.elf"
+
 
 echo "Size of program.elf:"
 $SIZE "$BIN_DIR/program.elf"

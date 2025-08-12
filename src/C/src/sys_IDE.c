@@ -153,13 +153,13 @@ int ide_init(void) {
 
 
 void sys_read_sectors(int cnt, void *buffer, long lba) {
+    
     uint8_t *buf = (uint8_t *)buffer;
-    // limit to 256 sectors
     uint8_t n = cnt ? cnt : 256;
 
     ide_wait_ready();
 
-    // select drive + LBA high bits
+    // Setup IDE registers
     ide_outb(IDE_DRIVE_HEAD, IDE_DRIVE_MASTER | ((lba >> 24) & 0x0F));
     ide_outb(IDE_SECTOR_COUNT, n);
     ide_outb(IDE_SECTOR_NUM,   (uint8_t)(lba & 0xFF));
@@ -167,18 +167,54 @@ void sys_read_sectors(int cnt, void *buffer, long lba) {
     ide_outb(IDE_CYL_HIGH,     (uint8_t)((lba >> 16) & 0xFF));
 
     ide_outb(IDE_COMMAND, IDE_CMD_READ_SECTORS);
-    //ide_delay_400ns();
-
+    
+    volatile uint16_t *ide_status_port = (volatile uint16_t *)(IDE_BASE + IDE_STATUS);
+    volatile uint16_t *ide_data_port = (volatile uint16_t *)(IDE_BASE + IDE_DATA);
+    // Ultra-fast sector reading with integrated DRQ checking
     for (int i = 0; i < n; i++) {
-        if (ide_wait_drq() < 0) {
+        uint16_t *wbuf = (uint16_t *)(buf + i * 512);
+        
+        
+        // Optimized m68k assembly with DRQ wait and data transfer
+        __asm__ __volatile__ (
+            // Wait for DRQ loop
+            "move.w #999,%%d2\n\t"          // Timeout counter
+            "1:\n\t"                        // DRQ wait loop
+            "move.b (%2),%%d3\n\t"         // Read IDE status (8-bit from upper byte)
+            "btst #3,%%d3\n\t"             // Test DRQ bit (bit 3)
+            "bne 3f\n\t"                   // If DRQ set, jump to data transfer
+            "btst #0,%%d3\n\t"             // Test ERR bit (bit 0)  
+            "bne 2f\n\t"                   // If ERR set, exit with error
+            "subq.w #1,%%d2\n\t"           // Decrement timeout
+            "bne 1b\n\t"                   // Loop if not timed out
+            "2:\n\t"                       // Error/timeout exit
+            "moveq #-1,%%d0\n\t"           // Return error code
+            "bra 4f\n\t"                   // Skip to end
+            
+            // Fast data transfer (256 words)
+            "3:\n\t"                       // Data transfer start
+            "move.w #255,%%d0\n\t"         // Counter: 255 down to 0 (256 words)
+            "5:\n\t"                       // Transfer loop
+            "move.w (%3),%%d1\n\t"         // Read 16-bit word from IDE data port
+            "move.w %%d1,(%0)+\n\t"        // Store to buffer with post-increment
+            "dbf %%d0,5b\n\t"              // Decrement and branch if >= 0
+            "moveq #0,%%d0\n\t"            // Success return code
+            "4:"                           // End label
+            
+            : "=a" (wbuf), "=d" (i)        // Outputs: updated buffer, loop status
+            : "a" (ide_status_port), "a" (ide_data_port), "0" (wbuf), "1" (i)  // Inputs
+            : "d0", "d1", "d2", "d3", "memory"  // Clobbered registers
+        );
+        
+        // Check if there was an error (d0 will be -1 on error, 0 on success)
+        register int result asm("d0");
+        if (result < 0) {
             printf("IDE read timeout or error\n");
             return;
         }
-        uint16_t *wbuf = (uint16_t *)(buf + i * 512);
-        for (int w = 0; w < 256; w++)
-            wbuf[w] = ide_inw(IDE_DATA);
     }
 }
+
 
 void sys_write_sectors(int cnt, const void *buffer, long lba) {
     const uint8_t *buf = (const uint8_t *)buffer;

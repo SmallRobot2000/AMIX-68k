@@ -9,9 +9,12 @@
 #include <stdint.h>
 #include <xmodem.h>
 #include <elf_loader.h>
+#include <kernel.h>
+#include <history.h>
 
 #define PRG_MIN_ADD 0x180000
 #define PRG_FOLDER "/bin/"
+#define LINE_HISTORY "/etc/history"
 uint8_t * buffer;
 PARTITION VolToPart[FF_VOLUMES] = {
         {0, 1},    /* "0:" ==> 1st partition in physical drive 0 */
@@ -21,7 +24,6 @@ LBA_t plist[] = {100, 0, 0};  /* Divide the drive to one full volume and one emp
 
 BYTE work[FF_MAX_SS];         /* Working buffer */
 
-FATFS fs;
 FRESULT list_dir (const char *path)
 {
     FRESULT res;
@@ -52,11 +54,13 @@ FRESULT list_dir (const char *path)
     return res;
 }
 
-typedef int (*prog_main_t)(void);
+typedef int (*prog_main_t)(int argc, char *argv[]);
 int call_address(uint32_t add)
 {
     prog_main_t prog_main = (prog_main_t)add;
-    int result = prog_main();
+    char *argv[] = {"My name! WHAT IS MY NAME???",NULL};
+    int argc = sizeof(argv) / sizeof(argv[0]) - 1;  // Count elements, subtract 1 for NULL terminator
+    int result = prog_main( argc, argv);
     return result;
 }
 void parse_line(char* line)
@@ -337,20 +341,14 @@ void parse_line(char* line)
 
 }
 int main(void) {
-    double c = 0.071264;
-    int i    = 63000;
-    buffer = malloc(512);
-    char *str1 = "ooa str!";
-
-    //scanf(" %c",&ch);
-    uint8_t *buffer = malloc(2000);
-    memcpy(buffer,str1,strlen(str1) + 1);
-    printf("Haljo %f\n", c);
-    printf("123dasdas %d\n", i);
-    printf("Hej there\n");
-    printf("test \niiii \nm\n%s",buffer);
-    i = 0;
-    char line[80];
+    printf("Kernel starting ...\n");
+    if(kernel_start() != 0)
+    {
+        while(1); //Oh no
+    }
+    int i = 0;
+    char line[81];
+    int history_cur = 0;
     while(1)
     {
     
@@ -367,16 +365,61 @@ int main(void) {
             line[i] = ' ';
             i++;
             line[i] = 0;
+            for (int y = 0; y < strlen(line); y++) {
+                if (line[y] != ' ')
+                {
+                    history_cur = 0;
+                    history_add(line);    
+                    break;
+                }
+            }
+            
             parse_line(line);
             i = 0;
         }else if(ch == 8){ //BS
             i --;
             sys_print_screen(ch);
+        }else if((uint8_t)ch == KYB_ARROW_UP || (uint8_t)ch == KYB_ARROW_DOWN){
+            char* str;
+            if((uint8_t)ch == KYB_ARROW_UP)
+            {
+                
+                str = history_get(history_cur);
+                history_cur += str == NULL ? 0 : 1;
+            }else{
+                history_cur -= history_cur == 0 ? 0 : 1;
+                str = history_get(history_cur);
+                
+                
+            }
+            if (str != NULL){
+                memset(line,' ',80);
+                line[79] = 0; //Clear line buffer
+                printf("\r%s",line); //Clear screen line
+                fflush(stdout);
+
+                strcpy(line,str);
+                i = strlen(line)-1;
+                line[i] = 0;
+                printf("\r%s",line);
+                fflush(stdout);
+            }
+        }else if(ch == 0x1B /*ESC*/){
+            memset(line,' ',80);
+            line[79] = 0; //Clear line buffer
+            printf("\r%s\r",line); //Clear screen line
+            fflush(stdout);
+            i = 0;
+            history_cur = 0;
+            line[0] = 0;
         }else{
             line[i] = ch;
-            sys_print_screen(line[i]);
             i++;
+            line[i] = 0;
+            printf("\r%s",line);
+            fflush(stdout);
         }
+        
         
         
     }
