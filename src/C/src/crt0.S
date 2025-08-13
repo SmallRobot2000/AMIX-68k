@@ -13,12 +13,30 @@
  * Define an empty environment.
  */
         .data
-        .align 2
-SYM (environ):
-        .long 0
+    .align 2
 
- 	.align	2
-	.text
+/* 1) Array of pointers, terminated by NULL */
+env_ptrs:
+    .long   env_foo        /* &"FOO=hello" */
+    .long   env_bar        /* &"BAR=world" */
+    .long   0              /* NULL terminator */
+
+/* 2) The actual strings */
+    .align 2
+env_foo:
+    .asciz  "FOO=hello"
+env_bar:
+    .asciz  "BAR=world"
+
+/* 3) Global symbol for C’s environ */
+    .align 2
+    .global environ
+environ:
+    .long   env_ptrs
+
+    .text
+    .global _start
+
 
 /*
  * These symbols are defined in C code, so they need to always be
@@ -101,12 +119,21 @@ _start:
 
 	PICCALL	__INIT_SECTION__
 
+      /* Push argc = 0 */
         pea     0
-	PICPEA	SYM (environ),a0
+
+        /* Push argv = NULL (sp@(4) still holds return address slot) */
         pea     sp@(4)
-        pea     0
-	CLI	
-	PICCALL	SYM (main)
+
+        /* Push environ pointer */
+	PICPEA SYM (environ),a0
+        movel   a0,-(sp)       /* push A0 value */
+
+        /* Re-enable interrupts before entering main */
+        CLI
+
+        /* Call main(argc, argv, environ) */
+	PICCALL SYM (main)
 	movel	d0, sp@-
 
 /*

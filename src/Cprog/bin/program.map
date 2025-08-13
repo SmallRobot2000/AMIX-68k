@@ -1,5 +1,9 @@
 Archive member included to satisfy reference by file (symbol)
 
+/home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
+                              ../bin/main.o (getenv)
+/home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
+                              /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o) (_findenv_r)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
                               ../bin/main.o (printf)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-puts.o)
@@ -8,6 +12,8 @@ Archive member included to satisfy reference by file (symbol)
                               ../bin/ff.o (memcmp)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strchr.o)
                               ../bin/ff.o (strchr)
+/home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
+                              /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o) (strncmp)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
                               ../bin/amix-syscalls.o (_impure_ptr)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
@@ -18,6 +24,8 @@ Archive member included to satisfy reference by file (symbol)
                               ../bin/amix-syscalls.o (memcpy)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
                               ../bin/ff.o (memset)
+/home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
+                              /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o) (__env_lock)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
                               /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o) (_vfprintf_r)
 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
@@ -114,7 +122,6 @@ cbuf                0x400             ../bin/amix-syscalls.o
 
 Discarded input sections
 
- .data          0x00000000        0x4 ../bin/crt0.o
  .bss           0x00000000        0x0 ../bin/crt0.o
  .text          0x00000000        0x0 ../bin/main.o
  .data          0x00000000        0x0 ../bin/main.o
@@ -276,30 +283,34 @@ Discarded input sections
  .bss           0x00000000        0x0 ../bin/sys_IDE.o
  .text.ide_wait_ready
                 0x00000000       0x2a ../bin/sys_IDE.o
- .text.ide_wait_drq
-                0x00000000       0x2e ../bin/sys_IDE.o
  .rodata.ide_init.str1.1
                 0x00000000       0x98 ../bin/sys_IDE.o
  .text.ide_init
-                0x00000000       0x90 ../bin/sys_IDE.o
+                0x00000000       0xa6 ../bin/sys_IDE.o
  .rodata.sys_read_sectors.str1.1
-                0x00000000       0x1a ../bin/sys_IDE.o
+                0x00000000       0x1c ../bin/sys_IDE.o
  .text.sys_read_sectors
-                0x00000000       0xe4 ../bin/sys_IDE.o
- .rodata.sys_write_sectors.str1.1
-                0x00000000       0x1b ../bin/sys_IDE.o
- .text.sys_write_sectors
-                0x00000000       0xf0 ../bin/sys_IDE.o
- .debug_info    0x00000000     0x1019 ../bin/sys_IDE.o
- .debug_abbrev  0x00000000      0x30e ../bin/sys_IDE.o
- .debug_loc     0x00000000      0x72d ../bin/sys_IDE.o
+                0x00000000      0x114 ../bin/sys_IDE.o
+ .debug_info    0x00000000      0xd6a ../bin/sys_IDE.o
+ .debug_abbrev  0x00000000      0x322 ../bin/sys_IDE.o
+ .debug_loc     0x00000000      0x480 ../bin/sys_IDE.o
  .debug_aranges
-                0x00000000       0x40 ../bin/sys_IDE.o
- .debug_ranges  0x00000000       0xb0 ../bin/sys_IDE.o
- .debug_line    0x00000000      0x260 ../bin/sys_IDE.o
- .debug_str     0x00000000      0x5c3 ../bin/sys_IDE.o
+                0x00000000       0x30 ../bin/sys_IDE.o
+ .debug_ranges  0x00000000       0x78 ../bin/sys_IDE.o
+ .debug_line    0x00000000      0x1e3 ../bin/sys_IDE.o
+ .debug_str     0x00000000      0x5cd ../bin/sys_IDE.o
  .comment       0x00000000       0x12 ../bin/sys_IDE.o
- .debug_frame   0x00000000       0xa4 ../bin/sys_IDE.o
+ .debug_frame   0x00000000       0x6c ../bin/sys_IDE.o
+ .text          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
+ .data          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
+ .bss           0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
+ .text._findenv
+                0x00000000       0x1a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
+ .text          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
+ .data          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
+ .bss           0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
+ .text._getenv_r
+                0x00000000       0x1e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
  .text          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
  .data          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
  .bss           0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
@@ -356,6 +367,9 @@ Discarded input sections
  .debug_str     0x00000000      0x17a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strchr.o)
  .comment       0x00000000       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strchr.o)
  .debug_frame   0x00000000       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strchr.o)
+ .text          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
+ .data          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
+ .bss           0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
  .text          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
  .data          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
  .bss           0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
@@ -369,6 +383,9 @@ Discarded input sections
  .bss           0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
  .data          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
  .bss           0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
+ .text          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
+ .data          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
+ .bss           0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
  .text          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .data          0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .bss           0x00000000        0x0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
@@ -595,409 +612,422 @@ END GROUP
                 [!provide]                        PROVIDE (__INIT_SECTION__ = 0x0)
                 [!provide]                        PROVIDE (__FINI_SECTION__ = 0x0)
 
-.text           0x00000000     0x92f0
+.text           0x00000000     0x94a0
  *(.text.startup)
  *(.text .text.*)
- .text          0x00000000       0x3e ../bin/crt0.o
+ .text          0x00000000       0x4c ../bin/crt0.o
                 0x00000000                _start
  .text.startup.main
-                0x0000003e       0x1c ../bin/main.o
-                0x0000003e                main
- .text._exit    0x0000005a       0x5c ../bin/amix-syscalls.o
-                0x0000005a                _exit
+                0x0000004c       0x58 ../bin/main.o
+                0x0000004c                main
+ .text._exit    0x000000a4       0x5c ../bin/amix-syscalls.o
+                0x000000a4                _exit
  .text._write_r
-                0x000000b6       0x8e ../bin/amix-syscalls.o
-                0x000000b6                _write_r
- .text._read_r  0x00000144       0x5a ../bin/amix-syscalls.o
-                0x00000144                _read_r
- .text._sbrk_r  0x0000019e       0x2c ../bin/amix-syscalls.o
-                0x0000019e                _sbrk_r
+                0x00000100       0x8e ../bin/amix-syscalls.o
+                0x00000100                _write_r
+ .text._read_r  0x0000018e       0x5a ../bin/amix-syscalls.o
+                0x0000018e                _read_r
+ .text._sbrk_r  0x000001e8       0x2c ../bin/amix-syscalls.o
+                0x000001e8                _sbrk_r
  .text._close_r
-                0x000001ca        0xa ../bin/amix-syscalls.o
-                0x000001ca                _close_r
+                0x00000214        0xa ../bin/amix-syscalls.o
+                0x00000214                _close_r
  .text._fstat_r
-                0x000001d4       0x16 ../bin/amix-syscalls.o
-                0x000001d4                _fstat_r
+                0x0000021e       0x16 ../bin/amix-syscalls.o
+                0x0000021e                _fstat_r
  .text._isatty_r
-                0x000001ea       0x16 ../bin/amix-syscalls.o
-                0x000001ea                _isatty_r
+                0x00000234       0x16 ../bin/amix-syscalls.o
+                0x00000234                _isatty_r
  .text._lseek_r
-                0x00000200        0xa ../bin/amix-syscalls.o
-                0x00000200                _lseek_r
+                0x0000024a        0xa ../bin/amix-syscalls.o
+                0x0000024a                _lseek_r
  .text._getpid_r
-                0x0000020a        0xa ../bin/amix-syscalls.o
-                0x0000020a                _getpid_r
- .text._kill_r  0x00000214       0x12 ../bin/amix-syscalls.o
-                0x00000214                _kill_r
+                0x00000254        0xa ../bin/amix-syscalls.o
+                0x00000254                _getpid_r
+ .text._kill_r  0x0000025e       0x12 ../bin/amix-syscalls.o
+                0x0000025e                _kill_r
  .text.sys_write_screen_string
-                0x00000226       0x3c ../bin/amix_sys.o
-                0x00000226                sys_write_screen_string
- *fill*         0x00000262        0x2 
- .text          0x00000264      0x122 ../bin/syscalls_asm.o
-                0x00000264                syscall_trap0
-                0x0000027c                syscall_trap0_double
-                0x0000029a                syscall_trap0_triple
-                0x000002cc                sys_print_screen
-                0x000002da                sys_print_uart
-                0x000002e8                sys_get_keyboard
- .text.printf   0x00000386       0x26 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
-                0x00000386                printf
- .text.__errno  0x000003ac        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
-                0x000003ac                __errno
- .text.strlen   0x000003b4       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
-                0x000003b4                strlen
- .text          0x000003c8       0x6e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
-                0x000003c8                memcpy
- *fill*         0x00000436        0x2 
- .text          0x00000438       0x72 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
-                0x00000438                memset
+                0x00000270       0x3c ../bin/amix_sys.o
+                0x00000270                sys_write_screen_string
+ .text          0x000002ac      0x122 ../bin/syscalls_asm.o
+                0x000002ac                syscall_trap0
+                0x000002c4                syscall_trap0_double
+                0x000002e2                syscall_trap0_triple
+                0x00000314                sys_print_screen
+                0x00000322                sys_print_uart
+                0x00000330                sys_get_keyboard
+ .text.getenv   0x000003ce       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
+                0x000003ce                getenv
+ .text._findenv_r
+                0x000003ee       0x9c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
+                0x000003ee                _findenv_r
+ .text.printf   0x0000048a       0x26 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+                0x0000048a                printf
+ .text.strncmp  0x000004b0       0xa8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
+                0x000004b0                strncmp
+ .text.__errno  0x00000558        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
+                0x00000558                __errno
+ .text.strlen   0x00000560       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
+                0x00000560                strlen
+ .text          0x00000574       0x6e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
+                0x00000574                memcpy
+ *fill*         0x000005e2        0x2 
+ .text          0x000005e4       0x72 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
+                0x000005e4                memset
+ .text.__env_lock
+                0x00000656        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
+                0x00000656                __env_lock
+ .text.__env_unlock
+                0x00000658        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
+                0x00000658                __env_unlock
  .text._vfprintf_r
-                0x000004aa     0x1d04 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
-                0x000004aa                _vfprintf_r
+                0x0000065a     0x1d04 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x0000065a                _vfprintf_r
  .text.__sbprintf
-                0x000021ae       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x0000235e       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .text.__sprint_r
-                0x00002252       0x36 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
-                0x00002252                __sprint_r
+                0x00002402       0x36 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
+                0x00002402                __sprint_r
  .text.__sflush_r
-                0x00002288      0x1ba /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
-                0x00002288                __sflush_r
+                0x00002438      0x1ba /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+                0x00002438                __sflush_r
  .text._fflush_r
-                0x00002442       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
-                0x00002442                _fflush_r
+                0x000025f2       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+                0x000025f2                _fflush_r
  .text.stdio_exit_handler
-                0x00002486       0x1e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00002636       0x1e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
  .text.cleanup_stdio
-                0x000024a4       0x52 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00002654       0x52 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
  .text.global_stdio_init.part.0
-                0x000024f6      0x178 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
- .text.__sinit  0x0000266e       0x22 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x0000266e                __sinit
+                0x000026a6      0x178 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+ .text.__sinit  0x0000281e       0x22 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x0000281e                __sinit
  .text.__sfp_lock_acquire
-                0x00002690        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x00002690                __sfp_lock_acquire
+                0x00002840        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00002840                __sfp_lock_acquire
  .text.__sfp_lock_release
-                0x00002692        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x00002692                __sfp_lock_release
+                0x00002842        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00002842                __sfp_lock_release
  .text.__sfvwrite_r
-                0x00002694      0x3b6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
-                0x00002694                __sfvwrite_r
+                0x00002844      0x3b6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
+                0x00002844                __sfvwrite_r
  .text._fwalk_sglue
-                0x00002a4a       0x56 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
-                0x00002a4a                _fwalk_sglue
- .text.__sread  0x00002aa0       0x38 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
-                0x00002aa0                __sread
+                0x00002bfa       0x56 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
+                0x00002bfa                _fwalk_sglue
+ .text.__sread  0x00002c50       0x38 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+                0x00002c50                __sread
  .text.__swrite
-                0x00002ad8       0x86 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
-                0x00002ad8                __swrite
- .text.__sseek  0x00002b5e       0x40 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
-                0x00002b5e                __sseek
+                0x00002c88       0x86 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+                0x00002c88                __swrite
+ .text.__sseek  0x00002d0e       0x40 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+                0x00002d0e                __sseek
  .text.__sclose
-                0x00002b9e       0x12 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
-                0x00002b9e                __sclose
+                0x00002d4e       0x12 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+                0x00002d4e                __sclose
  .text.__swsetup_r
-                0x00002bb0      0x128 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
-                0x00002bb0                __swsetup_r
- .text.memchr   0x00002cd8       0x9c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
-                0x00002cd8                memchr
- .text.memmove  0x00002d74       0xf8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
-                0x00002d74                memmove
+                0x00002d60      0x128 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
+                0x00002d60                __swsetup_r
+ .text.memchr   0x00002e88       0x9c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
+                0x00002e88                memchr
+ .text.memmove  0x00002f24       0xf8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
+                0x00002f24                memmove
  .text._localeconv_r
-                0x00002e6c        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
-                0x00002e6c                _localeconv_r
- .text.quorem   0x00002e74      0x1a2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
- .text._dtoa_r  0x00003016     0x196a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
-                0x00003016                _dtoa_r
+                0x0000301c        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
+                0x0000301c                _localeconv_r
+ .text.quorem   0x00003024      0x1a2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+ .text._dtoa_r  0x000031c6     0x196a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+                0x000031c6                _dtoa_r
  .text._malloc_trim_r
-                0x00004980       0xda /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
-                0x00004980                _malloc_trim_r
- .text._free_r  0x00004a5a      0x352 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
-                0x00004a5a                _free_r
+                0x00004b30       0xda /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+                0x00004b30                _malloc_trim_r
+ .text._free_r  0x00004c0a      0x352 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+                0x00004c0a                _free_r
  .text._malloc_r
-                0x00004dac      0x842 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00004dac                _malloc_r
+                0x00004f5c      0x842 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x00004f5c                _malloc_r
  .text.__malloc_lock
-                0x000055ee        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
-                0x000055ee                __malloc_lock
+                0x0000579e        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
+                0x0000579e                __malloc_lock
  .text.__malloc_unlock
-                0x000055f0        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
-                0x000055f0                __malloc_unlock
- .text._Balloc  0x000055f2       0x90 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x000055f2                _Balloc
- .text._Bfree   0x00005682       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00005682                _Bfree
+                0x000057a0        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
+                0x000057a0                __malloc_unlock
+ .text._Balloc  0x000057a2       0x90 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x000057a2                _Balloc
+ .text._Bfree   0x00005832       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00005832                _Bfree
  .text.__multadd
-                0x000056a6       0xfc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x000056a6                __multadd
+                0x00005856       0xfc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00005856                __multadd
  .text.__hi0bits
-                0x000057a2       0x66 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x000057a2                __hi0bits
+                0x00005952       0x66 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00005952                __hi0bits
  .text.__lo0bits
-                0x00005808       0x76 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00005808                __lo0bits
- .text.__i2b    0x0000587e       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000587e                __i2b
+                0x000059b8       0x76 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x000059b8                __lo0bits
+ .text.__i2b    0x00005a2e       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00005a2e                __i2b
  .text.__multiply
-                0x00005922      0x20a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00005922                __multiply
+                0x00005ad2      0x20a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00005ad2                __multiply
  .text.__pow5mult
-                0x00005b2c       0xfc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00005b2c                __pow5mult
+                0x00005cdc       0xfc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00005cdc                __pow5mult
  .text.__lshift
-                0x00005c28      0x112 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00005c28                __lshift
- .text.__mcmp   0x00005d3a       0x4e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00005d3a                __mcmp
- .text.__mdiff  0x00005d88      0x1d0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00005d88                __mdiff
- .text.__d2b    0x00005f58      0x122 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00005f58                __d2b
+                0x00005dd8      0x112 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00005dd8                __lshift
+ .text.__mcmp   0x00005eea       0x4e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00005eea                __mcmp
+ .text.__mdiff  0x00005f38      0x1d0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00005f38                __mdiff
+ .text.__d2b    0x00006108      0x122 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00006108                __d2b
  .text._realloc_r
-                0x0000607a      0x5f0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
-                0x0000607a                _realloc_r
+                0x0000622a      0x5f0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
+                0x0000622a                _realloc_r
  .text._fclose_r
-                0x0000666a       0xd8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
-                0x0000666a                _fclose_r
+                0x0000681a       0xd8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
+                0x0000681a                _fclose_r
  .text.__swhatbuf_r
-                0x00006742       0xb6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
-                0x00006742                __swhatbuf_r
+                0x000068f2       0xb6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+                0x000068f2                __swhatbuf_r
  .text.__smakebuf_r
-                0x000067f8       0xde /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
-                0x000067f8                __smakebuf_r
+                0x000069a8       0xde /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+                0x000069a8                __smakebuf_r
  .text.__assert_func
-                0x000068d6       0x6c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
-                0x000068d6                __assert_func
+                0x00006a86       0x6c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
+                0x00006a86                __assert_func
  .text._calloc_r
-                0x00006942      0x13a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
-                0x00006942                _calloc_r
+                0x00006af2      0x13a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
+                0x00006af2                _calloc_r
  .text.__ascii_mbtowc
-                0x00006a7c       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
-                0x00006a7c                __ascii_mbtowc
+                0x00006c2c       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
+                0x00006c2c                __ascii_mbtowc
  .text.__ascii_wctomb
-                0x00006ac0       0x2e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
-                0x00006ac0                __ascii_wctomb
+                0x00006c70       0x2e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+                0x00006c70                __ascii_wctomb
  .text.fiprintf
-                0x00006aee       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
-                0x00006aee                fiprintf
+                0x00006c9e       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+                0x00006c9e                fiprintf
  .text._vfiprintf_r
-                0x00006b12      0xdce /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
-                0x00006b12                _vfiprintf_r
+                0x00006cc2      0xdce /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+                0x00006cc2                _vfiprintf_r
  .text.__sbprintf
-                0x000078e0       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
- .text.abort    0x00007984       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
-                0x00007984                abort
- .text.raise    0x00007998       0x7e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
-                0x00007998                raise
- *fill*         0x00007a16        0x2 
- .text          0x00007a18       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
-                0x00007a18                __mulsi3
- *fill*         0x00007a3a        0x2 
- .text          0x00007a3c       0x5c /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
-                0x00007a3c                __udivsi3
- .text          0x00007a98       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
-                0x00007a98                __divsi3
- *fill*         0x00007ac6        0x2 
- .text          0x00007ac8       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
-                0x00007ac8                __umodsi3
- *fill*         0x00007af6        0x2 
- .text          0x00007af8       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
-                0x00007af8                __modsi3
- *fill*         0x00007b26        0x2 
- .text          0x00007b28      0x9cc /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
-                0x00007b82                __subdf3
-                0x00007b88                __adddf3
-                0x00007f1e                __muldf3
-                0x000080cc                __divdf3
-                0x00008340                __negdf2
-                0x0000839e                __cmpdf2_internal
-                0x0000846e                __cmpdf2
- .text          0x000084f4       0x6a /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
-                0x000084f4                __clear_sticky_bit
-                0x00008502                $_exception_handler
- *fill*         0x0000855e        0x2 
- .text          0x00008560       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
-                0x00008560                __eqdf2
- *fill*         0x00008582        0x2 
- .text          0x00008584       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
-                0x00008584                __nedf2
- *fill*         0x000085a6        0x2 
- .text          0x000085a8       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
-                0x000085a8                __gtdf2
- *fill*         0x000085ca        0x2 
- .text          0x000085cc       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
-                0x000085cc                __ltdf2
- *fill*         0x000085ee        0x2 
- .text          0x000085f0       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
-                0x000085f0                __ledf2
- *fill*         0x00008612        0x2 
- .text          0x00008614      0x4ba /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
-                0x00008614                __unordsf2
-                0x00008674                __unorddf2
-                0x000086e6                __floatunsidf
-                0x00008752                __floatsidf
-                0x0000881c                __floatunsisf
-                0x00008836                __floatsisf
-                0x00008850                __extendsfdf2
-                0x000088cc                __truncdfsf2
-                0x00008a1e                __fixdfsi
-                0x00008ab4                __fixsfsi
- *fill*         0x00008ace        0x2 
- .text          0x00008ad0      0x81e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
-                0x00008ad0                __unordxf2
-                0x00008b54                __extenddfxf2
-                0x00008c6a                __truncxfdf2
-                0x00008d52                __extendsfxf2
-                0x00008d96                __truncxfsf2
-                0x00008dbe                __floatsixf
-                0x00008e04                __floatunsixf
-                0x00008e4a                __fixxfsi
-                0x00008e72                __addxf3
-                0x00008ee8                __subxf3
-                0x00008f5e                __mulxf3
-                0x00008fd4                __divxf3
-                0x0000904a                __negxf2
-                0x000090a2                __cmpxf2
-                0x000090f6                __eqxf2
-                0x0000914a                __nexf2
-                0x0000919e                __ltxf2
-                0x000091f2                __lexf2
-                0x00009246                __gtxf2
-                0x0000929a                __gexf2
+                0x00007a90       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+ .text.abort    0x00007b34       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
+                0x00007b34                abort
+ .text.raise    0x00007b48       0x7e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
+                0x00007b48                raise
+ *fill*         0x00007bc6        0x2 
+ .text          0x00007bc8       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
+                0x00007bc8                __mulsi3
+ *fill*         0x00007bea        0x2 
+ .text          0x00007bec       0x5c /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
+                0x00007bec                __udivsi3
+ .text          0x00007c48       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
+                0x00007c48                __divsi3
+ *fill*         0x00007c76        0x2 
+ .text          0x00007c78       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
+                0x00007c78                __umodsi3
+ *fill*         0x00007ca6        0x2 
+ .text          0x00007ca8       0x2e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
+                0x00007ca8                __modsi3
+ *fill*         0x00007cd6        0x2 
+ .text          0x00007cd8      0x9cc /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
+                0x00007d32                __subdf3
+                0x00007d38                __adddf3
+                0x000080ce                __muldf3
+                0x0000827c                __divdf3
+                0x000084f0                __negdf2
+                0x0000854e                __cmpdf2_internal
+                0x0000861e                __cmpdf2
+ .text          0x000086a4       0x6a /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
+                0x000086a4                __clear_sticky_bit
+                0x000086b2                $_exception_handler
+ *fill*         0x0000870e        0x2 
+ .text          0x00008710       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
+                0x00008710                __eqdf2
+ *fill*         0x00008732        0x2 
+ .text          0x00008734       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
+                0x00008734                __nedf2
+ *fill*         0x00008756        0x2 
+ .text          0x00008758       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
+                0x00008758                __gtdf2
+ *fill*         0x0000877a        0x2 
+ .text          0x0000877c       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
+                0x0000877c                __ltdf2
+ *fill*         0x0000879e        0x2 
+ .text          0x000087a0       0x22 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
+                0x000087a0                __ledf2
+ *fill*         0x000087c2        0x2 
+ .text          0x000087c4      0x4ba /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
+                0x000087c4                __unordsf2
+                0x00008824                __unorddf2
+                0x00008896                __floatunsidf
+                0x00008902                __floatsidf
+                0x000089cc                __floatunsisf
+                0x000089e6                __floatsisf
+                0x00008a00                __extendsfdf2
+                0x00008a7c                __truncdfsf2
+                0x00008bce                __fixdfsi
+                0x00008c64                __fixsfsi
+ *fill*         0x00008c7e        0x2 
+ .text          0x00008c80      0x81e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
+                0x00008c80                __unordxf2
+                0x00008d04                __extenddfxf2
+                0x00008e1a                __truncxfdf2
+                0x00008f02                __extendsfxf2
+                0x00008f46                __truncxfsf2
+                0x00008f6e                __floatsixf
+                0x00008fb4                __floatunsixf
+                0x00008ffa                __fixxfsi
+                0x00009022                __addxf3
+                0x00009098                __subxf3
+                0x0000910e                __mulxf3
+                0x00009184                __divxf3
+                0x000091fa                __negxf2
+                0x00009252                __cmpxf2
+                0x000092a6                __eqxf2
+                0x000092fa                __nexf2
+                0x0000934e                __ltxf2
+                0x000093a2                __lexf2
+                0x000093f6                __gtxf2
+                0x0000944a                __gexf2
  *(.init*)
  *(.fini*)
-                0x000092f0                        . = ALIGN (0x4)
- *fill*         0x000092ee        0x2 
-                0x000092f0                        _etext = .
+                0x000094a0                        . = ALIGN (0x4)
+ *fill*         0x0000949e        0x2 
+                0x000094a0                        _etext = .
 
-.got            0x000092f0        0x0
-                0x000092f0                        _GLOBAL_OFFSET_TABLE_ = .
+.got            0x000094a0        0x0
+                0x000094a0                        _GLOBAL_OFFSET_TABLE_ = .
  *(.got.plt)
  *(.got)
 
 .plt
  *(.plt)
 
-.rodata         0x000092f0      0x371
+.rodata         0x000094a0      0x3a7
  *(.rodata .rodata.*)
  .rodata.main.str1.1
-                0x000092f0       0x27 ../bin/main.o
+                0x000094a0       0x5e ../bin/main.o
  .rodata._exit.str1.1
-                0x00009317       0x1c ../bin/amix-syscalls.o
+                0x000094fe       0x1c ../bin/amix-syscalls.o
  .rodata._vfprintf_r.str1.1
-                0x00009333       0x3b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x0000951a       0x3b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .rodata.zeroes.0
-                0x0000936e       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x00009555       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .rodata.blanks.1
-                0x0000937e       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x00009565       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .rodata._dtoa_r.str1.1
-                0x0000938e       0x46 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+                0x00009575       0x46 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
                                  0x48 (size before relaxing)
  .rodata.__multadd.str1.1
-                0x000093d4       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x000095bb       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
                                  0x3a (size before relaxing)
- *fill*         0x000093fd        0x1 
- .rodata.p05.0  0x000093fe        0xc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+ .rodata.p05.0  0x000095e4        0xc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
  .rodata.__mprec_bigtens
-                0x0000940a       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x0000940a                __mprec_bigtens
+                0x000095f0       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x000095f0                __mprec_bigtens
  .rodata.__mprec_tens
-                0x00009432       0xc8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
-                0x00009432                __mprec_tens
+                0x00009618       0xc8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x00009618                __mprec_tens
  .rodata._setlocale_r.str1.1
-                0x000094fa        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+                0x000096e0        0x8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
                                   0x9 (size before relaxing)
  .rodata.str1.1
-                0x00009502        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+                0x000096e8        0x2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
  .rodata.__assert_func.str1.1
-                0x00009504       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
+                0x000096ea       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
                                  0x3d (size before relaxing)
  .rodata._ctype_
-                0x00009540      0x101 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
-                0x00009540                _ctype_
+                0x00009726      0x101 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
+                0x00009726                _ctype_
  .rodata._vfiprintf_r.str1.1
-                0x00009641       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+                0x00009827       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
  .rodata.zeroes.0
-                0x00009641       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+                0x00009827       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
  .rodata.blanks.1
-                0x00009651       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+                0x00009837       0x10 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
 
-.data           0x00009664      0x6c4
-                0x00009664                        _data_start = .
-                0x00009664                        __CTOR_LIST__ = .
+.data           0x00009848      0x6e4
+                0x00009848                        _data_start = .
+                0x00009848                        __CTOR_LIST__ = .
  *crtbegin*.o(.ctors)
  *(SORT_BY_NAME(.ctors.*))
  *(.ctors)
  *crtend*.o(.ctors)
-                0x00009664        0x4 LONG 0x0
-                0x00009668                        __CTOR_END__ = .
-                0x00009668                        __DTOR_LIST__ = .
+                0x00009848        0x4 LONG 0x0
+                0x0000984c                        __CTOR_END__ = .
+                0x0000984c                        __DTOR_LIST__ = .
  *crtbegin*.o(.dtors)
  *(SORT_BY_NAME(.dtors.*))
  *(.dtors)
  *crtend*.o(.dtors)
-                0x00009668        0x4 LONG 0x0
-                0x0000966c                        __DTOR_END__ = .
+                0x0000984c        0x4 LONG 0x0
+                0x00009850                        __DTOR_END__ = .
  *(.data .data.*)
+ .data          0x00009850       0x20 ../bin/crt0.o
+                0x0000986c                environ
  .data._impure_ptr
-                0x0000966c        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
-                0x0000966c                _impure_ptr
+                0x00009870        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
+                0x00009870                _impure_ptr
  .data._impure_data
-                0x00009670      0x116 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
-                0x00009670                _impure_data
- .data.__sglue  0x00009786        0xc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x00009786                __sglue
+                0x00009874      0x116 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
+                0x00009874                _impure_data
+ .data.__sglue  0x0000998a        0xc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x0000998a                __sglue
  .data.__malloc_sbrk_base
-                0x00009792        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00009792                __malloc_sbrk_base
+                0x00009996        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x00009996                __malloc_sbrk_base
  .data.__malloc_trim_threshold
-                0x00009796        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00009796                __malloc_trim_threshold
+                0x0000999a        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x0000999a                __malloc_trim_threshold
  .data.__malloc_av_
-                0x0000979a      0x408 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x0000979a                __malloc_av_
+                0x0000999e      0x408 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x0000999e                __malloc_av_
  .data.__global_locale
-                0x00009ba2      0x168 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
-                0x00009ba2                __global_locale
- *fill*         0x00009d0a        0x2 
- .data          0x00009d0c       0x1c /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
-                0x00009d0c                _fpCCR
-                0x00009d28                        . = ALIGN (0x4)
-                0x00009d28                        _edata = .
+                0x00009da6      0x168 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+                0x00009da6                __global_locale
+ *fill*         0x00009f0e        0x2 
+ .data          0x00009f10       0x1c /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
+                0x00009f10                _fpCCR
+                0x00009f2c                        . = ALIGN (0x4)
+                0x00009f2c                        _edata = .
 
-.bss            0x00009d28      0x574
-                0x00009d28                        __bss_start = .
-                0x00009d28                        _bss_start = .
+.bss            0x00009f2c      0x574
+                0x00009f2c                        __bss_start = .
+                0x00009f2c                        _bss_start = .
  *(.bss .bss.*)
  .bss.heap_end.2984
-                0x00009d28        0x4 ../bin/amix-syscalls.o
- .bss.__sf      0x00009d2c      0x138 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x00009d2c                __sf
+                0x00009f2c        0x4 ../bin/amix-syscalls.o
+ .bss.__sf      0x00009f30      0x138 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00009f30                __sf
  .bss.__stdio_exit_handler
-                0x00009e64        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
-                0x00009e64                __stdio_exit_handler
+                0x0000a068        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x0000a068                __stdio_exit_handler
  .bss.__malloc_current_mallinfo
-                0x00009e68       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00009e68                __malloc_current_mallinfo
+                0x0000a06c       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x0000a06c                __malloc_current_mallinfo
  .bss.__malloc_max_total_mem
-                0x00009e90        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00009e90                __malloc_max_total_mem
+                0x0000a094        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x0000a094                __malloc_max_total_mem
  .bss.__malloc_max_sbrked_mem
-                0x00009e94        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00009e94                __malloc_max_sbrked_mem
+                0x0000a098        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x0000a098                __malloc_max_sbrked_mem
  .bss.__malloc_top_pad
-                0x00009e98        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
-                0x00009e98                __malloc_top_pad
+                0x0000a09c        0x4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x0000a09c                __malloc_top_pad
  *(COMMON)
- COMMON         0x00009e9c      0x400 ../bin/amix-syscalls.o
-                0x00009e9c                cbuf
-                0x0000a29c                        . = ALIGN (0x4)
-                0x0000a29c                        _end = .
-                0x0000a29c                        __end = .
-                0x0000a2a0                        . = ALIGN (0x8)
-                0x0000a2a0                        _stack_start = .
-                0x0000c2a0                        . = (. + 0x2000)
-                0x0000c2a0                        __stack = .
-                0x0000c2a0                        _heap_start = .
+ COMMON         0x0000a0a0      0x400 ../bin/amix-syscalls.o
+                0x0000a0a0                cbuf
+                0x0000a4a0                        . = ALIGN (0x4)
+                0x0000a4a0                        _end = .
+                0x0000a4a0                        __end = .
+                0x0000a4a0                        . = ALIGN (0x8)
+                0x0000a4a0                        _stack_start = .
+                0x0000c4a0                        . = (. + 0x2000)
+                0x0000c4a0                        __stack = .
+                0x0000c4a0                        _heap_start = .
                 0x00002000                        _heap_end = (ORIGIN (ram) + 0x2000)
 
 .stab
@@ -1006,273 +1036,293 @@ END GROUP
 .stabstr
  *(.stabstr)
 
-.debug_info     0x00000000    0x17119
+.debug_info     0x00000000    0x189ae
  *(.debug_info)
  .debug_info    0x00000000       0x26 ../bin/crt0.o
- .debug_info    0x00000026      0x8bf ../bin/main.o
- .debug_info    0x000008e5     0x108a ../bin/amix-syscalls.o
- .debug_info    0x0000196f      0xa58 ../bin/amix_sys.o
- .debug_info    0x000023c7       0x26 ../bin/syscalls_asm.o
- .debug_info    0x000023ed      0x82a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
- .debug_info    0x00002c17      0x735 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
- .debug_info    0x0000334c      0x71b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
- .debug_info    0x00003a67       0xdb /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
- .debug_info    0x00003b42       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
- .debug_info    0x00003b66       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
- .debug_info    0x00003b8a     0x157f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
- .debug_info    0x00005109      0x7fc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
- .debug_info    0x00005905      0x9ca /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
- .debug_info    0x000062cf      0xdef /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
- .debug_info    0x000070be      0xa20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
- .debug_info    0x00007ade      0x7d6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
- .debug_info    0x000082b4      0x9ff /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
- .debug_info    0x00008cb3      0x7b9 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
- .debug_info    0x0000946c      0x142 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
- .debug_info    0x000095ae      0x144 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
- .debug_info    0x000096f2      0xa2e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
- .debug_info    0x0000a120     0x1513 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
- .debug_info    0x0000b633      0xac7 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
- .debug_info    0x0000c0fa      0xc34 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
- .debug_info    0x0000cd2e      0x747 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
- .debug_info    0x0000d475     0x1b90 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
- .debug_info    0x0000f005      0xb69 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
- .debug_info    0x0000fb6e      0x897 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
- .debug_info    0x00010405      0xa92 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
- .debug_info    0x00010e97      0xb5a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
- .debug_info    0x000119f1      0x7ef /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
- .debug_info    0x000121e0      0x8af /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
- .debug_info    0x00012a8f      0xaa2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
- .debug_info    0x00013531      0xa63 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
- .debug_info    0x00013f94       0xb9 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
- .debug_info    0x0001404d      0x830 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
- .debug_info    0x0001487d     0x1003 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
- .debug_info    0x00015880       0xc8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
- .debug_info    0x00015948      0xb66 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
- .debug_info    0x000164ae       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
- .debug_info    0x000164d4       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
- .debug_info    0x000164fa       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
- .debug_info    0x00016520       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
- .debug_info    0x00016546       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
- .debug_info    0x0001656c       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
- .debug_info    0x00016592       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
- .debug_info    0x000165b8       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
- .debug_info    0x000165de       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
- .debug_info    0x00016604       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
- .debug_info    0x0001662a       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
- .debug_info    0x00016650       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
- .debug_info    0x00016676      0x44e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
- .debug_info    0x00016ac4      0x655 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
+ .debug_info    0x00000026      0x90b ../bin/main.o
+ .debug_info    0x00000931     0x108a ../bin/amix-syscalls.o
+ .debug_info    0x000019bb      0xa58 ../bin/amix_sys.o
+ .debug_info    0x00002413       0x26 ../bin/syscalls_asm.o
+ .debug_info    0x00002439      0x7a8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
+ .debug_info    0x00002be1      0x852 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
+ .debug_info    0x00003433      0x82a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+ .debug_info    0x00003c5d      0x108 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
+ .debug_info    0x00003d65      0x735 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
+ .debug_info    0x0000449a      0x71b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
+ .debug_info    0x00004bb5       0xdb /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
+ .debug_info    0x00004c90       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
+ .debug_info    0x00004cb4       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
+ .debug_info    0x00004cd8      0x747 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
+ .debug_info    0x0000541f     0x157f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+ .debug_info    0x0000699e      0x7fc /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
+ .debug_info    0x0000719a      0x9ca /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+ .debug_info    0x00007b64      0xdef /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+ .debug_info    0x00008953      0xa20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
+ .debug_info    0x00009373      0x7d6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
+ .debug_info    0x00009b49      0x9ff /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+ .debug_info    0x0000a548      0x7b9 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
+ .debug_info    0x0000ad01      0x142 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
+ .debug_info    0x0000ae43      0x144 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
+ .debug_info    0x0000af87      0xa2e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
+ .debug_info    0x0000b9b5     0x1513 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+ .debug_info    0x0000cec8      0xac7 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+ .debug_info    0x0000d98f      0xc34 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+ .debug_info    0x0000e5c3      0x747 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
+ .debug_info    0x0000ed0a     0x1b90 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+ .debug_info    0x0001089a      0xb69 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
+ .debug_info    0x00011403      0x897 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
+ .debug_info    0x00011c9a      0xa92 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+ .debug_info    0x0001272c      0xb5a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+ .debug_info    0x00013286      0x7ef /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
+ .debug_info    0x00013a75      0x8af /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
+ .debug_info    0x00014324      0xaa2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
+ .debug_info    0x00014dc6      0xa63 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+ .debug_info    0x00015829       0xb9 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
+ .debug_info    0x000158e2      0x830 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+ .debug_info    0x00016112     0x1003 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+ .debug_info    0x00017115       0xc8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
+ .debug_info    0x000171dd      0xb66 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
+ .debug_info    0x00017d43       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
+ .debug_info    0x00017d69       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
+ .debug_info    0x00017d8f       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
+ .debug_info    0x00017db5       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
+ .debug_info    0x00017ddb       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
+ .debug_info    0x00017e01       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
+ .debug_info    0x00017e27       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
+ .debug_info    0x00017e4d       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
+ .debug_info    0x00017e73       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
+ .debug_info    0x00017e99       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
+ .debug_info    0x00017ebf       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
+ .debug_info    0x00017ee5       0x26 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
+ .debug_info    0x00017f0b      0x44e /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
+ .debug_info    0x00018359      0x655 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
 
-.debug_abbrev   0x00000000     0x57e8
+.debug_abbrev   0x00000000     0x5ea9
  *(.debug_abbrev)
  .debug_abbrev  0x00000000       0x14 ../bin/crt0.o
- .debug_abbrev  0x00000014      0x1db ../bin/main.o
- .debug_abbrev  0x000001ef      0x2f9 ../bin/amix-syscalls.o
- .debug_abbrev  0x000004e8      0x213 ../bin/amix_sys.o
- .debug_abbrev  0x000006fb       0x14 ../bin/syscalls_asm.o
- .debug_abbrev  0x0000070f      0x227 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
- .debug_abbrev  0x00000936      0x185 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
- .debug_abbrev  0x00000abb      0x19a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
- .debug_abbrev  0x00000c55       0x8a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
- .debug_abbrev  0x00000cdf       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
- .debug_abbrev  0x00000cf3       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
- .debug_abbrev  0x00000d07      0x4cf /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
- .debug_abbrev  0x000011d6      0x1d1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
- .debug_abbrev  0x000013a7      0x311 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
- .debug_abbrev  0x000016b8      0x41c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
- .debug_abbrev  0x00001ad4      0x23e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
- .debug_abbrev  0x00001d12      0x1d6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
- .debug_abbrev  0x00001ee8      0x243 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
- .debug_abbrev  0x0000212b      0x1fe /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
- .debug_abbrev  0x00002329       0xd4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
- .debug_abbrev  0x000023fd       0xc3 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
- .debug_abbrev  0x000024c0      0x264 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
- .debug_abbrev  0x00002724      0x365 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
- .debug_abbrev  0x00002a89      0x274 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
- .debug_abbrev  0x00002cfd      0x2c8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
- .debug_abbrev  0x00002fc5      0x1ce /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
- .debug_abbrev  0x00003193      0x529 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
- .debug_abbrev  0x000036bc      0x256 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
- .debug_abbrev  0x00003912      0x2c1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
- .debug_abbrev  0x00003bd3      0x260 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
- .debug_abbrev  0x00003e33      0x2cb /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
- .debug_abbrev  0x000040fe      0x206 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
- .debug_abbrev  0x00004304      0x238 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
- .debug_abbrev  0x0000453c      0x252 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
- .debug_abbrev  0x0000478e      0x226 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
- .debug_abbrev  0x000049b4       0x62 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
- .debug_abbrev  0x00004a16      0x221 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
- .debug_abbrev  0x00004c37      0x3e2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
- .debug_abbrev  0x00005019       0x85 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
- .debug_abbrev  0x0000509e      0x2fa /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
- .debug_abbrev  0x00005398       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
- .debug_abbrev  0x000053ac       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
- .debug_abbrev  0x000053c0       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
- .debug_abbrev  0x000053d4       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
- .debug_abbrev  0x000053e8       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
- .debug_abbrev  0x000053fc       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
- .debug_abbrev  0x00005410       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
- .debug_abbrev  0x00005424       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
- .debug_abbrev  0x00005438       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
- .debug_abbrev  0x0000544c       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
- .debug_abbrev  0x00005460       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
- .debug_abbrev  0x00005474       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
- .debug_abbrev  0x00005488      0x1e1 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
- .debug_abbrev  0x00005669      0x17f /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
+ .debug_abbrev  0x00000014      0x1ee ../bin/main.o
+ .debug_abbrev  0x00000202      0x2f9 ../bin/amix-syscalls.o
+ .debug_abbrev  0x000004fb      0x213 ../bin/amix_sys.o
+ .debug_abbrev  0x0000070e       0x14 ../bin/syscalls_asm.o
+ .debug_abbrev  0x00000722      0x20e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
+ .debug_abbrev  0x00000930      0x240 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
+ .debug_abbrev  0x00000b70      0x227 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+ .debug_abbrev  0x00000d97       0x92 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
+ .debug_abbrev  0x00000e29      0x185 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
+ .debug_abbrev  0x00000fae      0x19a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
+ .debug_abbrev  0x00001148       0x8a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
+ .debug_abbrev  0x000011d2       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
+ .debug_abbrev  0x000011e6       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
+ .debug_abbrev  0x000011fa      0x1ce /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
+ .debug_abbrev  0x000013c8      0x4cf /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+ .debug_abbrev  0x00001897      0x1d1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
+ .debug_abbrev  0x00001a68      0x311 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+ .debug_abbrev  0x00001d79      0x41c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+ .debug_abbrev  0x00002195      0x23e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
+ .debug_abbrev  0x000023d3      0x1d6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
+ .debug_abbrev  0x000025a9      0x243 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+ .debug_abbrev  0x000027ec      0x1fe /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
+ .debug_abbrev  0x000029ea       0xd4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
+ .debug_abbrev  0x00002abe       0xc3 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
+ .debug_abbrev  0x00002b81      0x264 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
+ .debug_abbrev  0x00002de5      0x365 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+ .debug_abbrev  0x0000314a      0x274 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+ .debug_abbrev  0x000033be      0x2c8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+ .debug_abbrev  0x00003686      0x1ce /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
+ .debug_abbrev  0x00003854      0x529 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+ .debug_abbrev  0x00003d7d      0x256 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
+ .debug_abbrev  0x00003fd3      0x2c1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
+ .debug_abbrev  0x00004294      0x260 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+ .debug_abbrev  0x000044f4      0x2cb /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+ .debug_abbrev  0x000047bf      0x206 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
+ .debug_abbrev  0x000049c5      0x238 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
+ .debug_abbrev  0x00004bfd      0x252 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
+ .debug_abbrev  0x00004e4f      0x226 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+ .debug_abbrev  0x00005075       0x62 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
+ .debug_abbrev  0x000050d7      0x221 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+ .debug_abbrev  0x000052f8      0x3e2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+ .debug_abbrev  0x000056da       0x85 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
+ .debug_abbrev  0x0000575f      0x2fa /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
+ .debug_abbrev  0x00005a59       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
+ .debug_abbrev  0x00005a6d       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
+ .debug_abbrev  0x00005a81       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
+ .debug_abbrev  0x00005a95       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
+ .debug_abbrev  0x00005aa9       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
+ .debug_abbrev  0x00005abd       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
+ .debug_abbrev  0x00005ad1       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
+ .debug_abbrev  0x00005ae5       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
+ .debug_abbrev  0x00005af9       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
+ .debug_abbrev  0x00005b0d       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
+ .debug_abbrev  0x00005b21       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
+ .debug_abbrev  0x00005b35       0x14 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
+ .debug_abbrev  0x00005b49      0x1e1 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
+ .debug_abbrev  0x00005d2a      0x17f /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
 
-.debug_line     0x00000000     0xc2ce
+.debug_line     0x00000000     0xca07
  *(.debug_line)
- .debug_line    0x00000000       0x53 ../bin/crt0.o
- .debug_line    0x00000053      0x129 ../bin/main.o
- .debug_line    0x0000017c      0x32d ../bin/amix-syscalls.o
- .debug_line    0x000004a9      0x193 ../bin/amix_sys.o
- .debug_line    0x0000063c       0xa5 ../bin/syscalls_asm.o
- .debug_line    0x000006e1      0x1b5 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
- .debug_line    0x00000896       0xf5 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
- .debug_line    0x0000098b      0x117 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
- .debug_line    0x00000aa2      0x106 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
- .debug_line    0x00000ba8       0x69 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
- .debug_line    0x00000c11       0x6d /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
- .debug_line    0x00000c7e     0x1db2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
- .debug_line    0x00002a30      0x194 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
- .debug_line    0x00002bc4      0x475 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
- .debug_line    0x00003039      0x5db /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
- .debug_line    0x00003614      0x5f1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
- .debug_line    0x00003c05      0x1c1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
- .debug_line    0x00003dc6      0x270 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
- .debug_line    0x00004036      0x2c2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
- .debug_line    0x000042f8      0x1a2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
- .debug_line    0x0000449a      0x1ed /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
- .debug_line    0x00004687      0x1aa /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
- .debug_line    0x00004831     0x1552 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
- .debug_line    0x00005d83      0x579 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
- .debug_line    0x000062fc      0x995 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
- .debug_line    0x00006c91      0x16c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
- .debug_line    0x00006dfd     0x1442 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
- .debug_line    0x0000823f      0x905 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
- .debug_line    0x00008b44      0x271 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
- .debug_line    0x00008db5      0x381 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
- .debug_line    0x00009136      0x292 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
- .debug_line    0x000093c8      0x1bf /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
- .debug_line    0x00009587      0x2a1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
- .debug_line    0x00009828      0x217 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
- .debug_line    0x00009a3f      0x210 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
- .debug_line    0x00009c4f       0x93 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
- .debug_line    0x00009ce2      0x1a7 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
- .debug_line    0x00009e89     0x10eb /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
- .debug_line    0x0000af74      0x107 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
- .debug_line    0x0000b07b      0x6fb /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
- .debug_line    0x0000b776       0x74 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
- .debug_line    0x0000b7ea       0x8d /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
- .debug_line    0x0000b877       0x7c /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
- .debug_line    0x0000b8f3       0x78 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
- .debug_line    0x0000b96b       0x78 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
- .debug_line    0x0000b9e3      0x3eb /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
- .debug_line    0x0000bdce       0x83 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
- .debug_line    0x0000be51       0x72 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
- .debug_line    0x0000bec3       0x72 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
- .debug_line    0x0000bf35       0x72 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
- .debug_line    0x0000bfa7       0x72 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
- .debug_line    0x0000c019       0x72 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
- .debug_line    0x0000c08b      0x16d /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
- .debug_line    0x0000c1f8       0xd6 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
+ .debug_line    0x00000000       0x56 ../bin/crt0.o
+ .debug_line    0x00000056      0x13a ../bin/main.o
+ .debug_line    0x00000190      0x32d ../bin/amix-syscalls.o
+ .debug_line    0x000004bd      0x193 ../bin/amix_sys.o
+ .debug_line    0x00000650       0xa5 ../bin/syscalls_asm.o
+ .debug_line    0x000006f5      0x184 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
+ .debug_line    0x00000879      0x24d /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
+ .debug_line    0x00000ac6      0x1b5 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+ .debug_line    0x00000c7b      0x1e6 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
+ .debug_line    0x00000e61       0xf5 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
+ .debug_line    0x00000f56      0x117 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
+ .debug_line    0x0000106d      0x106 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
+ .debug_line    0x00001173       0x69 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
+ .debug_line    0x000011dc       0x6d /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
+ .debug_line    0x00001249      0x16e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
+ .debug_line    0x000013b7     0x1db2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+ .debug_line    0x00003169      0x194 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
+ .debug_line    0x000032fd      0x475 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+ .debug_line    0x00003772      0x5db /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+ .debug_line    0x00003d4d      0x5f1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
+ .debug_line    0x0000433e      0x1c1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
+ .debug_line    0x000044ff      0x270 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+ .debug_line    0x0000476f      0x2c2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
+ .debug_line    0x00004a31      0x1a2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
+ .debug_line    0x00004bd3      0x1ed /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
+ .debug_line    0x00004dc0      0x1aa /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
+ .debug_line    0x00004f6a     0x1552 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+ .debug_line    0x000064bc      0x579 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+ .debug_line    0x00006a35      0x995 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+ .debug_line    0x000073ca      0x16c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
+ .debug_line    0x00007536     0x1442 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+ .debug_line    0x00008978      0x905 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
+ .debug_line    0x0000927d      0x271 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
+ .debug_line    0x000094ee      0x381 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+ .debug_line    0x0000986f      0x292 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+ .debug_line    0x00009b01      0x1bf /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
+ .debug_line    0x00009cc0      0x2a1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
+ .debug_line    0x00009f61      0x217 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
+ .debug_line    0x0000a178      0x210 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+ .debug_line    0x0000a388       0x93 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
+ .debug_line    0x0000a41b      0x1a7 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+ .debug_line    0x0000a5c2     0x10eb /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+ .debug_line    0x0000b6ad      0x107 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
+ .debug_line    0x0000b7b4      0x6fb /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
+ .debug_line    0x0000beaf       0x74 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
+ .debug_line    0x0000bf23       0x8d /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
+ .debug_line    0x0000bfb0       0x7c /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
+ .debug_line    0x0000c02c       0x78 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
+ .debug_line    0x0000c0a4       0x78 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
+ .debug_line    0x0000c11c      0x3eb /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
+ .debug_line    0x0000c507       0x83 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
+ .debug_line    0x0000c58a       0x72 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
+ .debug_line    0x0000c5fc       0x72 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
+ .debug_line    0x0000c66e       0x72 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
+ .debug_line    0x0000c6e0       0x72 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
+ .debug_line    0x0000c752       0x72 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
+ .debug_line    0x0000c7c4      0x16d /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
+ .debug_line    0x0000c931       0xd6 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
 
-.debug_str      0x00000000     0x1d05
+.debug_str      0x00000000     0x1e36
  *(.debug_str)
  .debug_str     0x00000000       0x42 ../bin/crt0.o
- .debug_str     0x00000042      0x447 ../bin/main.o
-                                0x500 (size before relaxing)
- .debug_str     0x00000489      0x27d ../bin/amix-syscalls.o
+ .debug_str     0x00000042      0x46e ../bin/main.o
+                                0x527 (size before relaxing)
+ .debug_str     0x000004b0      0x27d ../bin/amix-syscalls.o
                                 0x7c1 (size before relaxing)
- .debug_str     0x00000706       0xc6 ../bin/amix_sys.o
+ .debug_str     0x0000072d       0xc6 ../bin/amix_sys.o
                                 0x5c0 (size before relaxing)
- .debug_str     0x000007cc       0x16 ../bin/syscalls_asm.o
+ .debug_str     0x000007f3       0x16 ../bin/syscalls_asm.o
                                  0x4a (size before relaxing)
- .debug_str     0x000007e2      0x102 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+ .debug_str     0x00000809       0xe0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
+                                0x4a6 (size before relaxing)
+ .debug_str     0x000008e9       0x6a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
+                                0x4d9 (size before relaxing)
+ .debug_str     0x00000953       0x60 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
                                 0x4c9 (size before relaxing)
- .debug_str     0x000008e4       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
+ .debug_str     0x000009b3       0x2b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
+                                0x171 (size before relaxing)
+ .debug_str     0x000009de       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
                                 0x490 (size before relaxing)
- .debug_str     0x0000090d       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
+ .debug_str     0x00000a07       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
                                 0x485 (size before relaxing)
- .debug_str     0x00000935       0x37 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
+ .debug_str     0x00000a2f       0x37 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
                                 0x175 (size before relaxing)
- .debug_str     0x0000096c       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
+ .debug_str     0x00000a66       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
                                  0x82 (size before relaxing)
- .debug_str     0x000009a8       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
+ .debug_str     0x00000aa2       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
                                  0x82 (size before relaxing)
- .debug_str     0x000009d8      0x379 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+ .debug_str     0x00000ad2       0x41 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
+                                0x4a2 (size before relaxing)
+ .debug_str     0x00000b13      0x379 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
                                 0x906 (size before relaxing)
- .debug_str     0x00000d51       0x38 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
+ .debug_str     0x00000e8c       0x38 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
                                 0x4d4 (size before relaxing)
- .debug_str     0x00000d89       0x59 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+ .debug_str     0x00000ec4       0x59 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
                                 0x512 (size before relaxing)
- .debug_str     0x00000de2      0x1ba /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+ .debug_str     0x00000f1d      0x1ba /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
                                 0x693 (size before relaxing)
- .debug_str     0x00000f9c       0x5b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
+ .debug_str     0x000010d7       0x5b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
                                 0x52f (size before relaxing)
- .debug_str     0x00000ff7       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
+ .debug_str     0x00001132       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
                                 0x49b (size before relaxing)
- .debug_str     0x0000101f       0x33 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+ .debug_str     0x0000115a       0x33 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
                                 0x4ef (size before relaxing)
- .debug_str     0x00001052       0x36 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
+ .debug_str     0x0000118d       0x36 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
                                 0x4bc (size before relaxing)
- .debug_str     0x00001088       0x3d /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
+ .debug_str     0x000011c3       0x3d /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
                                 0x189 (size before relaxing)
- .debug_str     0x000010c5       0x4c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
+ .debug_str     0x00001200       0x4c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
                                 0x1a2 (size before relaxing)
- .debug_str     0x00001111       0x90 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
+ .debug_str     0x0000124c       0x90 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
                                 0x6d1 (size before relaxing)
- .debug_str     0x000011a1      0x1a2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+ .debug_str     0x000012dc      0x1a2 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
                                 0x835 (size before relaxing)
- .debug_str     0x00001343      0x15e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+ .debug_str     0x0000147e      0x154 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
                                 0x5f3 (size before relaxing)
- .debug_str     0x000014a1      0x110 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+ .debug_str     0x000015d2      0x110 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
                                 0x6ab (size before relaxing)
- .debug_str     0x000015b1       0x42 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
+ .debug_str     0x000016e2       0x42 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
                                 0x4a9 (size before relaxing)
- .debug_str     0x000015f3       0x94 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+ .debug_str     0x00001724       0x94 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
                                 0x799 (size before relaxing)
- .debug_str     0x00001687       0x7a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
+ .debug_str     0x000017b8       0x7a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
                                 0x57e (size before relaxing)
- .debug_str     0x00001701       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
+ .debug_str     0x00001832       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
                                 0x4ea (size before relaxing)
- .debug_str     0x00001731       0x4f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+ .debug_str     0x00001862       0x4f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
                                 0x61e (size before relaxing)
- .debug_str     0x00001780       0x97 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+ .debug_str     0x000018b1       0x97 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
                                 0x70a (size before relaxing)
- .debug_str     0x00001817       0x49 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
+ .debug_str     0x00001948       0x49 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
                                 0x4c4 (size before relaxing)
- .debug_str     0x00001860       0x3a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
+ .debug_str     0x00001991       0x3a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
                                 0x4dd (size before relaxing)
- .debug_str     0x0000189a       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
+ .debug_str     0x000019cb       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
                                 0x6b1 (size before relaxing)
- .debug_str     0x000018d6       0x3d /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+ .debug_str     0x00001a07       0x3d /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
                                 0x6b8 (size before relaxing)
- .debug_str     0x00001913       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
+ .debug_str     0x00001a44       0x29 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
                                 0x168 (size before relaxing)
- .debug_str     0x0000193c       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+ .debug_str     0x00001a6d       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
                                 0x4d0 (size before relaxing)
- .debug_str     0x00001980       0x36 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+ .debug_str     0x00001ab1       0x36 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
                                 0x819 (size before relaxing)
- .debug_str     0x000019b6       0x2f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
+ .debug_str     0x00001ae7       0x2f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
                                 0x172 (size before relaxing)
- .debug_str     0x000019e5       0x7e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
+ .debug_str     0x00001b16       0x7e /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
                                 0x512 (size before relaxing)
- .debug_str     0x00001a63       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
- .debug_str     0x00001af5       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
- .debug_str     0x00001af5       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
- .debug_str     0x00001af5       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
- .debug_str     0x00001af5       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
- .debug_str     0x00001af5       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
- .debug_str     0x00001af5       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
- .debug_str     0x00001af5       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
- .debug_str     0x00001af5       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
- .debug_str     0x00001af5       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
- .debug_str     0x00001af5       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
- .debug_str     0x00001af5       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
- .debug_str     0x00001af5      0x126 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
+ .debug_str     0x00001b94       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
+ .debug_str     0x00001c26       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
+ .debug_str     0x00001c26       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
+ .debug_str     0x00001c26       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
+ .debug_str     0x00001c26       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
+ .debug_str     0x00001c26       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
+ .debug_str     0x00001c26       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
+ .debug_str     0x00001c26       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
+ .debug_str     0x00001c26       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
+ .debug_str     0x00001c26       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
+ .debug_str     0x00001c26       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
+ .debug_str     0x00001c26       0x92 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
+ .debug_str     0x00001c26      0x126 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
                                 0x1e1 (size before relaxing)
- .debug_str     0x00001c1b       0xea /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
+ .debug_str     0x00001d4c       0xea /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
                                 0x238 (size before relaxing)
 
 .debug_ranges   0x00000000      0x138
@@ -1283,7 +1333,7 @@ END GROUP
  .debug_ranges  0x00000120       0x18 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
 OUTPUT(../bin/program.elf elf32-m68k)
 
-.debug_aranges  0x00000000      0x930
+.debug_aranges  0x00000000      0x9c8
  .debug_aranges
                 0x00000000       0x20 ../bin/crt0.o
  .debug_aranges
@@ -1295,114 +1345,126 @@ OUTPUT(../bin/program.elf elf32-m68k)
  .debug_aranges
                 0x00000128       0x20 ../bin/syscalls_asm.o
  .debug_aranges
-                0x00000148       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+                0x00000148       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
  .debug_aranges
-                0x00000170       0x18 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
+                0x00000170       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
  .debug_aranges
-                0x00000188       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
+                0x00000198       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
  .debug_aranges
-                0x000001a8       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
+                0x000001c0       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
  .debug_aranges
-                0x000001c8       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
+                0x000001e0       0x18 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
  .debug_aranges
-                0x000001e8       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
+                0x000001f8       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
  .debug_aranges
-                0x00000208       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x00000218       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
  .debug_aranges
-                0x00000238       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
+                0x00000238       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memcpy.o)
  .debug_aranges
-                0x00000258       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+                0x00000258       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memset.o)
  .debug_aranges
-                0x00000288       0x70 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00000278       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
  .debug_aranges
-                0x000002f8       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
+                0x000002a0       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .debug_aranges
-                0x00000318       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
+                0x000002d0       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
  .debug_aranges
-                0x00000338       0x40 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+                0x000002f0       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
  .debug_aranges
-                0x00000378       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
+                0x00000320       0x70 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
  .debug_aranges
-                0x00000398       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
+                0x00000390       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
  .debug_aranges
-                0x000003b8       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
+                0x000003b0       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
  .debug_aranges
-                0x000003d8       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
+                0x000003d0       0x40 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
  .debug_aranges
-                0x00000408       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+                0x00000410       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
  .debug_aranges
-                0x00000430       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+                0x00000430       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
  .debug_aranges
-                0x00000458       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x00000450       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
  .debug_aranges
-                0x00000478       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
+                0x00000470       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
  .debug_aranges
-                0x000004a0       0xb0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x000004a0       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
  .debug_aranges
-                0x00000550       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
+                0x000004c8       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
  .debug_aranges
-                0x00000570       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
+                0x000004f0       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
  .debug_aranges
-                0x00000598       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+                0x00000510       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
  .debug_aranges
-                0x000005c0       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+                0x00000538       0xb0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
  .debug_aranges
-                0x000005f0       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
+                0x000005e8       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
  .debug_aranges
-                0x00000618       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
+                0x00000608       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
  .debug_aranges
-                0x00000638       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
+                0x00000630       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
  .debug_aranges
-                0x00000660       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+                0x00000658       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
  .debug_aranges
-                0x00000688       0x18 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
+                0x00000688       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
  .debug_aranges
-                0x000006a0       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+                0x000006b0       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
  .debug_aranges
-                0x000006c8       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+                0x000006d0       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
  .debug_aranges
-                0x000006f8       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
+                0x000006f8       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
  .debug_aranges
-                0x00000718       0x58 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
+                0x00000720       0x18 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-ctype_.o)
  .debug_aranges
-                0x00000770       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
+                0x00000738       0x28 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
  .debug_aranges
-                0x00000790       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
+                0x00000760       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
  .debug_aranges
-                0x000007b0       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
+                0x00000790       0x20 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
  .debug_aranges
-                0x000007d0       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
+                0x000007b0       0x58 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
  .debug_aranges
-                0x000007f0       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
+                0x00000808       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_mulsi3.o)
  .debug_aranges
-                0x00000810       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
+                0x00000828       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_udivsi3.o)
  .debug_aranges
-                0x00000830       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
+                0x00000848       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_divsi3.o)
  .debug_aranges
-                0x00000850       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
+                0x00000868       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_umodsi3.o)
  .debug_aranges
-                0x00000870       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
+                0x00000888       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_modsi3.o)
  .debug_aranges
-                0x00000890       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
+                0x000008a8       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_double.o)
  .debug_aranges
-                0x000008b0       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
+                0x000008c8       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_floatex.o)
  .debug_aranges
-                0x000008d0       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
+                0x000008e8       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_eqdf2.o)
  .debug_aranges
-                0x000008f0       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
+                0x00000908       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_nedf2.o)
  .debug_aranges
-                0x00000910       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
+                0x00000928       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_gtdf2.o)
+ .debug_aranges
+                0x00000948       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ltdf2.o)
+ .debug_aranges
+                0x00000968       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(_ledf2.o)
+ .debug_aranges
+                0x00000988       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
+ .debug_aranges
+                0x000009a8       0x20 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
 
 .comment        0x00000000       0x2c
  .comment       0x00000000       0x11 ../bin/main.o
                                  0x12 (size before relaxing)
  .comment       0x00000011       0x12 ../bin/amix-syscalls.o
  .comment       0x00000011       0x12 ../bin/amix_sys.o
- .comment       0x00000011       0x1b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+ .comment       0x00000011       0x1b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
                                  0x1c (size before relaxing)
+ .comment       0x0000002c       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
+ .comment       0x0000002c       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+ .comment       0x0000002c       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
  .comment       0x0000002c       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-impure.o)
  .comment       0x0000002c       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
  .comment       0x0000002c       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
+ .comment       0x0000002c       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
  .comment       0x0000002c       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .comment       0x0000002c       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
  .comment       0x0000002c       0x1c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
@@ -1435,43 +1497,47 @@ OUTPUT(../bin/program.elf elf32-m68k)
  .comment       0x0000002c       0x12 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
  .comment       0x0000002c       0x12 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
 
-.debug_frame    0x00000000     0x184c
- .debug_frame   0x00000000       0x2c ../bin/main.o
- .debug_frame   0x0000002c      0x1b0 ../bin/amix-syscalls.o
- .debug_frame   0x000001dc       0xcc ../bin/amix_sys.o
- .debug_frame   0x000002a8       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
- .debug_frame   0x000002ec       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
- .debug_frame   0x00000310       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
- .debug_frame   0x00000334       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
- .debug_frame   0x000003d8       0x38 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
- .debug_frame   0x00000410       0xd0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
- .debug_frame   0x000004e0      0x15c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
- .debug_frame   0x0000063c      0x108 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
- .debug_frame   0x00000744       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
- .debug_frame   0x00000780       0xa8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
- .debug_frame   0x00000828       0x48 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
- .debug_frame   0x00000870       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
- .debug_frame   0x000008a0       0x34 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
- .debug_frame   0x000008d4       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
- .debug_frame   0x00000918       0x94 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
- .debug_frame   0x000009ac       0x90 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
- .debug_frame   0x00000a3c       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
- .debug_frame   0x00000ae0       0x34 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
- .debug_frame   0x00000b14      0x3d8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
- .debug_frame   0x00000eec       0xc0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
- .debug_frame   0x00000fac       0x7c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
- .debug_frame   0x00001028       0x50 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
- .debug_frame   0x00001078       0x94 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
- .debug_frame   0x0000110c       0x70 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
- .debug_frame   0x0000117c       0x60 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
- .debug_frame   0x000011dc       0x38 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
- .debug_frame   0x00001214       0x34 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
- .debug_frame   0x00001248       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
- .debug_frame   0x0000128c       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
- .debug_frame   0x00001330       0x2c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
- .debug_frame   0x0000135c      0x154 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
- .debug_frame   0x000014b0      0x134 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
- .debug_frame   0x000015e4      0x268 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
+.debug_frame    0x00000000     0x1968
+ .debug_frame   0x00000000       0x30 ../bin/main.o
+ .debug_frame   0x00000030      0x1b0 ../bin/amix-syscalls.o
+ .debug_frame   0x000001e0       0xcc ../bin/amix_sys.o
+ .debug_frame   0x000002ac       0x48 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
+ .debug_frame   0x000002f4       0x6c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
+ .debug_frame   0x00000360       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+ .debug_frame   0x000003a4       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
+ .debug_frame   0x000003d4       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
+ .debug_frame   0x000003f8       0x24 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
+ .debug_frame   0x0000041c       0x34 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
+ .debug_frame   0x00000450       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+ .debug_frame   0x000004f4       0x38 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
+ .debug_frame   0x0000052c       0xd0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+ .debug_frame   0x000005fc      0x15c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+ .debug_frame   0x00000758      0x108 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
+ .debug_frame   0x00000860       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
+ .debug_frame   0x0000089c       0xa8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+ .debug_frame   0x00000944       0x48 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
+ .debug_frame   0x0000098c       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
+ .debug_frame   0x000009bc       0x34 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
+ .debug_frame   0x000009f0       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
+ .debug_frame   0x00000a34       0x94 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+ .debug_frame   0x00000ac8       0x90 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+ .debug_frame   0x00000b58       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+ .debug_frame   0x00000bfc       0x34 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
+ .debug_frame   0x00000c30      0x3d8 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+ .debug_frame   0x00001008       0xc0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
+ .debug_frame   0x000010c8       0x7c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
+ .debug_frame   0x00001144       0x50 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+ .debug_frame   0x00001194       0x94 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+ .debug_frame   0x00001228       0x70 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
+ .debug_frame   0x00001298       0x60 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
+ .debug_frame   0x000012f8       0x38 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
+ .debug_frame   0x00001330       0x34 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+ .debug_frame   0x00001364       0x44 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+ .debug_frame   0x000013a8       0xa4 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+ .debug_frame   0x0000144c       0x2c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
+ .debug_frame   0x00001478      0x154 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
+ .debug_frame   0x000015cc      0x134 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(fpgnulib.o)
+ .debug_frame   0x00001700      0x268 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
 
 .debug_loc      0x00000000      0x89b
  .debug_loc     0x00000000      0x14f ../bin/amix-syscalls.o
@@ -1480,126 +1546,140 @@ OUTPUT(../bin/program.elf elf32-m68k)
  .debug_loc     0x00000744      0x157 /opt/m68k-toolchain/bin/../lib/gcc/m68k-elf/6.3.0/libgcc.a(xfgnulib.o)
 
 .debug_loclists
-                0x00000000     0xb0ee
+                0x00000000     0xb2a9
  .debug_loclists
-                0x00000000       0x9f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+                0x00000000       0x2a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
  .debug_loclists
-                0x0000009f       0x2d /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
+                0x0000002a       0x85 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
  .debug_loclists
-                0x000000cc     0x2a58 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x000000af       0x9f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
  .debug_loclists
-                0x00002b24       0x21 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
+                0x0000014e      0x10c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
  .debug_loclists
-                0x00002b45      0x168 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+                0x0000025a       0x2d /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
  .debug_loclists
-                0x00002cad      0x1a1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00000287     0x2a58 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .debug_loclists
-                0x00002e4e      0x3f9 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
+                0x00002cdf       0x21 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
  .debug_loclists
-                0x00003247       0x74 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
+                0x00002d00      0x168 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
  .debug_loclists
-                0x000032bb       0x9a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+                0x00002e68      0x1a1 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
  .debug_loclists
-                0x00003355       0x22 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
+                0x00003009      0x3f9 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
  .debug_loclists
-                0x00003377       0xf7 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
+                0x00003402       0x74 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
  .debug_loclists
-                0x0000346e      0x2cf /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
+                0x00003476       0x9a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
  .debug_loclists
-                0x0000373d       0x26 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
+                0x00003510       0x22 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
  .debug_loclists
-                0x00003763     0x2468 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+                0x00003532       0xf7 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
  .debug_loclists
-                0x00005bcb      0x402 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+                0x00003629      0x2cf /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
  .debug_loclists
-                0x00005fcd      0x9ae /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x000038f8       0x26 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
  .debug_loclists
-                0x0000697b     0x18b9 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000391e     0x2468 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
  .debug_loclists
-                0x00008234     0x1165 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
+                0x00005d86      0x402 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
  .debug_loclists
-                0x00009399       0x7a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
+                0x00006188      0x9ae /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
  .debug_loclists
-                0x00009413      0x1f5 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+                0x00006b36     0x18b9 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
  .debug_loclists
-                0x00009608       0x34 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+                0x000083ef     0x1165 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
  .debug_loclists
-                0x0000963c      0x200 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
+                0x00009554       0x7a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
  .debug_loclists
-                0x0000983c       0x3b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
+                0x000095ce      0x1f5 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
  .debug_loclists
-                0x00009877       0x3f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+                0x000097c3       0x34 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
  .debug_loclists
-                0x000098b6       0xe0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+                0x000097f7      0x200 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
  .debug_loclists
-                0x00009996     0x1571 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+                0x000099f7       0x3b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
  .debug_loclists
-                0x0000af07      0x1e7 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
+                0x00009a32       0x3f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+ .debug_loclists
+                0x00009a71       0xe0 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+ .debug_loclists
+                0x00009b51     0x1571 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+ .debug_loclists
+                0x0000b0c2      0x1e7 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
 
 .debug_rnglists
-                0x00000000      0x7c8
+                0x00000000      0x828
  .debug_rnglists
-                0x00000000       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
+                0x00000000       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv.o)
  .debug_rnglists
-                0x00000019       0x13 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
+                0x00000019       0x1a /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-getenv_r.o)
  .debug_rnglists
-                0x0000002c       0x13 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
+                0x00000033       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-printf.o)
  .debug_rnglists
-                0x0000003f      0x126 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
+                0x0000004c       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strncmp.o)
  .debug_rnglists
-                0x00000165       0x13 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
+                0x00000060       0x13 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-errno.o)
  .debug_rnglists
-                0x00000178       0x6f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
+                0x00000073       0x13 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-strlen.o)
  .debug_rnglists
-                0x000001e7       0x6b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
+                0x00000086       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-envlock.o)
  .debug_rnglists
-                0x00000252       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
+                0x0000009f      0x126 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfprintf.o)
  .debug_rnglists
-                0x00000282       0x13 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
+                0x000001c5       0x13 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-sprint_r.o)
  .debug_rnglists
-                0x00000295       0x2c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
+                0x000001d8       0x6f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fflush.o)
  .debug_rnglists
-                0x000002c1       0x22 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
+                0x00000247       0x6b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-findfp.o)
  .debug_rnglists
-                0x000002e3       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
+                0x000002b2       0x30 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fvwrite.o)
  .debug_rnglists
-                0x000002f7       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
+                0x000002e2       0x13 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fwalk.o)
  .debug_rnglists
-                0x0000030b       0x1f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
+                0x000002f5       0x2c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-stdio.o)
  .debug_rnglists
-                0x0000032a       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
+                0x00000321       0x22 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wsetup.o)
  .debug_rnglists
-                0x00000366       0x1b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
+                0x00000343       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memchr.o)
  .debug_rnglists
-                0x00000381       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
+                0x00000357       0x14 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-memmove.o)
  .debug_rnglists
-                0x000003bd       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
+                0x0000036b       0x1f /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-localeconv.o)
  .debug_rnglists
-                0x000003d6      0x12c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
+                0x0000038a       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-dtoa.o)
  .debug_rnglists
-                0x00000502       0xd9 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
+                0x000003c6       0x1b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-freer.o)
  .debug_rnglists
-                0x000005db       0x35 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
+                0x000003e1       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mallocr.o)
  .debug_rnglists
-                0x00000610       0x1b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
+                0x0000041d       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mlock.o)
  .debug_rnglists
-                0x0000062b       0x2b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
+                0x00000436      0x12c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mprec.o)
  .debug_rnglists
-                0x00000656       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
+                0x00000562       0xd9 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-reallocr.o)
  .debug_rnglists
-                0x0000066f       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
+                0x0000063b       0x35 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fclose.o)
  .debug_rnglists
-                0x000006ab       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
+                0x00000670       0x1b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-makebuf.o)
  .debug_rnglists
-                0x000006c4       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+                0x0000068b       0x2b /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-locale.o)
  .debug_rnglists
-                0x000006dd       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+                0x000006b6       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-assert.o)
  .debug_rnglists
-                0x000006f6       0x3d /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+                0x000006cf       0x3c /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-callocr.o)
  .debug_rnglists
-                0x00000733       0x13 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
+                0x0000070b       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-mbtowc_r.o)
  .debug_rnglists
-                0x00000746       0x82 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
+                0x00000724       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-wctomb_r.o)
+ .debug_rnglists
+                0x0000073d       0x19 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-fiprintf.o)
+ .debug_rnglists
+                0x00000756       0x3d /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-vfiprintf.o)
+ .debug_rnglists
+                0x00000793       0x13 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-abort.o)
+ .debug_rnglists
+                0x000007a6       0x82 /home/lovro/opt/cross-newlib/m68k-elf-rosco/lib/libc.a(libc_a-signal.o)
 
 .debug_line_str
                 0x00000000       0x7f

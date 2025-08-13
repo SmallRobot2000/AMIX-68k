@@ -78,7 +78,7 @@ static int ide_wait_ready(void) {
 
 // Wait for data request
 static int ide_wait_drq(void) {
-    int timeout = 1000;
+    int timeout = 100000;
     uint8_t status;
     
     while (timeout--) {
@@ -95,7 +95,7 @@ static int ide_wait_drq(void) {
 
 // 400ns delay (read alternate status 4 times)
 static void ide_delay_400ns(void) {
-    int timeout = 1000;
+    int timeout = 100000;
     while (timeout--) {
         
     }
@@ -178,8 +178,8 @@ void sys_read_sectors(int cnt, void *buffer, long lba) {
         // Optimized m68k assembly with DRQ wait and data transfer
         __asm__ __volatile__ (
             // Wait for DRQ loop
-            "move.w #999,%%d2\n\t"          // Timeout counter
-            "1:\n\t"                        // DRQ wait loop
+            "move.w #9999,%%d2\n\t"      // Timeout counter
+            "1:\n\t"                       // DRQ wait loop
             "move.b (%2),%%d3\n\t"         // Read IDE status (8-bit from upper byte)
             "btst #3,%%d3\n\t"             // Test DRQ bit (bit 3)
             "bne 3f\n\t"                   // If DRQ set, jump to data transfer
@@ -193,7 +193,7 @@ void sys_read_sectors(int cnt, void *buffer, long lba) {
             
             // Fast data transfer (256 words)
             "3:\n\t"                       // Data transfer start
-            "move.w #255,%%d0\n\t"         // Counter: 255 down to 0 (256 words)
+            "move.w #255,%%d0\n\t"       // Counter: 255 down to 0 (256 words)
             "5:\n\t"                       // Transfer loop
             "move.w (%3),%%d1\n\t"         // Read 16-bit word from IDE data port
             "move.w %%d1,(%0)+\n\t"        // Store to buffer with post-increment

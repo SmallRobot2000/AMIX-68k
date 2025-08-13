@@ -4,6 +4,8 @@
         "stdio.h": "c",
         "malloc.h": "c",
         "string.h": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "stdint.h": "c",
+        "sys_amix.h": "c"
     }
 }

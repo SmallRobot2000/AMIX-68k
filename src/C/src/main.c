@@ -11,10 +11,12 @@
 #include <elf_loader.h>
 #include <kernel.h>
 #include <history.h>
+#include <stdbool.h>
 
 #define PRG_MIN_ADD 0x180000
 #define PRG_FOLDER "/bin/"
 #define LINE_HISTORY "/etc/history"
+#define DEFAULT_PROMPT "$"
 uint8_t * buffer;
 PARTITION VolToPart[FF_VOLUMES] = {
         {0, 1},    /* "0:" ==> 1st partition in physical drive 0 */
@@ -54,15 +56,7 @@ FRESULT list_dir (const char *path)
     return res;
 }
 
-typedef int (*prog_main_t)(int argc, char *argv[]);
-int call_address(uint32_t add)
-{
-    prog_main_t prog_main = (prog_main_t)add;
-    char *argv[] = {"My name! WHAT IS MY NAME???",NULL};
-    int argc = sizeof(argv) / sizeof(argv[0]) - 1;  // Count elements, subtract 1 for NULL terminator
-    int result = prog_main( argc, argv);
-    return result;
-}
+
 void parse_line(char* line)
 {
     char * linePtr = strtok(line, " ");
@@ -215,26 +209,21 @@ void parse_line(char* line)
         printf("\n");
         char * arg;
         arg = strtok(NULL," ");
-        char *end;
         
         if(arg == NULL)
         {
-            printf("Usage: run <address>\n");
+            printf("Usage: run <ELF file>\n");
             return;
         }
-        long add = strtol(arg, &end, 0);
-
-        if (errno == ERANGE) {
-            printf("Error converting address\n");
-            return;
-        }
-        if(end == arg || add < PRG_MIN_ADD)
+        uint32_t add = _WORKING_PROGRAM_ADD;
+        if(load_elf(arg, (void *)add) < 0)
         {
-            printf("Invalid address\n");
-            return;
+            printf("Error loading file\n");
+        }else{
+            printf("Return exit code: 0x%04x\n", call_address(add));
         }
-        printf("Running at 0x%08lx\n",add);
-        printf("Return exit code: 0x%04x\n", call_address(add));
+        
+        
         
     }else if(strcmp(linePtr,"dump") == 0)
     {
@@ -325,22 +314,23 @@ void parse_line(char* line)
     {
         printf("\n");
         char prgPath[256];
-        strcpy(prgPath, "");
-        strcat(prgPath,PRG_FOLDER);
+        strcpy(prgPath,_BIN_PATH);
         strcat(prgPath,linePtr);
-        //printf("\nTrying %s\n",linePtr);
-        uint32_t add = load_elf(prgPath, (void *)PRG_MIN_ADD);
-        if(add == (uint32_t)-1)
+        if(linePtr[0] == '.') //Is relative?
         {
-            printf("Load error\n");
-            return;
+            run_file(linePtr);
+            
+        }else{
+            run_file(prgPath);
         }
-        call_address(add);
-        
+        printf("\n");
+    
     }
 
 }
-int main(void) {
+
+int main(int argc, char *argv[], char *environp[]) {
+
     printf("Kernel starting ...\n");
     if(kernel_start() != 0)
     {
@@ -348,7 +338,12 @@ int main(void) {
     }
     int i = 0;
     char line[81];
+    char print_buf[81];
     int history_cur = 0;
+    printf("%s",DEFAULT_PROMPT);
+    fflush(stdout);
+    memset(print_buf,' ',80);
+    print_buf[79] = 0;
     while(1)
     {
     
@@ -376,9 +371,8 @@ int main(void) {
             
             parse_line(line);
             i = 0;
-        }else if(ch == 8){ //BS
-            i --;
-            sys_print_screen(ch);
+            //printf("%s",DEFAULT_PROMPT);
+            //fflush(stdout);
         }else if((uint8_t)ch == KYB_ARROW_UP || (uint8_t)ch == KYB_ARROW_DOWN){
             char* str;
             if((uint8_t)ch == KYB_ARROW_UP)
@@ -393,22 +387,22 @@ int main(void) {
                 
             }
             if (str != NULL){
-                memset(line,' ',80);
+                memset(line,' ',79);
                 line[79] = 0; //Clear line buffer
-                printf("\r%s",line); //Clear screen line
-                fflush(stdout);
+                //printf("\r%s",line); //Clear screen line
+                //fflush(stdout);
 
                 strcpy(line,str);
                 i = strlen(line)-1;
                 line[i] = 0;
-                printf("\r%s",line);
-                fflush(stdout);
+                //printf("\r%s%s",DEFAULT_PROMPT,line);
+                //fflush(stdout);
             }
         }else if(ch == 0x1B /*ESC*/){
-            memset(line,' ',80);
+            memset(line,' ',79);
             line[79] = 0; //Clear line buffer
-            printf("\r%s\r",line); //Clear screen line
-            fflush(stdout);
+            //printf("\r%s%s\r",DEFAULT_PROMPT,line); //Clear screen line
+            //fflush(stdout);
             i = 0;
             history_cur = 0;
             line[0] = 0;
@@ -416,10 +410,14 @@ int main(void) {
             line[i] = ch;
             i++;
             line[i] = 0;
-            printf("\r%s",line);
-            fflush(stdout);
+            //printf("\r%s%s",DEFAULT_PROMPT,line);
+            //fflush(stdout);
         }
+        line[i] = 0;
         
+    
+        printf("\r%s\r%s%s",print_buf,DEFAULT_PROMPT,line);
+        fflush(stdout);
         
         
     }

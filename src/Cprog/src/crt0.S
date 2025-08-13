@@ -13,12 +13,29 @@
  * Define an empty environment.
  */
         .data
-        .align 2
-SYM (environ):
-        .long 0
+    .align 2
 
- 	.align	2
-	.text
+/* 1) Array of pointers, terminated by NULL */
+env_ptrs:
+	.long env_foo
+    .long   0              /* NULL terminator */
+
+/* 2) The actual strings */
+    .align 2
+env_foo:
+    .asciz  "FOO=hello"
+env_bar:
+    .asciz  "BAR=world"
+
+/* 3) Global symbol for C’s environ */
+    .align 2
+    .global environ
+environ:
+    .long   0
+
+    .text
+    .global _start
+
 
 /*
  * These symbols are defined in C code, so they need to always be
@@ -30,7 +47,6 @@ SYM (environ):
 	.extern SYM (exit)
 	.extern SYM (atexit)
 	.extern SYM(__do_global_dtors)
-
 /* 
  * These values are set in the linker script, so they must be
  * explicitly named here without SYM.
@@ -60,12 +76,21 @@ _start:
 	 * Default to using the __stack for SP.
 	 */
 	STI
-	movel	4(sp),d0	//argv
-	movel	8(sp),d1 	//argc
+	//movel	d0,a0
+
+
+
+	movel	12(sp),a0	//env
+	movel	8(sp),d1	//argv
+	movel	4(sp),d2 	//argc
 	/* set up initial stack frame */
 	link	a6, IMM(-8)
+	movel	a0,-(sp)
 	movel	d1,-(sp)
-	movel	d0,-(sp)
+	movel	d2,-(sp)
+
+	lea     SYM(environ), a1  /* A1 = address of the global environ word */
+    move.l  a0, (a1)          /* *(&environ) = environ_ptr */	
 
 /*
  * zero out the bss section.
@@ -90,20 +115,8 @@ _start:
  * we pass argv as a pointer to NULL.
  */
 
-
-       // pea     0
-	//PICPEA	SYM (environ),a0
-        //pea     sp@(4)
-        //pea     0
 	CLI	
 	PICCALL	SYM (main)
-	//movel	d0, sp@-
 
-/*
- * drop down into exit incase the user doesn't. This should drop
- * control back to the ROM monitor, if there is one. This calls the
- * exit() from the C library so the C++ tables get cleaned up right.
- */
-	//PICCALL	SYM (exit)
 	unlk	a6
 	rts
