@@ -34,6 +34,10 @@ int main(int argc, char *argv[], char *envp[])
         return -1;
     }
     fclose(fd);
+    printf("Type string!\n");
+    char* str = malloc(256);
+    //scanf("%s",str);
+    printf("Your str: %s\n",str);
 
     return 1;
 }

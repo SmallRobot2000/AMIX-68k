@@ -378,7 +378,7 @@ _exec_illegal:
     bsr     x_print_word_string
     lea     msg_illegal,a0
     bsr     send_string
-    move.l  (4,a7),d0
+    move.l  (2,a7),d0
     bsr     x_print_hex
     jmp     *
 
@@ -390,7 +390,7 @@ _exec_addr_err:
     bsr     x_print_word_string
     lea     msg_add_err,a0
     bsr     send_string
-    move.l  (4,a7),d0
+    move.l  (2,a7),d0
     bsr     x_print_hex
     jmp     *
 
