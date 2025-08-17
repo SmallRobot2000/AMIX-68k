@@ -10,19 +10,26 @@
 #include <stdint.h>
 #include <elf_loader.h>
 #include <history.h>
-
+#include <shell.h>
+#include <kernel_syscalls.h>
 FATFS fs;
 #define BIN_PATH "/bin/"
 #define SYS_PATH "/sys/"
 #define SRC_PATH "/sys/src/"
 #define DEFAULT_PROGRAM_ADD 0x200000
 #define DEFAULT_PROGRAM_MAX_SIZE 0x20000 //128k
-
+#define DEFAULT_STS_VER_STR "AMIX system with kernel/shell v0.0.0 alfa"
 char _SRC_PATH[256];
 char _BIN_PATH[256];
 char _SYS_PATH[256];
 uint32_t _WORKING_PROGRAM_ADD;
 uint32_t _WORKING_PROGRAM_MAX_SIZE;
+char* _SYS_VER_STR;
+void clear_screen()
+{
+    sys_scroll(32);
+    syscall_trap0(0x0CL,0x00L,0x00); //set cursor to 0,0
+}
 void kernel_panic_print(char* f_str, int err_code)
 {
     printf("KERNEL PANIC\n");
@@ -31,11 +38,17 @@ void kernel_panic_print(char* f_str, int err_code)
 
 int kernel_start()
 {
+    //clear_screen();
     FRESULT f_res;
     //Initialize everything
+    printf("Starting kernel SYSCALL\n");
+    trap1_init();
+    
     _WORKING_PROGRAM_ADD = DEFAULT_PROGRAM_ADD;
     _WORKING_PROGRAM_MAX_SIZE = DEFAULT_PROGRAM_MAX_SIZE;
-    printf("Get env FOO %s\n",getenv("FOO"));
+    _SYS_VER_STR = DEFAULT_STS_VER_STR;
+    //setenv("SYS_VER_STR",DEFAULT_STS_VER_STR,1);
+    //printf("%s\n",getenv("SYS_VER_STR"));
     strcpy(_SYS_PATH,SYS_PATH);
     strcpy(_SRC_PATH,SRC_PATH);
     strcpy(_BIN_PATH,BIN_PATH);
@@ -127,7 +140,7 @@ int kernel_start()
         kernel_panic_print("Not able to open source directory!\nError code: ", f_res);
         return -2;
     }
-    
+    shell_start();
 
     
     return 0;

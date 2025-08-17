@@ -6,6 +6,10 @@
         "string.h": "c",
         "cstdint": "c",
         "stdint.h": "c",
-        "sys_amix.h": "c"
+        "sys_amix.h": "c",
+        "functional": "c",
+        "stddef.h": "c",
+        "stdlib.h": "c",
+        "ff.h": "c"
     }
 }

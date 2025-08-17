@@ -36,7 +36,8 @@
 // Drive selection bits
 #define IDE_DRIVE_MASTER        0xE0
 #define IDE_DRIVE_SLAVE         0xF0
-
+//Differs between cf card and hdd
+#define IDE_TIMEOUT 99000
 // I/O port access functions (implement these for your system)
 static inline void ide_outb(uint16_t port, uint8_t value) {
     
@@ -61,36 +62,40 @@ static inline uint16_t ide_inw(uint16_t port) {
 
 // Wait for drive to be ready
 static int ide_wait_ready(void) {
-    int timeout = 1000;
+    int timeout = IDE_TIMEOUT;
     int8_t status;
     
     while (timeout--) {
         status = ide_inb(IDE_STATUS);
 
-        if (!(status & IDE_BSY) && (status & IDE_DRDY)) {
+        if (!(status & IDE_BSY) && (status & IDE_DRDY) && (status & IDE_DSC)) {
             return 0;  // Ready
         }
-        
+        if (status & IDE_ERR) {
+            printf("IDE error stat %d\n", ide_inb(IDE_ERROR));
+            return -1;  // Error
+        }
     }
     
-    return -1;  // Timeout
+    return -2;  // Timeout
 }
 
 // Wait for data request
 static int ide_wait_drq(void) {
-    int timeout = 100000;
+    int timeout = IDE_TIMEOUT;
     uint8_t status;
     
     while (timeout--) {
         status = ide_inb(IDE_STATUS);
-        if (!(status & IDE_BSY) && (status & IDE_DRQ)) {
+        if (!(status & IDE_BSY) && (status & IDE_DRQ) && (status & IDE_DSC)) {
             return 0;  // Data ready
         }
         if (status & IDE_ERR) {
+            printf("IDE error stat %d\n", ide_inb(IDE_ERROR));
             return -1;  // Error
         }
     }
-    return -1;  // Timeout
+    return -2;  // Timeout
 }
 
 // 400ns delay (read alternate status 4 times)
@@ -232,8 +237,9 @@ void sys_write_sectors(int cnt, const void *buffer, long lba) {
     ide_delay_400ns();
 
     for (int i = 0; i < n; i++) {
-        if (ide_wait_drq() < 0) {
-            printf("IDE write timeout or error\n");
+        int stat = ide_wait_drq();
+        if (stat < 0) {
+            printf("IDE write timeout or error %d\n",stat);
             return;
         }
         const uint16_t *wbuf = (const uint16_t *)(buf + i * 512);

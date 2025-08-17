@@ -7,6 +7,9 @@
 #include <sys/time.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/reent.h>  // For struct _reent
+#include <fcntl.h>
 //Sys stuff
 #include<sys_amix.h>
 
@@ -35,64 +38,6 @@ void _exit(int status) {
     }
 }
 
-/* Reentrant write stub using TRAP #0 */
-    char * cbuf[256];
-int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
-    size_t i;
-    memcpy(cbuf,buf, count);
-    cbuf[count] = 0; //end of string
-    switch (fd) {
-    case STDOUT_FILENO:
-    case STDERR_FILENO:
-        //for (i = 0; i < count; i++) {
-            //sys_update_scrool();
-            /* TRAP #0, D1 = syscall number (0 = write char),
-               D0 = character, A0 = unused here */
-            //syscall_trap0(0L, (long)(unsigned char)cbuf[i], 0L);
-            if(count != 0){syscall_trap0(0xFL, count, cbuf);} //print string
-            
-        //}
-        return (int)count;  /* Number of bytes written */
-    case UART_FILENO:
-        for (i = 0; i < count; i++) {
-            /* TRAP #0, D1 = syscall number (2 = write char UART),
-               D0 = character, A0 = unused here */
-            syscall_trap0(0L, (long)cbuf[i], 0L);
-        }
-        
-    default:
-        r->_errno = EBADF;
-        return -1;
-    }
-}
-
-/* Reentrant read stub using TRAP #0 */
-int _read_r(struct _reent *r, int fd, void *buf, size_t count) {
-    char *cbuf = (char *)buf;
-    size_t i;
-    long result;
-
-    switch (fd) {
-    case STDIN_FILENO:
-        for (i = 0; i < count; i++) {
-            /* TRAP #0, D1 = syscall number (8 = read char from keyboard),
-               D0 = unused, A0 = unused, returns char in D0 */
-            result = syscall_trap0(8, 0L, 0L);
-            
-            cbuf[i] = (char)(result & 0xFF);
-            
-            /* Stop on newline/carriage return for line-buffered input */
-            if (cbuf[i] == '\n' || cbuf[i] == '\r') {
-                return (int)(i + 1);
-            }
-        }
-        return (int)count;  /* Number of bytes read */
-
-    default:
-        r->_errno = EBADF;
-        return -1;
-    }
-}
 
 
 // Memory management
@@ -109,23 +54,6 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
     return (void *)prev_heap_end;
 }
 
-// File operations - minimal implementations
-int _close_r(struct _reent *r, int fd) { 
-    return 0; // Always succeed for now
-}
-
-int _fstat_r(struct _reent *r, int fd, struct stat *st) { 
-    st->st_mode = S_IFCHR;  // Character device
-    return 0;
-}
-
-int _isatty_r(struct _reent *r, int fd) { 
-    return (fd >= 0 && fd <= 3) ? 1 : 0;  // stdin, stdout, stderr, uart are ttys
-}
-
-int _lseek_r(struct _reent *r, int fd, off_t pos, int whence) { 
-    return 0; 
-}
 
 
 // Process control - minimal implementations
@@ -133,50 +61,78 @@ int _getpid_r(struct _reent *r) { return 1; }
 int _kill_r(struct _reent *r, int pid, int sig) { r->_errno = ENOSYS; return -1; }
 int _link_r(struct _reent *r, const char *old, const char *new) { r->_errno = EMLINK; return -1; }
 int _unlink_r(struct _reent *r, const char *name) { r->_errno = ENOENT; return -1; }
-int _stat_r(struct _reent *r, const char *file, struct stat *st) { st->st_mode = S_IFCHR; return 0; }
 int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp) { return 0; }
 
+enum {
+    SYSCALL_OPEN  = 0,
+    SYSCALL_CLOSE,
+    SYSCALL_READ,
+    SYSCALL_WRITE,
+    SYSCALL_LSEEK,
+    SYSCALL_FSTAT,
+    SYSCALL_ISTTY,
+    SYSCALL_STAT
+};
 
-/* POSIX‐style _write stub that calls the reentrant version */
-int _write(int fd, const void *buf, size_t count) {
-    const char *cbuf = buf;
-    size_t i;
-    switch (fd) {
-    case STDOUT_FILENO:
-    case STDERR_FILENO:
-        for (i = 0; i < count; i++) {
-            // Using newlib’s reentrant stub:
-            _write_r(_REENT, fd, &cbuf[i], 1);
-            // Or if you bypass it:
-            // syscall_trap0(3, (long)cbuf[i], 0);
-        }
-        return count;   // Return bytes written
-    case UART_FILENO:
-        //for (i = 0; i < count; i++) {
-            // Using newlib’s reentrant stub:
-            _write_r(_REENT, fd, cbuf, count);
-            // Or if you bypass it:
-            // syscall_trap0(3, (long)cbuf[i], 0);
-        //}
-        return count;   // Return bytes written
-    default:
-        // Indicate unsupported FD
-        errno = EBADF;
-        return -1;
-    }
+//kernel SYS calls
+
+static inline int syscall_trap1(uintptr_t r, int callno, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3) //arg4 is ussaly reerant
+{
+    int ret;
+    //printf("Fname add sent:\n %lx",arg1);
+    __asm__ volatile (
+        "move.l %1, %%d0\n\t"
+        "move.l %2, %%d1\n\t"
+        "move.l %3, %%d2\n\t"
+        "move.l %4, %%d3\n\t"
+        "move.l %5, %%d4\n\t"
+        "trap #1\n\t"
+        "move.l %%d0, %0\n\t"
+        : "=r"(ret)
+        : "r"(callno), "r"(arg1), "r"(arg2), "r"(arg3), "r"(r)
+        : "d0", "d1", "d2", "d3", "d4", "memory"
+    );
+    //printf("ret got= %d\n",ret);
+    return ret;
 }
 
-int _read(int fd, char *buf, size_t count) {
-    size_t i;
-    switch (fd)
-    {
-    case STDIN_FILENO:
-        _read_r(_REENT, fd, buf, count);
-        return i;
-    
-    
-    default:
-        errno = EBADF;
-        return -1;
-    }
+
+// _open_r: open file
+int _open_r(struct _reent *r, const char *name, int flags, int mode) {
+    return syscall_trap1((uintptr_t)r, SYSCALL_OPEN, (uintptr_t)name, (uintptr_t)flags, (uintptr_t)mode);
+}
+
+// _close_r: close file descriptor
+int _close_r(struct _reent *r, int fd) {
+    return syscall_trap1((uintptr_t)r, SYSCALL_CLOSE, (uintptr_t)fd, 0, 0);
+}
+
+// _read_r: read from fd into buffer
+int _read_r(struct _reent *r, int fd, void *buf, size_t count) {
+    return syscall_trap1((uintptr_t)r, SYSCALL_READ, (uintptr_t)fd, (uintptr_t)buf, (uintptr_t)count);
+}
+
+// _write_r: write to fd from buffer
+int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
+    return syscall_trap1((uintptr_t)r, SYSCALL_WRITE, (uintptr_t)fd, (uintptr_t)buf, (uintptr_t)count);
+}
+
+// _lseek_r: seek fd
+int _lseek_r(struct _reent *r, int fd, int offset, int whence) {
+    return syscall_trap1((uintptr_t)r, SYSCALL_LSEEK, (uintptr_t)fd, (uintptr_t)offset, (uintptr_t)whence);
+}
+
+// _fstat_r: stat file descriptor
+int _fstat_r(struct _reent *r, int fd, void *statbuf) {
+    return syscall_trap1((uintptr_t)r, SYSCALL_FSTAT, (uintptr_t)fd, (uintptr_t)statbuf, 0);
+}
+
+// _isatty_r: test if fd is tty
+int _isatty_r(struct _reent *r, int fd) {
+    return syscall_trap1((uintptr_t)r, SYSCALL_ISTTY, (uintptr_t)fd, 0, 0);
+}
+
+// _stat_r: stat a filename
+int _stat_r(struct _reent *r, const char *name, void *statbuf) {
+    return syscall_trap1((uintptr_t)r, SYSCALL_STAT, (uintptr_t)name, (uintptr_t)statbuf, 0);
 }

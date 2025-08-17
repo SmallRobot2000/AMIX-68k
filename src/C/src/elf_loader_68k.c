@@ -144,8 +144,12 @@ uint32_t load_and_file_elf(const char *path, void *base_addr, const char *bin_pa
     FIL fil;
     
     /* 1) Open file and check size */
-    if (f_open(&fil, path, FA_READ) != FR_OK) return (uint32_t)-1;
-    
+    FRESULT fres = f_open(&fil, path, FA_READ);
+    if (fres != FR_OK) 
+    {
+        printf("Error opening file %d\n",fres);
+        return (uint32_t)-1;
+    }
     FSIZE_t fsize = f_size(&fil);
     if (fsize > BIGBUF_SIZE) {
         f_close(&fil);
@@ -154,8 +158,10 @@ uint32_t load_and_file_elf(const char *path, void *base_addr, const char *bin_pa
     
     /* 2) Read entire file */
     UINT br;
-    if (f_read(&fil, bigbuf, fsize, &br) != FR_OK || br != fsize) {
+    fres = f_read(&fil, bigbuf, fsize, &br);
+    if (fres != FR_OK || br != fsize) {
         f_close(&fil);
+        printf("Error opening file %d\n",fres);
         return (uint32_t)-1;
     }
     f_close(&fil);
@@ -364,7 +370,7 @@ int run_file(const char* path)
         uint32_t res = load_elf(path, (void *)_WORKING_PROGRAM_ADD);
         if(res < 0 || res != _WORKING_PROGRAM_ADD)
         {
-            perror("Loading file failed");
+            printf("Loading file failed %ld",res);
             return -1;
         
         }
