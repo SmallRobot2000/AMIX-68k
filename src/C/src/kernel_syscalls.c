@@ -14,7 +14,7 @@ int _lseek_r(struct _reent *, int, int, int);
 int _fstat_r(struct _reent *, int, void *);
 int _isatty_r(struct _reent *, int);
 int _stat_r(struct _reent *, const char *, void *);
-
+int _gettimeofday_r(struct _reent *r, void *, void *);
 /* Prototype of your trap handler - must be a function with 
    proper 68010 assembly prologue to handle the trap */
 
@@ -28,7 +28,8 @@ enum {
     SYSCALL_LSEEK,
     SYSCALL_FSTAT,
     SYSCALL_ISTTY,
-    SYSCALL_STAT
+    SYSCALL_STAT,
+    SYSCALL_TIME
 };
 
 static inline uintptr_t read_vbr(void) {
@@ -94,6 +95,9 @@ int trap1_dispatch(void) {
         case SYSCALL_STAT:
             ret = _stat_r(r, (const char *)arg1, (void *)arg2);
             break;
+        case SYSCALL_TIME:
+            ret = _gettimeofday_r(r, (void *)arg1, (void*)arg2);
+            break;
         default:
             ret = -1; // Unknown syscall
             break;
@@ -102,7 +106,7 @@ int trap1_dispatch(void) {
     return ret;
 }
 
-static inline int syscall_trap1(uintptr_t r, int callno, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3) //arg4 is ussaly reerant
+static inline int syscall_trap1(uintptr_t r, int callno, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3)
 {
     int ret;
     //printf("Fname add sent:\n %lx",arg1);

@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <stddef.h>
 #include <errno.h>
-
+#include <RTC.h>
 //Sys stuff
 #include<sys_amix.h>
 #include <stdint.h>
@@ -153,12 +153,41 @@ off_t _lseek_r(struct _reent *r, int fd, off_t offset, int whence) {
     return newpos;
 }
 
+
+long rtc_to_unix_epoch(int year, int mon, int day, int hour, int min, int sec) {
+    // Simple table for days before each month; adjust for leap years
+    static const int days_before_month[12] = { 0,31,59,90,120,151,181,212,243,273,304,334 };
+    int y = year - 1970;
+    int leap_days = (y + 2) / 4 - (y + 70) / 100 + (y + 370) / 400;
+    int days = y * 365 + leap_days + days_before_month[mon-1] + (day-1);
+
+    // Leap year adjustment
+    if ((mon > 2) && ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))) {
+        days++;
+    }
+
+    return ((long)days * 24 * 3600) + (hour * 3600) + (min * 60) + sec;
+}
+
 // Process control - minimal implementations
 int _getpid_r(struct _reent *r) { return 1; }
 int _kill_r(struct _reent *r, int pid, int sig) { r->_errno = ENOSYS; return -1; }
 int _link_r(struct _reent *r, const char *old, const char *new) { r->_errno = EMLINK; return -1; }
 int _unlink_r(struct _reent *r, const char *name) { r->_errno = ENOENT; return -1; }
-int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp) { return 0; }
+int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp) 
+{ 
+    uint8_t year, date, mon, sec, min, hr, day;
+    rtc_get_time(&sec, &min, &hr, &day, &date, &mon, &year);
+    int full_year = year+2000;
+    long epoch = rtc_to_unix_epoch(full_year, mon, date, hr, min, sec);
+
+    if(tp)
+    {
+        tp->tv_sec = epoch;
+        tp->tv_usec = 0; //no micro seconds!
+    }
+    return 0; 
+}
 
 // _stat_r: info about a file path (not necessarily open)
 int _stat_r(struct _reent *r, const char *path, struct stat *st) {

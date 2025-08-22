@@ -10,6 +10,7 @@
         "functional": "c",
         "stddef.h": "c",
         "stdlib.h": "c",
-        "ff.h": "c"
+        "ff.h": "c",
+        "unistd.h": "c"
     }
 }

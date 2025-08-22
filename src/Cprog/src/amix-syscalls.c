@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <sys/reent.h>  // For struct _reent
 #include <fcntl.h>
+#include <RTC.h>
 //Sys stuff
 #include<sys_amix.h>
 
@@ -18,6 +19,40 @@
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
 #define UART_FILENO     3    // Custom: UART i/os
+
+enum {
+    SYSCALL_OPEN  = 0,
+    SYSCALL_CLOSE,
+    SYSCALL_READ,
+    SYSCALL_WRITE,
+    SYSCALL_LSEEK,
+    SYSCALL_FSTAT,
+    SYSCALL_ISTTY,
+    SYSCALL_STAT,
+    SYSCALL_TIME
+};
+
+//kernel SYS calls
+
+static inline int syscall_trap1(uintptr_t r, int callno, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3)
+{
+    int ret;
+    //printf("Fname add sent:\n %lx",arg1);
+    __asm__ volatile (
+        "move.l %1, %%d0\n\t"
+        "move.l %2, %%d1\n\t"
+        "move.l %3, %%d2\n\t"
+        "move.l %4, %%d3\n\t"
+        "move.l %5, %%d4\n\t"
+        "trap #1\n\t"
+        "move.l %%d0, %0\n\t"
+        : "=r"(ret)
+        : "r"(callno), "r"(arg1), "r"(arg2), "r"(arg3), "r"(r)
+        : "d0", "d1", "d2", "d3", "d4", "memory"
+    );
+    //printf("ret got= %d\n",ret);
+    return ret;
+}
 
 void _exit(int status) {
     // Print exit message to screen
@@ -54,48 +89,15 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
     return (void *)prev_heap_end;
 }
 
-
-
 // Process control - minimal implementations
 int _getpid_r(struct _reent *r) { return 1; }
 int _kill_r(struct _reent *r, int pid, int sig) { r->_errno = ENOSYS; return -1; }
 int _link_r(struct _reent *r, const char *old, const char *new) { r->_errno = EMLINK; return -1; }
 int _unlink_r(struct _reent *r, const char *name) { r->_errno = ENOENT; return -1; }
-int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp) { return 0; }
-
-enum {
-    SYSCALL_OPEN  = 0,
-    SYSCALL_CLOSE,
-    SYSCALL_READ,
-    SYSCALL_WRITE,
-    SYSCALL_LSEEK,
-    SYSCALL_FSTAT,
-    SYSCALL_ISTTY,
-    SYSCALL_STAT
-};
-
-//kernel SYS calls
-
-static inline int syscall_trap1(uintptr_t r, int callno, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3) //arg4 is ussaly reerant
-{
-    int ret;
-    //printf("Fname add sent:\n %lx",arg1);
-    __asm__ volatile (
-        "move.l %1, %%d0\n\t"
-        "move.l %2, %%d1\n\t"
-        "move.l %3, %%d2\n\t"
-        "move.l %4, %%d3\n\t"
-        "move.l %5, %%d4\n\t"
-        "trap #1\n\t"
-        "move.l %%d0, %0\n\t"
-        : "=r"(ret)
-        : "r"(callno), "r"(arg1), "r"(arg2), "r"(arg3), "r"(r)
-        : "d0", "d1", "d2", "d3", "d4", "memory"
-    );
-    //printf("ret got= %d\n",ret);
-    return ret;
+int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp) 
+{ 
+    return syscall_trap1((uintptr_t)r, SYSCALL_TIME, (uintptr_t)tp, (uintptr_t)tzp, 0);
 }
-
 
 // _open_r: open file
 int _open_r(struct _reent *r, const char *name, int flags, int mode) {
