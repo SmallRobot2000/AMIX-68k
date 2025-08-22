@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -e
 
 LDSCRIPT=$1
-COMM_INC=$2
+COMM_INC=$2 #Common Include directory
 SRC_DIR=${3:-../src}
 BIN_DIR=${4:-../bin}
 INC_DIR=${5:-../include}
@@ -19,55 +19,57 @@ INCDIR="${NEWLIB_BASE}/${TARGET_PREFIX}/include"
 LIBDIR="${NEWLIB_BASE}/${TARGET_PREFIX}/lib"
 
 # Clean previous builds
-rm -f "$BIN_DIR"/*.{o,elf,bin,srec,map}
+rm -f "$BIN_DIR"/*.o "$BIN_DIR"/*.elf "$BIN_DIR"/*.bin "$BIN_DIR"/*.srec "$BIN_DIR"/*.map
 
-# Enable debug info for .symtab, keep relocations
-COMMON_CFLAGS="-Os -g -m68010 -ffunction-sections -fdata-sections -Wall -I${INCDIR} -I${INC_DIR} -I${COMM_INC}"
+COMMON_CFLAGS="-Os -m68010 -ffunction-sections -fdata-sections -g -Wall -I${INCDIR} -I${INC_DIR} -I${COMM_INC}"
 
 echo "Compiling C files..."
-for src in "$SRC_DIR"/*.c; do
-  [ -e "$src" ] || continue
-  obj="$BIN_DIR/$(basename "${src%.c}").o"
-  echo "  $src -> $obj"
-  $CC $COMMON_CFLAGS -c "$src" -o "$obj"
+for c in "$SRC_DIR"/*.c; do
+  [ -e "$c" ] || continue
+  obj="$BIN_DIR/$(basename "${c%.c}").o"
+  echo "  $c → $obj"
+  $CC $COMMON_CFLAGS -c "$c" -o "$obj"
 done
 
 echo "Compiling assembly files..."
-for src in "$SRC_DIR"/*.S; do
-  [ -e "$src" ] || continue
-  obj="$BIN_DIR/$(basename "${src%.S}").o"
-  echo "  $src -> $obj"
-  $CC $COMMON_CFLAGS -c "$src" -o "$obj"
+for s in "$SRC_DIR"/*.S; do
+  [ -e "$s" ] || continue
+  obj="$BIN_DIR/$(basename "${s%.S}").o"
+  echo "  $s → $obj"
+  $CC $COMMON_CFLAGS -c "$s" -o "$obj"
 done
 
-OBJ_FILES=("$BIN_DIR"/*.o)
-if [ "${#OBJ_FILES[@]}" -eq 0 ]; then
-  echo "Error: No object files found in $BIN_DIR"
+OBJ_FILES=$(find "$BIN_DIR" -maxdepth 1 -name '*.o' -print)
+if [ -z "$OBJ_FILES" ]; then
+  echo "Error: no .o files in $BIN_DIR"
   exit 1
 fi
 
-echo "Linking into program.elf (with relocations)..."
-CRT0="$BIN_DIR/crt0.o"
-MAIN="$BIN_DIR/main.o"
-OTHER_OBJS=()
-for o in "${OBJ_FILES[@]}"; do
-  case "$(basename "$o")" in
-    crt0.o|main.o) ;;
-    *) OTHER_OBJS+=("$o") ;;
+echo "Linking into ELF (symbols preserved)..."
+CRT0_OBJ="$BIN_DIR/crt0.o"
+MAIN_OBJ="$BIN_DIR/main.o"
+OTHER_OBJS=$(for o in $OBJ_FILES; do
+  case "$o" in
+    "$CRT0_OBJ"|"$MAIN_OBJ") ;;
+    *) printf ' %s' "$o" ;;
   esac
-done
+done)
 
 $CC -nostartfiles \
-    "$CRT0" "$MAIN" "${OTHER_OBJS[@]}" \
+    "$CRT0_OBJ" "$MAIN_OBJ" $OTHER_OBJS \
     -T "$LDSCRIPT" \
     -L "$LIBDIR" \
-    -Wl,-Map="$BIN_DIR/program.map",--gc-sections,--emit-relocs \
+    -Wl,-Map="$BIN_DIR/program.map",--gc-sections \
     -lc -lm -lgcc \
     -o "$BIN_DIR/program.elf"
 
-echo "Stripping debug symbols only..."
-$STRIP --strip-unneeded "$BIN_DIR/program.elf"
+echo "Generated $BIN_DIR/program.elf (symbols intact)"
 
+echo "Size:"
+$SIZE "$BIN_DIR/program.elf"
+
+echo "Stripping debug symbols only..."
+$STRIP --strip-debug "$BIN_DIR/program.elf"
 
 echo "Size of program.elf:"
 $SIZE "$BIN_DIR/program.elf"
@@ -75,5 +77,4 @@ $SIZE "$BIN_DIR/program.elf"
 echo "Generating binary and SREC..."
 $OBJCOPY -O binary "$BIN_DIR/program.elf" "$BIN_DIR/program.bin"
 $OBJCOPY -O srec   "$BIN_DIR/program.elf" "$BIN_DIR/program.srec"
-
 echo "Build complete."

@@ -35,8 +35,6 @@ echo "Please put the target into XMODEM receive mode now."
 
 # Send file via XMODEM
 sx "$FILE_TO_SEND" > "$SERIAL_DEV" < "$SERIAL_DEV"
-
-
 STATUS=$?
 
 if [ $STATUS -ne 0 ]; then
