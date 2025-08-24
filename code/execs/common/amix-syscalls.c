@@ -80,7 +80,6 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
 int _getpid_r(struct _reent *r) { return 1; }
 int _kill_r(struct _reent *r, int pid, int sig) { r->_errno = ENOSYS; return -1; }
 int _link_r(struct _reent *r, const char *old, const char *new) { r->_errno = EMLINK; return -1; }
-int _unlink_r(struct _reent *r, const char *name) { r->_errno = ENOENT; return -1; }
 int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp) 
 { 
     return syscall_trap1((uintptr_t)r, SYSCALL_TIME, (uintptr_t)tp, (uintptr_t)tzp, 0);
@@ -157,6 +156,27 @@ struct dirent *readdir(DIR *d)
 int closedir(DIR *d)
 {
     int ret = syscall_trap1((uintptr_t)&rent, SYSCALL_CLOSEDIR, (uintptr_t)d, 0, 0);
+    errno = rent._errno;
+    return ret;
+}
+
+int mkdir(const char *pathname, mode_t mode)
+{
+    int ret = syscall_trap1((uintptr_t)&rent, SYSCALL_MKDIR, (uintptr_t)pathname, mode, 0);
+    errno = rent._errno;
+    return ret;
+}
+
+int rmdir(const char *pathname) 
+{
+    int ret = syscall_trap1((uintptr_t)&rent, SYSCALL_RMDIR, (uintptr_t)pathname, 0, 0);
+    errno = rent._errno;
+    return ret;
+}
+
+int _unlink_r(struct _reent *r, const char *pathname) 
+{
+    int ret = syscall_trap1((uintptr_t)&rent, SYSCALL_UNLINK, (uintptr_t)pathname, 0, 0);
     errno = rent._errno;
     return ret;
 }

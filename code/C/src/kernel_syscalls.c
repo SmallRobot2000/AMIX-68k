@@ -24,7 +24,10 @@ extern int _fstat_r(struct _reent *, int, void *);
 extern int _isatty_r(struct _reent *, int);
 extern int _stat_r(struct _reent *, const char *, void *);
 extern int _gettimeofday_r(struct _reent *r, void *, void *);
+extern int _unlink_r(struct _reent *r, const char *path);
+// Unlink (delete) file syscall replacement for newlib with FATfs
 
+ 
 //other FS stuff
 int _chdir_r(struct _reent *r, const char *str)
 {
@@ -136,6 +139,49 @@ int _closedir_r(struct _reent *r, DIR *d) {
     }
     return 0;
 }
+int _mkdir_r(struct _reent *r, const char *pathname, int mode) { //mode not used for now
+    (void)mode; // suppress unused param warning
+
+    FRESULT res;
+
+    // Create directory
+    res = f_mkdir(pathname);
+    if (res != FR_OK && res != FR_EXIST) {
+        r->_errno = fatfs_to_errno(res);
+        errno = r->_errno;
+        return -1;
+    }
+    r->_errno = 0;
+    return 0;
+}
+
+
+
+// Remove directory syscall replacement for newlib with FATfs
+int _rmdir_r(struct _reent *r, const char *path) {
+    FILINFO fno;
+    FRESULT res;
+
+    res = f_stat(path, &fno);
+    if (res != FR_OK) {
+        r->_errno = fatfs_to_errno(res);
+        return -1;
+    }
+
+    if (fno.fattrib & AM_DIR) {
+        res = f_unlink(path);
+        if (res != FR_OK) {
+            r->_errno = fatfs_to_errno(res);
+            return -1;
+        }
+        return 0;
+    }
+
+    r->_errno = ENOTDIR;
+    return -1;
+}
+
+
 
 
 int trap1_dispatch(void) {
@@ -196,6 +242,15 @@ int trap1_dispatch(void) {
             break;
         case SYSCALL_READDIR:
             ret = (uintptr_t)_readdir_r(r, (DIR*)arg1);
+            break;
+        case SYSCALL_MKDIR:
+            ret = _mkdir_r(r, (const char*)arg1, arg2);
+            break;
+        case SYSCALL_RMDIR:
+            ret = _rmdir_r(r, (const char*)arg1);
+            break;
+        case SYSCALL_UNLINK:
+            ret = _unlink_r(r, (const char*)arg1);
             break;
         default:
             ret = -1; // Unknown syscall

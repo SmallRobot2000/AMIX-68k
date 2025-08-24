@@ -311,12 +311,6 @@ void parse_line(char* line)
         char * arg;
         arg = strtok(NULL," ");
         printf("\n%s\n",arg);
-    }else if(strcmp(linePtr,"mkdir") == 0)
-    {
-        char * arg;
-        arg = strtok(NULL," ");
-        if(f_mkdir(arg)){printf("Error");}
-        printf("\n");
     }/*else if(strcmp(linePtr,"ls") == 0)
     {
         char * arg;
@@ -474,7 +468,7 @@ void parse_line(char* line)
         dump_memory((void *)add, (size_t)len);
         printf("\n");
         
-    }else if(strcmp(linePtr,"rm") == 0)
+    }/*else if(strcmp(linePtr,"rm") == 0)
     {
         printf("\n");
         char *arg = strtok(NULL, " ");
@@ -487,7 +481,7 @@ void parse_line(char* line)
         {
             printf("Error removing file\n");
         }
-    }else if(strcmp(linePtr,"umnt") == 0)
+    }*/else if(strcmp(linePtr,"umnt") == 0)
     {
         char *arg = strtok(NULL, " ");
         if(arg == NULL)

@@ -173,7 +173,31 @@ long rtc_to_unix_epoch(int year, int mon, int day, int hour, int min, int sec) {
 int _getpid_r(struct _reent *r) { return 1; }
 int _kill_r(struct _reent *r, int pid, int sig) { r->_errno = ENOSYS; return -1; }
 int _link_r(struct _reent *r, const char *old, const char *new) { r->_errno = EMLINK; return -1; }
-int _unlink_r(struct _reent *r, const char *name) { r->_errno = ENOENT; return -1; }
+
+// Unlink (delete) file syscall replacement for newlib with FATfs
+int _unlink_r(struct _reent *r, const char *path) {
+    FILINFO fno;
+    FRESULT res;
+
+    res = f_stat(path, &fno);
+    if (res != FR_OK) {
+        r->_errno = fatfs_to_errno(res);
+        return -1;
+    }
+
+    if (fno.fattrib & AM_DIR) {
+        r->_errno = EISDIR;
+        return -1;
+    }
+
+    res = f_unlink(path);
+    if (res != FR_OK) {
+        r->_errno = fatfs_to_errno(res);
+        return -1;
+    }
+
+    return 0;
+}
 int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp) 
 { 
     uint8_t year, date, mon, sec, min, hr, day;
