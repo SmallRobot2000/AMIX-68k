@@ -11,6 +11,7 @@
 #include <sys/reent.h>  // For struct _reent
 #include <fcntl.h>
 #include <RTC.h>
+#include <dirent.h>
 //Sys stuff
 #include<sys_amix.h>
 #include<kernel_syscalls.h>
@@ -136,6 +137,26 @@ char *getcwd(char *buf, size_t size)
 int chdir(const char *path)
 {
     int ret = syscall_trap1((uintptr_t)&rent, SYSCALL_CD, (uintptr_t)path, 0, 0);
+    errno = rent._errno;
+    return ret;
+}
+
+//dirent
+DIR *opendir(const char *path)
+{
+    DIR *ret = (DIR *)syscall_trap1((uintptr_t)&rent, SYSCALL_OPENDIR, (uintptr_t)path, 0, 0);
+    errno = rent._errno;
+    return ret;
+}
+struct dirent *readdir(DIR *d)
+{
+    struct dirent *ret = (struct dirent *)syscall_trap1((uintptr_t)&rent, SYSCALL_READDIR, (uintptr_t)d, 0, 0);
+    errno = rent._errno;
+    return ret;
+}
+int closedir(DIR *d)
+{
+    int ret = syscall_trap1((uintptr_t)&rent, SYSCALL_CLOSEDIR, (uintptr_t)d, 0, 0);
     errno = rent._errno;
     return ret;
 }

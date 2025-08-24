@@ -11,6 +11,7 @@
         "stddef.h": "c",
         "stdlib.h": "c",
         "ff.h": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "stat.h": "c"
     }
 }

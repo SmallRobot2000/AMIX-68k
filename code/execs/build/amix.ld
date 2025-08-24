@@ -11,8 +11,8 @@ __DYNAMIC = 0;
 
 MEMORY
 {
-    ram (rwx) : ORIGIN = 0x000000, LENGTH = 512K
-
+    ram (rwx) : ORIGIN = 0x000000, LENGTH = 2M
+    rom (rx)  : ORIGIN = 0x000000, LENGTH = 1M
 }
 
 /* Stack positioned after BSS, heap grows upward from there */
@@ -96,13 +96,11 @@ SECTIONS
 
     /* Stack area - fixed size after BSS */
     . = ALIGN(8);
-    _stack_start = .;
     . = . + 0x2000;  /* 8KB stack space */
     __stack = .;     /* Top of stack (SP starts here) */
     
     /* Heap starts after stack, grows upward */
-    _heap_start = .;
-    _heap_end = ORIGIN(ram) + 0x2000;  /* Use 8K heap */
+    _heap_start = . + 4;
 
     /* Debug sections (not loaded into memory) */
     .stab 0 (NOLOAD) : { *(.stab) }

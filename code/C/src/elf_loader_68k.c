@@ -297,13 +297,12 @@ uint32_t load_and_file_elf(const char *path, void *base_addr, const char *bin_pa
 
 //extern char* environ[];
 typedef int (*prog_main_t)(int argc, char *argv[], char *environ[]);
-int call_address(uint32_t add)
+int call_address(uint32_t add, char **argv, int argc)
 {
     prog_main_t prog_main = (prog_main_t)add;
-    char *argv[] = {"My name! WHAT IS MY NAME???",NULL};
-    int argc = sizeof(argv) / sizeof(argv[0]) - 1;  // Count elements, subtract 1 for NULL terminator
-    int result = prog_main( argc, argv, environ);
-    return result;
+    //char *argv[] = {"My name! WHAT IS MY NAME???",NULL};
+    //int argc = sizeof(argv) / sizeof(argv[0]) - 1;  // Count elements, subtract 1 for NULL terminator
+    return prog_main( argc, argv, environ);
 }
 
 
@@ -362,7 +361,7 @@ bool is_elf_file(const char *path)
 }
 
 char resbuff[256];
-int run_file(const char* path)
+int run_file(const char* path, char **argv, int argc) //sets $?
 {
     int is_elf = is_elf_file(path);
     if(is_elf == true)
@@ -374,20 +373,20 @@ int run_file(const char* path)
             return -1;
         
         }
-        int cres = call_address(_WORKING_PROGRAM_ADD);
+        int cres = call_address(_WORKING_PROGRAM_ADD, argv, argc);
         itoa(cres, resbuff, 256);
         setenv("?",resbuff, 1); //set error return
         
-        return 0;
+        return cres;
     }else{
         FIL fd;
         FRESULT res = f_open(&fd, path, FA_READ);
         if(res)
         {
-            printf("Error opening file");
+            printf("%s: file not found",path);
             return -1;
         }
-        uint br;
+        unsigned int br;
         res = f_read(&fd, (void *)_WORKING_PROGRAM_ADD, _WORKING_PROGRAM_MAX_SIZE, &br);
         if(res != FR_OK)
         {
@@ -397,7 +396,7 @@ int run_file(const char* path)
         {
             printf("Error file too big");
         }
-        int cres = call_address(_WORKING_PROGRAM_ADD);
+        int cres = call_address(_WORKING_PROGRAM_ADD, argv, argc);
         itoa(cres, resbuff, 256);
         setenv("?",resbuff, 1); //set error return
         return 0;

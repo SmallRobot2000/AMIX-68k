@@ -27,7 +27,7 @@ LIBDIR="${NEWLIB_BASE}/${TARGET_PREFIX}/lib"
 # Enable debug info for .symtab, keep relocations
 COMMON_CFLAGS="-Os -g -m68010 -ffunction-sections -fdata-sections -Wall -I${INCDIR} -I${INC_DIR}"
 
-echo "Compiling C files..."
+#echo "Compiling C files..."
 for src in "$SRC_DIR"/*.c; do
   [ -e "$src" ] || continue
   obj="$TMP_DIR/$(basename "${src%.c}").o"
@@ -42,7 +42,7 @@ for comm in "$COMM_DIR"/*.c; do
   $CC $COMMON_CFLAGS -c "$comm" -o "$obj"
 done
 
-echo "Compiling assembly files..."
+#echo "Compiling assembly files..."
 for src in "$SRC_DIR"/*.S; do
   [ -e "$src" ] || continue
   obj="$TMP_DIR/$(basename "${src%.S}").o"
@@ -63,7 +63,7 @@ if [ "${#OBJ_FILES[@]}" -eq 0 ]; then
   exit 1
 fi
 
-echo "Linking into $NAME.elf (with relocations)..."
+#echo "Linking into $NAME.elf (with relocations)..."
 CRT0="$TMP_DIR/crt0.o"
 MAIN="$TMP_DIR/main.o"
 OTHER_OBJS=()
@@ -79,10 +79,10 @@ $CC -nostartfiles \
     -T "$LDSCRIPT" \
     -L "$LIBDIR" \
     -Wl,-Map="$TMP_DIR/$NAME.map",--gc-sections,--emit-relocs \
-    -lc -lm -lgcc \
+    -lc -lm -lgcc -Wl,--no-warn-rwx-segments \
     -o "$BIN_DIR/$NAME.elf"
 
-echo "Stripping debug symbols only..."
+#echo "Stripping debug symbols only..."
 $STRIP --strip-unneeded "$BIN_DIR/$NAME.elf"
 
 
@@ -90,7 +90,7 @@ $STRIP --strip-unneeded "$BIN_DIR/$NAME.elf"
 #$SIZE "$BIN_DIR/$NAME.elf"
 
 #echo "Generating binary and SREC..."
-#$OBJCOPY -O binary "$BIN_DIR/$NAME.elf" "$BIN_DIR/$NAME.bin"
+$OBJCOPY -O binary "$BIN_DIR/$NAME.elf" "$BIN_DIR/$NAME.bin"
 #$OBJCOPY -O srec   "$BIN_DIR/$NAME.elf" "$BIN_DIR/$NAME.srec"
 
 #echo "Build complete."

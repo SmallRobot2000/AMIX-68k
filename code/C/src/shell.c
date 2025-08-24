@@ -31,310 +31,6 @@ char line[81];
 char print_buf[81];
 int history_cur = 0;
 
-FRESULT list_dir (const char *path)
-{
-    FRESULT res;
-    DIR dir;
-    FILINFO fno;
-    int nfile, ndir;
-    
-
-    res = f_opendir(&dir, path);                   /* Open the directory */
-    if (res == FR_OK) {
-        nfile = ndir = 0;
-        for (;;) {
-            res = f_readdir(&dir, &fno);           /* Read a directory item */
-            if (fno.fname[0] == 0) break;          /* Error or end of dir */
-            if (fno.fattrib & AM_DIR) {            /* It is a directory */
-                printf("   <DIR>   %s\n", fno.fname);
-                ndir++;
-            } else {                               /* It is a file */
-                printf("%10lu %s\n", fno.fsize, fno.fname);
-                nfile++;
-            }
-        }
-        f_closedir(&dir);
-        printf("%d dirs, %d files.\n", ndir, nfile);
-    } else {
-        printf("Failed to open \"%s\". (%u)\n", path, res);
-    }
-    return res;
-}
-
-void parse_line(char* line)
-{
-    char * linePtr = strtok(line, " ");
-    if(strcmp(linePtr,"clear") == 0) //no diff
-    {
-        //printf("We are testing!!\n");
-        sys_scroll(32);
-        syscall_trap0(0x0CL,0x00L,0x00); //set cursor to 0,0
-        //fs
-    }else if(strcmp(linePtr,"fdisk") == 0){
-        printf("Result of fdisk: %x\n", f_fdisk(0, plist, work));            /* Divide the physical drive 0 */
-        printf("Hello??? \n");
-
-
-    }else if(strcmp(linePtr,"getfree") == 0)
-    {
-        DWORD fre_clust, fre_sect, tot_sect;
-        FATFS *fatfs;
-        if(f_getfree("0",&fre_clust,&fatfs)){printf("Error!");}            /* Divide the physical drive 0 */
-        /* Get total sectors and free sectors */
-        tot_sect = (fatfs->n_fatent - 2) * fatfs->csize;
-        fre_sect = fre_clust * fatfs->csize;
-        /* Print the free space (assuming 512 bytes/sector) */
-        printf("%10lu KiB total drive space.\n%10lu KiB available.\n", tot_sect / 2, fre_sect / 2);
-        
-    }else if(strcmp(linePtr,"mkfs") == 0)
-    {
-        
-        printf("Result of mkfs: %d\n",f_mkfs("0:",NULL,work,FF_MAX_SS)); //default params
-    }else if(strcmp(linePtr,"mnt") == 0)
-    {
-        printf("Result of mnt: %d\n",f_mount(&fs,"0:",0)); //default params
-    }else if(strcmp(linePtr,"print") == 0)
-    {
-        char * arg;
-        arg = strtok(NULL," ");
-        printf("\n%s\n",arg);
-    }else if(strcmp(linePtr,"mkdir") == 0)
-    {
-        char * arg;
-        arg = strtok(NULL," ");
-        if(f_mkdir(arg)){printf("Error");}
-        printf("\n");
-    }else if(strcmp(linePtr,"cd") == 0)
-    {
-        char * arg;
-        arg = strtok(NULL," ");
-        if(f_chdir(arg)){printf("Error"); return;}
-        setenv("PWD",arg,1);
-        printf("\n");
-    }else if(strcmp(linePtr,"ls") == 0)
-    {
-        char * arg;
-        arg = strtok(NULL," ");
-        if(arg == NULL)
-        {
-            arg = ".";
-        }
-        printf("\n");
-        if(list_dir(arg)){printf("Error");}
-        
-    }else if(strcmp(linePtr,"pwd") == 0)
-    {
-        char path[80];
-        printf("\n");
-        //if(f_getcwd(path, 80)){printf("Error");}
-        printf("%s\n",getenv("PWD"));
-        
-    }else if(strcmp(linePtr,"xmodem") == 0)
-    {
-        char * arg;
-        arg = strtok(NULL," ");
-        if(arg == NULL)
-        {
-            printf("Usage: xmodem <file_name>");
-            return;
-        }
-        xmodem_receive(arg);
-        
-    }else if(strcmp(linePtr,"cat") == 0)
-    {
-        char * arg;
-        arg = strtok(NULL," ");
-        if(arg == NULL)
-        {
-            printf("Usage: xmodem <file_name>");
-            return;
-        }
-        FIL fp;
-        FRESULT res = f_open(&fp, arg, FA_READ);
-        if(res)
-        {
-            printf("Error opening file %s\n",arg);
-        }
-        char cbuf[32];
-        unsigned int bw;
-        while(1)
-        {
-            res = f_read(&fp, cbuf, 32, &bw);
-            if(res)
-            {
-                printf("Error reading file\n");
-                f_close(&fp);
-                return;
-            }
-            if(bw == 0)
-            {
-                break;
-            }
-            for(int i = 0; i < bw; i++)
-            {
-                printf("%c",cbuf[i]);
-            }
-        }
-        printf("\n");
-    }else if(strcmp(linePtr,"load") == 0)
-    {
-        printf("\n");
-        char * arg;
-        arg = strtok(NULL," ");
-        if(arg == NULL)
-        {
-            printf("Usage: load <.elf file> <address>\n");
-            return;
-        }
-        char path[128];
-        memcpy(path, arg, strlen(arg)+1);
-
-        arg = strtok(NULL," ");
-        if(arg == NULL)
-        {
-            printf("Usage: load <.elf file> <address>\n");
-            return;
-        }
-        char *end;
-        long add = strtol(arg, &end, 0);
-
-        if (errno == ERANGE) {
-            printf("Error converting address\n");
-            return;
-        }
-        if(end == arg || add < PRG_MIN_ADD)
-        {
-            printf("Invalid address\n");
-            return;
-        }
-        
-        printf("Load exit code: %lu\n", load_elf(path, (void*)add));
-    }else if(strcmp(linePtr,"run") == 0)
-    {
-        printf("\n");
-        char * arg;
-        arg = strtok(NULL," ");
-        
-        if(arg == NULL)
-        {
-            printf("Usage: run <ELF file>\n");
-            return;
-        }
-        uint32_t add = _WORKING_PROGRAM_ADD;
-        if(load_elf(arg, (void *)add) < 0)
-        {
-            printf("Error loading file\n");
-        }else{
-            printf("Return exit code: 0x%04x\n", call_address(add));
-        }
-        
-        
-        
-    }else if(strcmp(linePtr,"dump") == 0)
-    {
-        printf("\n");
-        char * arg;
-        arg = strtok(NULL," ");
-        char *end;
-        
-        if(arg == NULL)
-        {
-            printf("Usage: dump <address> <lenght>\n");
-            return;
-        }
-        long add = strtol(arg, &end, 0);
-
-        if (errno == ERANGE) {
-            printf("Error converting address\n");
-            return;
-        }
-        if(end == arg)
-        {
-            printf("Invalid address\n");
-            return;
-        }
-        arg = strtok(NULL," ");
-        if(arg == NULL)
-        {
-            printf("Usage: dump <address> <lenght>\n");
-            return;
-        }
-        long len = strtol(arg, &end, 0);
-
-        if (errno == ERANGE) {
-            printf("Error converting address\n");
-            return;
-        }
-        if(end == arg)
-        {
-            printf("Invalid address\n");
-            return;
-        }
-
-        printf("Dumping at 0x%08lx lengh 0x%08lx\n",add, len);
-        dump_memory((void *)add, (size_t)len);
-        printf("\n");
-        
-    }else if(strcmp(linePtr,"rm") == 0)
-    {
-        printf("\n");
-        char *arg = strtok(NULL, " ");
-        if(arg == NULL)
-        {
-            printf("Usage: rm <path>\n");
-        }
-        FRESULT res = f_unlink(arg);
-        if(res)
-        {
-            printf("Error removing file\n");
-        }
-    }else if(strcmp(linePtr,"umnt") == 0)
-    {
-        char *arg = strtok(NULL, " ");
-        if(arg == NULL)
-        {
-            printf("Usage: umnt <path>\n");
-        }
-        FRESULT res = f_unmount(arg);
-        if(res)
-        {
-            printf("Error unmounting drive %d\n",res);
-        }
-        return;
-    }else if(strcmp(linePtr, "mv") == 0)
-    {
-        printf("\n");
-        char *arg = strtok(NULL, " ");
-        char *arg1 = strtok(NULL, " ");
-        if(arg == NULL || arg1 == NULL)
-        {
-            printf("Usage: mv <old path> <new path>\n");
-        }
-        FRESULT res = f_rename(arg,arg1);
-        if(res)
-        {
-            printf("Fs error %d",res);
-        }
-    }else
-    {
-        printf("\n");
-        char prgPath[256];
-        strcpy(prgPath,_BIN_PATH);
-        strcat(prgPath,linePtr);
-        if(strchr(linePtr, '/')) //Is relative?
-        {
-            run_file(linePtr);
-            
-        }else{
-            run_file(prgPath);
-        }
-        printf("\n");
-    
-    }
-
-}
-
-
 
 
 
@@ -365,6 +61,32 @@ typedef struct {
     int append_mode;
     int background;
 } command_t;
+
+
+int call_command(command_t *cmd)
+{
+    char* path = cmd->argv[0];
+    
+    
+    if(strchr(path, '/')) //Full or relative path
+    {
+        return run_file(path, cmd->argv, cmd->argc);
+    }else{ //From /bin
+        char* fullPath = malloc(strlen(_BIN_PATH)+strlen(path)+1);
+        memset(fullPath, 0, strlen(_BIN_PATH)+strlen(path)+1);
+
+        strcat(fullPath, _BIN_PATH);
+        strcat(fullPath, path);
+        int ret = run_file(fullPath, cmd->argv, cmd->argc);
+        free(fullPath);
+        return ret;
+    }   
+    return 0;
+}
+
+
+
+
 
 void free_tokens(token_t *tokens, int n) {
     for (int i = 0; i < n; i++) free(tokens[i].value);
@@ -517,6 +239,318 @@ void shell_demo(char* line)
         free_tokens(tokens, ntokens);
     
 }
+
+FRESULT list_dir (const char *path)
+{
+    return 0;
+//}
+//    FRESULT res;
+//    DIR dir;
+//    FILINFO fno;
+//    int nfile, ndir;
+//    
+//
+//    res = f_opendir(&dir, path);                   /* Open the directory */
+//    if (res == FR_OK) {
+//        nfile = ndir = 0;
+//        for (;;) {
+//            res = f_readdir(&dir, &fno);           /* Read a directory item */
+//            if (fno.fname[0] == 0) break;          /* Error or end of dir */
+//            if (fno.fattrib & AM_DIR) {            /* It is a directory */
+//                printf("   <DIR>   %s\n", fno.fname);
+//                ndir++;
+//            } else {                               /* It is a file */
+//                printf("%10lu %s\n", fno.fsize, fno.fname);
+//                nfile++;
+//            }
+//        }
+//        f_closedir(&dir);
+//        printf("%d dirs, %d files.\n", ndir, nfile);
+//    } else {
+//        printf("Failed to open \"%s\". (%u)\n", path, res);
+//    }
+//    return res;
+}
+
+void parse_line(char* line)
+{
+    char *orgLine = malloc(strlen(line)+1);
+    strcpy(orgLine, line);
+    char * linePtr = strtok(line, " ");
+    if(strcmp(linePtr,"clear") == 0) //no diff
+    {
+        //printf("We are testing!!\n");
+        sys_scroll(32);
+        syscall_trap0(0x0CL,0x00L,0x00); //set cursor to 0,0
+        //fs
+    }else if(strcmp(linePtr,"fdisk") == 0){
+        printf("Result of fdisk: %x\n", f_fdisk(0, plist, work));            /* Divide the physical drive 0 */
+        printf("Hello??? \n");
+
+
+    }else if(strcmp(linePtr,"getfree") == 0)
+    {
+        DWORD fre_clust, fre_sect, tot_sect;
+        FATFS *fatfs;
+        if(f_getfree("0",&fre_clust,&fatfs)){printf("Error!");}            /* Divide the physical drive 0 */
+        /* Get total sectors and free sectors */
+        tot_sect = (fatfs->n_fatent - 2) * fatfs->csize;
+        fre_sect = fre_clust * fatfs->csize;
+        /* Print the free space (assuming 512 bytes/sector) */
+        printf("%10lu KiB total drive space.\n%10lu KiB available.\n", tot_sect / 2, fre_sect / 2);
+        
+    }else if(strcmp(linePtr,"mkfs") == 0)
+    {
+        
+        printf("Result of mkfs: %d\n",f_mkfs("0:",NULL,work,FF_MAX_SS)); //default params
+    }else if(strcmp(linePtr,"mnt") == 0)
+    {
+        printf("Result of mnt: %d\n",f_mount(&fs,"0:",0)); //default params
+    }else if(strcmp(linePtr,"print") == 0)
+    {
+        char * arg;
+        arg = strtok(NULL," ");
+        printf("\n%s\n",arg);
+    }else if(strcmp(linePtr,"mkdir") == 0)
+    {
+        char * arg;
+        arg = strtok(NULL," ");
+        if(f_mkdir(arg)){printf("Error");}
+        printf("\n");
+    }/*else if(strcmp(linePtr,"ls") == 0)
+    {
+        char * arg;
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            arg = ".";
+        }
+        printf("\n");
+        if(list_dir(arg)){printf("Error");}
+        
+    }*/else if(strcmp(linePtr,"xmodem") == 0)
+    {
+        char * arg;
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            printf("Usage: xmodem <file_name>");
+            return;
+        }
+        xmodem_receive(arg);
+        
+    }else if(strcmp(linePtr,"cat") == 0)
+    {
+        char * arg;
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            printf("Usage: xmodem <file_name>");
+            return;
+        }
+        FIL fp;
+        FRESULT res = f_open(&fp, arg, FA_READ);
+        if(res)
+        {
+            printf("Error opening file %s\n",arg);
+        }
+        char cbuf[32];
+        unsigned int bw;
+        while(1)
+        {
+            res = f_read(&fp, cbuf, 32, &bw);
+            if(res)
+            {
+                printf("Error reading file\n");
+                f_close(&fp);
+                return;
+            }
+            if(bw == 0)
+            {
+                break;
+            }
+            for(int i = 0; i < bw; i++)
+            {
+                printf("%c",cbuf[i]);
+            }
+        }
+        printf("\n");
+    }else if(strcmp(linePtr,"load") == 0)
+    {
+        printf("\n");
+        char * arg;
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            printf("Usage: load <.elf file> <address>\n");
+            return;
+        }
+        char path[128];
+        memcpy(path, arg, strlen(arg)+1);
+
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            printf("Usage: load <.elf file> <address>\n");
+            return;
+        }
+        char *end;
+        long add = strtol(arg, &end, 0);
+
+        if (errno == ERANGE) {int call_address(uint32_t add, char **argv, int argc);
+            printf("Error converting address\n");
+            return;
+        }
+        if(end == arg || add < PRG_MIN_ADD)
+        {
+            printf("Invalid address\n");
+            return;
+        }
+        
+        printf("Load exit code: %lu\n", load_elf(path, (void*)add));
+    }else if(strcmp(linePtr,"run") == 0)
+    {
+        printf("\n");
+        char * arg;
+        arg = strtok(NULL," ");
+        
+        if(arg == NULL)
+        {
+            printf("Usage: run <ELF file>\n");
+            return;
+        }
+        uint32_t add = _WORKING_PROGRAM_ADD;
+        if(load_elf(arg, (void *)add) < 0)
+        {
+            printf("Error loading file\n");
+        }else{
+            //printf("Return exit code: 0x%04x\n", call_address(add, NULL, NULL));
+        }
+        
+        
+        
+    }else if(strcmp(linePtr,"dump") == 0)
+    {
+        printf("\n");
+        char * arg;
+        arg = strtok(NULL," ");
+        char *end;
+        
+        if(arg == NULL)
+        {
+            printf("Usage: dump <address> <lenght>\n");
+            return;
+        }
+        long add = strtol(arg, &end, 0);
+
+        if (errno == ERANGE) {
+            printf("Error converting address\n");
+            return;
+        }
+        if(end == arg)
+        {
+            printf("Invalid address\n");
+            return;
+        }
+        arg = strtok(NULL," ");
+        if(arg == NULL)
+        {
+            printf("Usage: dump <address> <lenght>\n");
+            return;
+        }
+        long len = strtol(arg, &end, 0);
+
+        if (errno == ERANGE) {
+            printf("Error converting address\n");
+            return;
+        }
+        if(end == arg)
+        {
+            printf("Invalid address\n");
+            return;
+        }
+
+        printf("Dumping at 0x%08lx lengh 0x%08lx\n",add, len);
+        dump_memory((void *)add, (size_t)len);
+        printf("\n");
+        
+    }else if(strcmp(linePtr,"rm") == 0)
+    {
+        printf("\n");
+        char *arg = strtok(NULL, " ");
+        if(arg == NULL)
+        {
+            printf("Usage: rm <path>\n");
+        }
+        FRESULT res = f_unlink(arg);
+        if(res)
+        {
+            printf("Error removing file\n");
+        }
+    }else if(strcmp(linePtr,"umnt") == 0)
+    {
+        char *arg = strtok(NULL, " ");
+        if(arg == NULL)
+        {
+            printf("Usage: umnt <path>\n");
+        }
+        FRESULT res = f_unmount(arg);
+        if(res)
+        {
+            printf("Error unmounting drive %d\n",res);
+        }
+        return;
+    }else if(strcmp(linePtr, "mv") == 0)
+    {
+        printf("\n");
+        char *arg = strtok(NULL, " ");
+        char *arg1 = strtok(NULL, " ");
+        if(arg == NULL || arg1 == NULL)
+        {
+            printf("Usage: mv <old path> <new path>\n");
+        }
+        FRESULT res = f_rename(arg,arg1);
+        if(res)
+        {
+            printf("Fs error %d",res);
+        }
+    }else
+    {
+        printf("\n");
+        //char prgPath[256];
+        //strcpy(prgPath,_BIN_PATH);
+        //strcat(prgPath,linePtr);
+        if(strchr(linePtr, '/')) //Is relative?
+        {
+            //run_file(linePtr);
+            
+        }else{
+            //run_file(prgPath);
+        }
+
+
+        token_t tokens[MAX_TOKENS];
+
+        int ntokens = tokenize_line(orgLine, tokens, MAX_TOKENS);
+        int idx = 0;
+        while (tokens[idx].type != TOKEN_EOF) {
+            command_t *cmd = parse_command(tokens, &idx);
+            call_command(cmd);
+            free_command(cmd);
+
+            if (tokens[idx].type == TOKEN_PIPE || tokens[idx].type == TOKEN_SEMICOLON)
+                idx++;
+        }
+        free_tokens(tokens, ntokens);
+        fflush(stdout);
+        //printf("\n");
+    
+    }
+    free(orgLine);
+}
+
+
+
 
 
 

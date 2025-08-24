@@ -101,7 +101,7 @@ int kernel_start()
     }
 
     //Made directory
-    DIR dir;
+    FF_DIR dir;
     FILINFO fno;
     f_res = f_chdir(_SRC_PATH);
     

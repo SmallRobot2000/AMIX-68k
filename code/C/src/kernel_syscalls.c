@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <dirent.h>
 #include <sys/reent.h>  // For struct _reent
 #include <fcntl.h>
 #include <string.h>
@@ -83,6 +84,60 @@ void trap1_init(void) {
 
 }
 
+
+//dirent
+
+
+// Adapted opendir, readdir, closedir
+
+DIR *_opendir_r(struct _reent *r, const char *path) {
+    r->_errno = ENOMEM;
+    DIR *d = malloc(sizeof(DIR));
+    if (!d) return NULL;
+    FRESULT res = f_opendir(&d->fatfs_dir, path);
+    if (res != FR_OK) {
+        free(d);
+        r->_errno = fatfs_to_errno(res);
+        return NULL;
+    }
+    r->_errno = 0; //OK
+    d->first = 1;
+    return d;
+}
+
+struct dirent *_readdir_r(struct _reent *r, DIR *d) {
+    static struct dirent entry;
+    FRESULT res;
+    r->_errno = 0;
+    if (d->first) {
+        res = f_readdir(&d->fatfs_dir, &d->finfo); // first call
+        d->first = 0;
+    } else {
+        res = f_readdir(&d->fatfs_dir, &d->finfo);
+    }
+    if (res != FR_OK){
+        r->_errno = fatfs_to_errno(res);
+        return NULL;
+    }else if(d->finfo.fname[0] == 0) {
+        return NULL; // End of dir
+    }
+    strncpy(entry.d_name, d->finfo.fname, sizeof(entry.d_name));
+    entry.d_name[sizeof(entry.d_name)-1] = 0;
+    
+    return &entry;
+}
+
+int _closedir_r(struct _reent *r, DIR *d) {
+    r->_errno = fatfs_to_errno( f_closedir(&d->fatfs_dir));
+    free(d);
+    if(r->_errno)
+    {
+        return -1;
+    }
+    return 0;
+}
+
+
 int trap1_dispatch(void) {
     int syscall_no, arg1, arg2, arg3;
     struct _reent *r;
@@ -132,6 +187,15 @@ int trap1_dispatch(void) {
             break;
         case SYSCALL_CD:
             ret = _chdir_r(r, (const char*)arg1);
+            break;
+        case SYSCALL_OPENDIR:
+            ret = (uintptr_t)_opendir_r(r, (const char*)arg1);
+            break;
+        case SYSCALL_CLOSEDIR:
+            ret = _closedir_r(r, (DIR*)arg1);
+            break;
+        case SYSCALL_READDIR:
+            ret = (uintptr_t)_readdir_r(r, (DIR*)arg1);
             break;
         default:
             ret = -1; // Unknown syscall
