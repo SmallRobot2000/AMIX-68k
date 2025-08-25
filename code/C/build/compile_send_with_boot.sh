@@ -6,7 +6,7 @@ cd ../RAM_API
 ./program.sh
 cd ../C
 cd build
-cp ../test.c ../src/main.c
+
 ./compile.sh amix.ld ../../include
 if [ ! -f $BIN/program.bin ]; then
     echo "Build failed, aborting send."

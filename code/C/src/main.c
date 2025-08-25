@@ -20,17 +20,7 @@ extern void trap1_test();
 
 int main(int argc, char *argv[], char *environp[]) 
 {
-
-    if(kernel_start() != 0)
-    {
-        //while(1); //Oh no
-    }
+//Need to init kirst proces and commit suicide
     
-    while(1)
-    {
-        shell_loop();
-        
-        
-    }
     return 0;
 }
