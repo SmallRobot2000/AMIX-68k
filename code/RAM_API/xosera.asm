@@ -628,3 +628,18 @@ x_print_byte_buffer:
     CLI
     movem.l (a7)+,d0/d1/d2/a0/a1/a2/a3
     rts
+
+
+x_print_word_buffer:
+    movem.l d0/d1/d2/a0/a1/a2/a3,-(a7)
+    STI
+    move.l  d0,d2   ;CNT
+    subq.l  #1,d2
+.loop:
+    move.w  (a0)+,d0
+    bsr     x_print_char_word
+    dbra    d2,.loop
+.end:
+    CLI
+    movem.l (a7)+,d0/d1/d2/a0/a1/a2/a3
+    rts

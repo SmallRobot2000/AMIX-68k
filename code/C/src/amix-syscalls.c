@@ -243,13 +243,151 @@ int _stat_r(struct _reent *r, const char *path, struct stat *st) {
         return -1;
     }
 }
+// Map ANSI foreground colors (30-37 and 90-97) to 4-bit color values (0-15)
+BYTE ansi_fg_code_to_pc_color(int code) {
+    switch(code) {
+        case 30: return 0x0;  // Black
+        case 31: return 0x4;  // Red
+        case 32: return 0x2;  // Green
+        case 33: return 0x6;  // Yellow (brown)
+        case 34: return 0x1;  // Blue
+        case 35: return 0x5;  // Magenta
+        case 36: return 0x3;  // Cyan
+        case 37: return 0x7;  // Light gray
+        case 90: return 0x8;  // Dark gray
+        case 91: return 0xC;  // Bright red
+        case 92: return 0xA;  // Bright green
+        case 93: return 0xE;  // Bright yellow
+        case 94: return 0x9;  // Bright blue
+        case 95: return 0xD;  // Bright magenta
+        case 96: return 0xB;  // Bright cyan
+        case 97: return 0xF;  // White
+        default: return 0x7;  // Default light gray
+    }
+}
+
+// Map ANSI background colors (40-47 and 100-107) to 4-bit color values (0-15)
+BYTE ansi_bg_code_to_pc_color(int code) {
+    switch(code) {
+        case 40: return 0x0;  // Black
+        case 41: return 0x4;  // Red
+        case 42: return 0x2;  // Green
+        case 43: return 0x6;  // Yellow (brown)
+        case 44: return 0x1;  // Blue
+        case 45: return 0x5;  // Magenta
+        case 46: return 0x3;  // Cyan
+        case 47: return 0x7;  // Light gray
+        case 100: return 0x8; // Dark gray
+        case 101: return 0xC; // Bright red
+        case 102: return 0xA; // Bright green
+        case 103: return 0xE; // Bright yellow
+        case 104: return 0x9; // Bright blue
+        case 105: return 0xD; // Bright magenta
+        case 106: return 0xB; // Bright cyan
+        case 107: return 0xF; // White
+        default: return 0x0;  // Default black
+    }
+}
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef unsigned char BYTE;
+typedef unsigned short WORD;
+
+// Dummy color map functions (replace with your implementation)
+BYTE ansi_fg_code_to_pc_color(int code);
+BYTE ansi_bg_code_to_pc_color(int code);
+
+// Main function: converts input char buffer with ANSI color escapes into WORD buffer with color attributes
+size_t _byte_to_word_string(const char* buf, size_t count, WORD *wbuf)
+{
+    BYTE _text_color_foreground = 0x02;  // green default fg
+    BYTE _text_color_background = 0x00;  // black default bg
+    size_t out_count = 0;
+
+    while (count > 0 && *buf)
+    {
+        if (*buf == '\033' && buf[1] == '[')
+        {
+            // Parse the end of the escape sequence (ending with 'm')
+            const char *esc = buf + 2;
+            char code[32] = {0};
+            int i = 0;
+
+            while (count > 0 && *esc && *esc != 'm' && i < (int)(sizeof(code) - 1))
+            {
+                code[i++] = *esc++;
+                count--;
+            }
+            if (*esc == 'm')
+            {
+                code[i] = '\0';  // Null terminate codes string
+
+                // Tokenize by ';' and update fg/bg colors
+                char *token;
+                char *saveptr;
+                char codetmp[32];
+                strncpy(codetmp, code, sizeof(codetmp)-1);
+                codetmp[sizeof(codetmp)-1] = '\0';
+
+                token = strtok_r(codetmp, ";", &saveptr);
+                while (token)
+                {
+                    int val = atoi(token);
+                    if ((val >= 30 && val <= 37) || (val >= 90 && val <= 97))
+                        _text_color_foreground = ansi_fg_code_to_pc_color(val);
+                    else if ((val >= 40 && val <= 47) || (val >= 100 && val <= 107))
+                        _text_color_background = ansi_bg_code_to_pc_color(val);
+                    else if (val == 0)
+                    {
+                        // Reset to defaults
+                        _text_color_foreground = 0x07;
+                        _text_color_background = 0x00;
+                    }
+                    token = strtok_r(NULL, ";", &saveptr);
+                }
+
+                // Advance buf and count past full escape sequence: \033[ ... m
+                size_t esc_len = (esc - buf) + 1;
+                buf += esc_len;
+                count -= esc_len;
+                continue; // do not output escape sequences as characters
+            }
+            else
+            {
+                // Malformed escape, output as normal char and advance
+                *wbuf++ = *buf++ | ((_text_color_background << 4 | _text_color_foreground) << 8);
+                out_count++;
+                count--;
+                continue;
+            }
+        }
+        else
+        {
+            *wbuf++ = *buf++ | ((_text_color_background << 4 | _text_color_foreground) << 8);
+            out_count++;
+            count--;
+        }
+    }
+
+    return out_count;
+}
 
 /* POSIX‐style _write stub that calls the reentrant version */
 int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
+    WORD *wbuf;
+    size_t cnt = count;
     switch (fd) {
     case STDOUT_FILENO:
     case STDERR_FILENO:
-        if(count != 0){syscall_trap0(0xFL, count, (void *)buf);} //print string
+        wbuf = malloc(count*sizeof(WORD));
+        cnt = _byte_to_word_string(buf, cnt, wbuf);
+
+        //if(count != 0){syscall_trap0(0xFL, count, (void *)buf);} //print byte buffer
+        if(count != 0){syscall_trap0(0x14L, cnt, (void *)wbuf);} //print word buffer
+        free(wbuf);
         return count;   // Return bytes written
     default:
         if (fd >= STD_FD_COUNT && fd < MAX_OPEN_FILES && fd_table[fd])

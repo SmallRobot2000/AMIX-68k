@@ -306,11 +306,6 @@ void parse_line(char* line)
     }else if(strcmp(linePtr,"mnt") == 0)
     {
         printf("Result of mnt: %d\n",f_mount(&fs,"0:",0)); //default params
-    }else if(strcmp(linePtr,"print") == 0)
-    {
-        char * arg;
-        arg = strtok(NULL," ");
-        printf("\n%s\n",arg);
     }/*else if(strcmp(linePtr,"ls") == 0)
     {
         char * arg;
@@ -333,7 +328,7 @@ void parse_line(char* line)
         }
         xmodem_receive(arg);
         
-    }else if(strcmp(linePtr,"cat") == 0)
+    }/*else if(strcmp(linePtr,"cat") == 0)
     {
         char * arg;
         arg = strtok(NULL," ");
@@ -423,7 +418,7 @@ void parse_line(char* line)
         
         
         
-    }else if(strcmp(linePtr,"dump") == 0)
+    }*/else if(strcmp(linePtr,"dump") == 0)
     {
         printf("\n");
         char * arg;

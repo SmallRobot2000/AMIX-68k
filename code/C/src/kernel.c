@@ -111,6 +111,7 @@ int kernel_start()
         return -2;
     }
     setenv("PWD",_SRC_PATH,1);
+    setenv("PATH",_BIN_PATH,1);
     f_res = f_opendir(&dir, _SRC_PATH);
     
     char binPath[256];

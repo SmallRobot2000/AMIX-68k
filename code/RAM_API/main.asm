@@ -255,7 +255,12 @@ TRAP0_handler:
 	dbra	d1,.13l
 	jmp		.end
 .s13:
-
+	cmp.b	#$14,d1
+	bne		.s14
+	;Print word buffer with lenght in d0, ptr in a0
+	bsr		x_print_word_buffer
+	jmp		.end
+.s14
 .end:
 	move.l	(_stack_tmp),a7
 	CLI
