@@ -68,6 +68,7 @@ environ:
     move.w  #0x2200,sr    // Enable all interrupts (IPL=0), Supervisor mode on
     .endm
 
+
 /*
  * set things up so the application will run. This *must* be called start.
  */

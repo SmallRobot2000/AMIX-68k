@@ -374,7 +374,13 @@ size_t _byte_to_word_string(const char* buf, size_t count, WORD *wbuf)
 
     return out_count;
 }
+static inline void asm_STI(void) {
+    __asm__ volatile ("move.w #0x2700, %%sr" ::: "memory");
+}
 
+static inline void asm_CLI(void) {
+    __asm__ volatile ("move.w #0x2200, %%sr" ::: "memory");
+}
 /* POSIX‐style _write stub that calls the reentrant version */
 int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
     WORD *wbuf;
@@ -382,12 +388,13 @@ int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
     switch (fd) {
     case STDOUT_FILENO:
     case STDERR_FILENO:
-        wbuf = malloc(count*sizeof(WORD));
-        cnt = _byte_to_word_string(buf, cnt, wbuf);
-
-        //if(count != 0){syscall_trap0(0xFL, count, (void *)buf);} //print byte buffer
-        if(count != 0){syscall_trap0(0x14L, cnt, (void *)wbuf);} //print word buffer
-        free(wbuf);
+        //wbuf = malloc(count*sizeof(WORD));
+        //cnt = _byte_to_word_string(buf, cnt, wbuf);
+        //asm_STI();
+        if(count != 0){syscall_trap0(0xFL, count, (void *)buf);} //print byte buffer
+        //asm_CLI();
+        //if(count != 0){syscall_trap0(0x14L, cnt, (void *)wbuf);} //print word buffer
+        //free(wbuf);
         return count;   // Return bytes written
     default:
         if (fd >= STD_FD_COUNT && fd < MAX_OPEN_FILES && fd_table[fd])

@@ -263,7 +263,7 @@ TRAP0_handler:
 .s14
 .end:
 	move.l	(_stack_tmp),a7
-	CLI
+	;CLI
 	rte
 
 TRAP_empty:	
