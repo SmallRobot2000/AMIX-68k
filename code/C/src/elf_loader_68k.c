@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <kernel.h>
-
+#include <process.h>
 #define BIGBUF_SIZE   (128 * 1024)
     /* Buffer for entire file */
     uint8_t bigbuf[BIGBUF_SIZE];
@@ -294,15 +294,20 @@ uint32_t load_and_file_elf(const char *path, void *base_addr, const char *bin_pa
     return base + ehdr->e_entry;
 }
 
-
-//extern char* environ[];
-typedef int (*prog_main_t)(int argc, char *argv[], char *environ[]);
-int call_address(uint32_t add, char **argv, int argc)
+char *custom_env[] = {
+    "PATH=/bin",
+    "MYVAR=myvalue",
+    NULL
+};
+extern char**__environ = custom_env;
+typedef int (*prog_main_t)(int argc, char *argv[], char *custom_env[]);
+tcb_t *call_address(uint32_t add, char **argv, int argc)
 {
-    prog_main_t prog_main = (prog_main_t)add;
+    //prog_main_t prog_main = (prog_main_t)add;
     //char *argv[] = {"My name! WHAT IS MY NAME???",NULL};
     //int argc = sizeof(argv) / sizeof(argv[0]) - 1;  // Count elements, subtract 1 for NULL terminator
-    return prog_main( argc, argv, environ);
+    //return prog_main( argc, argv, custom_env);
+    return create_task((void*)add, argv, argc, custom_env);
 }
 
 
@@ -369,36 +374,34 @@ int run_file(const char* path, char **argv, int argc) //sets $?
         uint32_t res = load_elf(path, (void *)_WORKING_PROGRAM_ADD);
         if(res < 0 || res != _WORKING_PROGRAM_ADD)
         {
-            printf("Loading file failed %ld",res);
+            printf("Loading file failed %ld\n",res);
             return -1;
         
         }
-        int cres = call_address(_WORKING_PROGRAM_ADD, argv, argc);
-        itoa(cres, resbuff, 256);
-        setenv("?",resbuff, 1); //set error return
-        
-        return cres;
+        tcb_t *task = call_address(_WORKING_PROGRAM_ADD, argv, argc);
+        wait_pid(task->pid);
+        return 0;
     }else{
         FIL fd;
         FRESULT res = f_open(&fd, path, FA_READ);
         if(res)
         {
-            printf("%s: file not found",path);
+            printf("%s: file not found\n",path);
             return -1;
         }
         unsigned int br;
         res = f_read(&fd, (void *)_WORKING_PROGRAM_ADD, _WORKING_PROGRAM_MAX_SIZE, &br);
         if(res != FR_OK)
         {
-            printf("Error reading file %d",res);
+            printf("Error reading file %d\n",res);
         }
         if(br == _WORKING_PROGRAM_MAX_SIZE)
         {
-            printf("Error file too big");
+            printf("Error file too big\n");
         }
-        int cres = call_address(_WORKING_PROGRAM_ADD, argv, argc);
-        itoa(cres, resbuff, 256);
-        setenv("?",resbuff, 1); //set error return
+        tcb_t *task = call_address(_WORKING_PROGRAM_ADD, argv, argc);
+        wait_pid(task->pid);
+
         return 0;
     }
 }

@@ -26,10 +26,10 @@ trap2_deamon:
     //set sys stack
     move.l  sp,d0               //save task stack
     lea  SYM(_scheduler_stack_top),sp
-    link a6,#0                  // create stack frame
+
     move.l sp, a0               // pass pointer to stack frame or regs into a0
     jsr SYM(_scheduler_deamon)     // call C dispatch function
-    unlk a6                     // remove stack frame
+
     move.l  d0,sp               //d0 - stack pointer to new process!
     movem.l (sp)+,d0-d7/a0-a6   // reverse all registers
     

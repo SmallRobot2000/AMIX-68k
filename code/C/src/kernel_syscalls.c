@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <sys/fcntl.h>
 #include <sys/errno.h>
+#include <process.h>
 extern int fatfs_to_errno(FRESULT res);
 //extern defines
 extern int _open_r(struct _reent *, const char *, int, int);
@@ -251,6 +252,13 @@ int trap1_dispatch(void) {
             break;
         case SYSCALL_UNLINK:
             ret = _unlink_r(r, (const char*)arg1);
+            break;
+        case SYSCALL_GETPID:
+            r->_errno = 0;
+            ret = cur_pid;
+            break;
+        case SYSCALL_KILLPID:
+            ret = proc_kill_r(r, arg1);
             break;
         default:
             ret = -1; // Unknown syscall

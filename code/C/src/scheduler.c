@@ -1,6 +1,8 @@
 #include<process.h>
 #include<malloc.h>
 #include<stdio.h>
+#include<RTC.h>
+#include<stdbool.h>
 tcb_t *tasks[MAX_TASKS];
 uint32_t _scheduler_stack[1024]; //stack when schedlurer is running = 4k
 uint32_t *_scheduler_stack_top = &_scheduler_stack[512];
@@ -14,8 +16,19 @@ static inline void asm_STI(void) {
 static inline void asm_CLI(void) {
     __asm__ volatile ("move.w #0x2200, %%sr" ::: "memory");
 }
-
-
+bool pause = false;
+void pause_scheduler()
+{
+    pause = true;
+}
+void resume_scheduler()
+{
+    pause = false;
+}
+void print_pcs()
+{
+    
+}
 
 static inline uintptr_t read_vbr(void) {
     uintptr_t vbr;
@@ -45,6 +58,7 @@ void scheduler_init()
 }
 void scheduler_start()
 {
+    resume_scheduler();
     asm_CLI();
 }
 int scheduler_add_task(tcb_t* task)
@@ -62,9 +76,22 @@ int scheduler_add_task(tcb_t* task)
     return -1; //No available free task slots
 }
     
-    
+int proc_kill_r(struct _reent *r, int pid)
+{
+    for(int i = 0; i < MAX_TASKS; i++)
+    {
+        if(tasks[i] != NULL && tasks[i]-> pid == pid) //Empty task
+        {
+            tasks[i] = NULL; //erased!
+            return 0;
+        }
+    }
+
+    return -1;
+}
 uint32_t _scheduler_deamon(void) //return stack pointer of a task to resume, and gets a stack pointer of interupted task
 {
+    //ds3234_read_register(123);
     static uint16_t* task_stack_ptr;
     __asm__ volatile (
         "move.l %%d0, %0\n\t"
@@ -73,7 +100,11 @@ uint32_t _scheduler_deamon(void) //return stack pointer of a task to resume, and
         : "d0", "memory"
     );
     asm_STI();
-
+    if(pause && tasks[cur_task_place] != NULL)
+    {
+        asm_CLI();
+        return (uint32_t)task_stack_ptr; //resume dont do anything
+    }
      if(tasks[cur_task_place]->state == READY)
      {
         //Startup of kernel or task restart
@@ -103,13 +134,16 @@ uint32_t _scheduler_deamon(void) //return stack pointer of a task to resume, and
      {
         if(cur_task_place == prev_task_place)
         {
-            printf("Inposible task array logic halting...");
-            fflush(stdout);
-            while(1);
+            //printf("Inposible task array logic halting...");
+            //fflush(stdout);
+            //while(1);
         }
         tasks[prev_task_place]->stack_pointer = task_stack_ptr; //update stack pointer for return
         //Normal running task
         cur_pid = tasks[cur_task_place]->pid;
+
+        //ds3234_read_register(123); //For timing
+        asm_CLI();
         return (uint32_t)tasks[cur_task_place]->stack_pointer;
      }else if(tasks[cur_task_place]->state == READY)
      {

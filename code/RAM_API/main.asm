@@ -160,6 +160,7 @@ TRAP0_handler:
 	cmp.b	#$8,d1
 	bne		.s8
 	;Chek key (1 or 0)
+	CLI ;We dont want a halt of cursor
 	bsr		kyb_get_key
 	jmp		.end
 .s8:

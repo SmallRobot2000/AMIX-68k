@@ -16,13 +16,6 @@
 #define PRG_MIN_ADD 0x180000
 #define DEFAULT_PROMPT "$ "
 
-//FS stuff(temp) TODO better!
-PARTITION VolToPart[FF_VOLUMES] = {
-        {0, 1},    /* "0:" ==> 1st partition in physical drive 0 */
-        {0, 2}     /* "1:" ==> 2nd partition in physical drive 0 */
-    };
-LBA_t plist[] = {100, 0, 0};  /* Divide the drive to one full volume and one empty */
-
 BYTE work[FF_MAX_SS];         /* Working buffer */
 
 //Loop stuff
@@ -283,11 +276,6 @@ void parse_line(char* line)
         sys_scroll(32);
         syscall_trap0(0x0CL,0x00L,0x00); //set cursor to 0,0
         //fs
-    }else if(strcmp(linePtr,"fdisk") == 0){
-        printf("Result of fdisk: %x\n", f_fdisk(0, plist, work));            /* Divide the physical drive 0 */
-        printf("Hello??? \n");
-
-
     }else if(strcmp(linePtr,"getfree") == 0)
     {
         DWORD fre_clust, fre_sect, tot_sect;
@@ -299,10 +287,6 @@ void parse_line(char* line)
         /* Print the free space (assuming 512 bytes/sector) */
         printf("%10lu KiB total drive space.\n%10lu KiB available.\n", tot_sect / 2, fre_sect / 2);
         
-    }else if(strcmp(linePtr,"mkfs") == 0)
-    {
-        
-        printf("Result of mkfs: %d\n",f_mkfs("0:",NULL,work,FF_MAX_SS)); //default params
     }else if(strcmp(linePtr,"mnt") == 0)
     {
         printf("Result of mnt: %d\n",f_mount(&fs,"0:",0)); //default params
@@ -320,14 +304,15 @@ void parse_line(char* line)
     }*/else if(strcmp(linePtr,"xmodem") == 0)
     {
         char * arg;
+        do{
         arg = strtok(NULL," ");
         if(arg == NULL)
         {
-            printf("Usage: xmodem <file_name>");
+            printf("\nUsage: xmodem <file_name(s)>\n");
             return;
         }
         xmodem_receive(arg);
-        
+        }while(arg != NULL);
     }/*else if(strcmp(linePtr,"cat") == 0)
     {
         char * arg;
@@ -547,8 +532,9 @@ void shell_loop()
 {
        
     
-        char ch = syscall_trap0(8L,0L,0L);
-        
+    
+        char ch = syscall_trap0(9L,0L,0L);
+
         if(i == 79){printf("\nToo long\n");i = 0;}
         
             
@@ -606,7 +592,7 @@ void shell_loop()
             i = 0;
             history_cur = 0;
             line[0] = 0;
-        }else if (ch == 0x08) //BS
+        }else if (ch == 0x08 && i > 0) //BS
         {
             line[i-1] = 0;
             i--;
@@ -620,16 +606,20 @@ void shell_loop()
         }
         line[i] = 0;
         
-    
+        
         printf("\r%s\r%s%s",print_buf,DEFAULT_PROMPT,line);
         fflush(stdout);
 }
-
+extern uint32_t cur_pid;
 void shell_start()
 {
-    printf("Shell starting ...\n");
+    printf("Shell starting ...\nPID %lu\n",cur_pid);
     printf("%s",DEFAULT_PROMPT);
     fflush(stdout);
     memset(print_buf,' ',80);
     print_buf[79] = 0;
+    while(1)
+    {
+        shell_loop();
+    }
 }

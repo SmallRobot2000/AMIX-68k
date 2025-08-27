@@ -97,7 +97,7 @@ static void ds3234_write_register(uint8_t addr, uint8_t val) {
     SPI_CS_HIGH();
 }
 
-static uint8_t ds3234_read_register(uint8_t addr) {
+uint8_t ds3234_read_register(uint8_t addr) {
     SPI_CS_LOW();
     SPI_SEND(addr & 0x7F);  // MSB=0 for read
     uint8_t v = SPI_RECEVE();

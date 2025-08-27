@@ -53,7 +53,7 @@ void* allocate_tcb()
     return malloc(sizeof(tcb_t));
 }
 // Initialize the stack with context to start the task
-void init_task_stack(tcb_t *task, void (*entry)(void *), void *arg) {
+void init_task_stack(tcb_t *task, void (*entry)(void *), char **argv, int argc, char **env) {
     uint8_t *stack_top = (uint8_t*)&task->stack[STACK_SIZE - 1]; // word pointer
     
     // Create fake exception stack frame including registers zeroed
@@ -61,7 +61,7 @@ void init_task_stack(tcb_t *task, void (*entry)(void *), void *arg) {
     
     // Copy frame (bytes) onto task stack (consider word alignment)
     uint8_t *stack_bytes = (uint8_t *)stack_top;
-    stack_bytes -= STACK_FRAME_SIZE;
+    stack_bytes -= STACK_FRAME_SIZE+3*4; //3*4 for args
     
     // Set stack pointer to frame start (aligned)
     task->stack_pointer = (uint16_t*)stack_bytes;
@@ -72,6 +72,10 @@ void init_task_stack(tcb_t *task, void (*entry)(void *), void *arg) {
         stack_bytes[i] = frame[i];
     }
 
+    uint32_t* ptr = (uint32_t*)(stack_bytes+STACK_FRAME_SIZE);
+    *ptr++ = (uint32_t)env;
+    *ptr++ = (uint32_t)argv;
+    *ptr++ = (uint32_t)argc;
     free(frame);
     
     
@@ -81,26 +85,51 @@ void init_task_stack(tcb_t *task, void (*entry)(void *), void *arg) {
 
     task->state = READY;
     task->entry = entry;
-    task->arg = arg;
+
 }
 
     
 // Create a new task
-tcb_t *create_task(void (*entry)(void *), void *arg) {
+tcb_t *create_task(void (*entry)(void *), char **argv, int argc, char** env) {
     tcb_t *task = allocate_tcb(); // Allocate or get from pool
     if (!task) return NULL;
 
     
-    init_task_stack(task, entry, arg);
+    init_task_stack(task, entry, argv, argc, env);
 
 
     task->state = READY;
-    task-> pid = pid_inc++;
+    task-> pid = pid_inc;
+    pid_inc++;
     task-> p_pid = cur_pid;
 
     if(scheduler_add_task(task))
     {
-        return NULL; //Error adding task
+        return NULL; //Error adding task creation
     }
     return task;
 }
+
+
+
+__attribute__((optimize("O0"))) int wait_pid(uint32_t pid)
+{
+    //wait untill pid is killed
+    int task_place = -1;
+    for(int i = 0; i < MAX_TASKS; i++)
+    {
+        if(tasks[i] != NULL && tasks[i]->pid == pid)
+        {
+            task_place = i;
+            break;
+        }
+    }
+    //printf("Waitig for task %d\n", task_place);
+    if(task_place == -1)
+    {
+        return -1;
+    }
+    while(tasks[task_place] != NULL);
+    return 0;
+}
+

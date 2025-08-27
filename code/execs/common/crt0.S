@@ -28,10 +28,8 @@ env_bar:
     .asciz  "BAR=world"
 
 /* 3) Global symbol for C’s environ */
-    .align 2
-    .global environ
-environ:
-    .long   0
+    .align 4
+    .extern SYM (environ_ptr)
 
     .text
     .global _start
@@ -79,22 +77,23 @@ _start:
 	//movel	d0,a0
 
 
-
-	movel	12(sp),a0	//env
-	movel	8(sp),d1	//argv
-	movel	4(sp),d2 	//argc
+	//form caller
+	movel	(sp)+,d0	//env
+	movel	(sp)+,d2 	//argv
+	movel	(sp)+,d1	//argc
 	/* set up initial stack frame */
-	link	a6, IMM(-8)
-	movel	a0,-(sp)
-	movel	d1,-(sp)
-	movel	d2,-(sp)
+	link	a6, IMM(-12)
+	//move.l	IMM(69),a0
 
-	lea     SYM(environ), a1  /* A1 = address of the global environ word */
-    move.l  a0, (a1)          /* *(&environ) = environ_ptr */	
-
+	//to C
+	movel	d2,-(sp)	//argv
+	movel	d1,-(sp)	//argc
+	movel	d0,-(sp) 	//env
+	//dont tuch it works
 /*
  * zero out the bss section.
  */
+ /*
 	movel	IMM(__bss_start), d1
 	movel	IMM(_end), d0
 	cmpl	d0, d1
@@ -106,17 +105,17 @@ _start:
 	clrb	(a0)+
 
 	dbra	d0, 2b
-
+*/
 	
 3:
 /*
  * call the main routine from the application to get it going.
  * main (argc, argv, environ)
  * we pass argv as a pointer to NULL.
- */
-
+ */	
+	PICCALL SYM (_INIT)
+	movel	(sp)+,d0	//add of env
 	CLI	
 	PICCALL	SYM (main)
-
-	unlk	a6
-	rts
+	PICCALL SYM (_exit)
+	

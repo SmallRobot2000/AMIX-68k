@@ -29,6 +29,14 @@
 
 static FIL *fd_table[MAX_OPEN_FILES] = {0}; // Maps fd -> FIL*
 
+extern inline void asm_STI(void) {
+    __asm__ volatile ("move.w #0x2700, %%sr" ::: "memory");
+}
+
+extern inline void asm_CLI(void) {
+    __asm__ volatile ("move.w #0x2200, %%sr" ::: "memory");
+}
+
 int fatfs_to_errno(FRESULT res) {
     switch(res) {
         case FR_OK:                 return 0;
@@ -79,7 +87,7 @@ void _exit(int status) {
 void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
     extern char _heap_start;
     static uintptr_t heap_end = 0;
-
+    asm_STI();
     if (heap_end == 0) {
         heap_end = (uintptr_t)&_heap_start;
         // align initial heap_end up to next 4-byte boundary
@@ -94,7 +102,7 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
     heap_end = new_end;
 
     //printf("\nSBRK last 0x%08lx new 0x%08lx\n",prev, new_end);
-    
+    asm_CLI();
     return (void *)prev;
 }
 
@@ -169,10 +177,7 @@ long rtc_to_unix_epoch(int year, int mon, int day, int hour, int min, int sec) {
     return ((long)days * 24 * 3600) + (hour * 3600) + (min * 60) + sec;
 }
 
-// Process control - minimal implementations
-int _getpid_r(struct _reent *r) { return 1; }
-int _kill_r(struct _reent *r, int pid, int sig) { r->_errno = ENOSYS; return -1; }
-int _link_r(struct _reent *r, const char *old, const char *new) { r->_errno = EMLINK; return -1; }
+
 
 // Unlink (delete) file syscall replacement for newlib with FATfs
 int _unlink_r(struct _reent *r, const char *path) {
@@ -374,13 +379,7 @@ size_t _byte_to_word_string(const char* buf, size_t count, WORD *wbuf)
 
     return out_count;
 }
-static inline void asm_STI(void) {
-    __asm__ volatile ("move.w #0x2700, %%sr" ::: "memory");
-}
 
-static inline void asm_CLI(void) {
-    __asm__ volatile ("move.w #0x2200, %%sr" ::: "memory");
-}
 /* POSIX‐style _write stub that calls the reentrant version */
 int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
     WORD *wbuf;
@@ -388,13 +387,15 @@ int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
     switch (fd) {
     case STDOUT_FILENO:
     case STDERR_FILENO:
-        //wbuf = malloc(count*sizeof(WORD));
-        //cnt = _byte_to_word_string(buf, cnt, wbuf);
-        //asm_STI();
-        if(count != 0){syscall_trap0(0xFL, count, (void *)buf);} //print byte buffer
+        wbuf = malloc(count*sizeof(WORD));
+        cnt = _byte_to_word_string(buf, cnt, wbuf);
+        asm_STI();
+        //if(count != 0){syscall_trap0(0xFL, count, (void *)buf);} //print byte buffer
         //asm_CLI();
-        //if(count != 0){syscall_trap0(0x14L, cnt, (void *)wbuf);} //print word buffer
-        //free(wbuf);
+        //asm_STI();
+        if(count != 0){syscall_trap0(0x14L, cnt, (void *)wbuf);} //print word buffer
+        asm_CLI();
+        free(wbuf);
         return count;   // Return bytes written
     default:
         if (fd >= STD_FD_COUNT && fd < MAX_OPEN_FILES && fd_table[fd])
@@ -534,3 +535,9 @@ int _close_r(struct _reent *r, int fd) {
     free_fd(fd);
     return 0;
 }
+
+
+// Process control - minimal implementations
+int _getpid_r(struct _reent *r) { return 1; }
+int _kill_r(struct _reent *r, int pid, int sig) { r->_errno = ENOSYS; return -1; }
+int _link_r(struct _reent *r, const char *old, const char *new) { r->_errno = EMLINK; return -1; }

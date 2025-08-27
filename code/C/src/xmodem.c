@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <process.h>
 // XMODEM Protocol Constants
 #define SOH     0x01    // Start of Header
 #define EOT     0x04    // End of Transmission  
@@ -22,6 +23,8 @@ typedef struct {
     uint16_t crc;       // CRC-16 checksum
 } xmodem_packet_t;
 int times = 0;
+
+
 int get_UART_timeout()
 {
     uint16_t ch;
@@ -40,12 +43,14 @@ int get_UART_timeout()
 int xmodem_receive(char* fname)
 {
     printf("\n");
+    pause_scheduler();
     FIL fp;
     FRESULT res  = f_open(&fp, fname, FA_CREATE_ALWAYS | FA_WRITE | FA_READ);
     if(res != FR_OK)
         {
             printf("File error\n");
             f_close(&fp);
+            resume_scheduler();
             return -1;
         }
     //The protocol
@@ -84,8 +89,10 @@ int xmodem_receive(char* fname)
         if(res != FR_OK)
         {
             printf("Close error %d\n",res);
+            resume_scheduler();
             return -1;
         }
+        resume_scheduler();
         return -1;
     }
     //Redy
@@ -93,9 +100,10 @@ int xmodem_receive(char* fname)
     {
         chkSum = 0;
         //Get rest of ze block
+        
         for(int i = 1; i <= 131; i++)
         {
-            for(int z = 0; z < 1000; z++)
+            for(;;)
             {
                 ch = sys_peek_UART();
                 if(ch == -1){continue;}
@@ -109,8 +117,10 @@ int xmodem_receive(char* fname)
                 if(res != FR_OK)
                 {
                     printf("Close error %d\n",res);
+                    resume_scheduler();
                     return -1;
                 }
+                resume_scheduler();
                 return -1;
             }
             block[i] = ch;
@@ -124,8 +134,10 @@ int xmodem_receive(char* fname)
             if(res != FR_OK)
             {
                 printf("Close error %d\n",res);
+                resume_scheduler();
                 return -1;
             }
+            resume_scheduler();
             return -1;
         }
         if((uint8_t)block[2] != (uint8_t)~blockNum)
@@ -136,8 +148,10 @@ int xmodem_receive(char* fname)
             if(res != FR_OK)
             {
                 printf("Close error %d\n",res);
+                resume_scheduler();
                 return -1;
             }
+            resume_scheduler();
             return -1;
         }
         chkSum = 0;
@@ -155,8 +169,10 @@ int xmodem_receive(char* fname)
             if(res != FR_OK)
             {
                 printf("Close error %d\n",res);
+                resume_scheduler();
                 return -1;
             }
+            resume_scheduler();
             return -1;
         }
         //Everythin is fine
@@ -170,8 +186,10 @@ int xmodem_receive(char* fname)
             if(res != FR_OK)
             {
                 printf("Close error %d\n",res);
+                resume_scheduler();
                 return -1;
             }
+            resume_scheduler();
             return -1;
 
         }
@@ -194,8 +212,10 @@ int xmodem_receive(char* fname)
             if(res != FR_OK)
             {
                 printf("Close error %d\n",res);
+                resume_scheduler();
                 return -1;
             }
+            resume_scheduler();
             return -1;
         }
 
@@ -207,8 +227,10 @@ int xmodem_receive(char* fname)
             if(res != FR_OK)
             {
                 printf("Close error %d\n",res);
+                resume_scheduler();
                 return -1;
             }
+            resume_scheduler();
             return 0;
         }else if(ch == SOH){
             continue;
@@ -220,8 +242,10 @@ int xmodem_receive(char* fname)
             if(res != FR_OK)
             {
                 printf("Close error %d\n",res);
+                resume_scheduler();
                 return -1;
             }
+            resume_scheduler();
             return -1;
         }
     }    
@@ -229,11 +253,15 @@ int xmodem_receive(char* fname)
         if(res != FR_OK)
         {
             printf("Close error %d\n",res);
+            resume_scheduler();
             return -1;
         }
+        resume_scheduler();
         return 0;
    
     
-
+    resume_scheduler();
     return 0;
 }
+
+

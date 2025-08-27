@@ -15,11 +15,7 @@
         .data
     .align 2
 
-/* 1) Array of pointers, terminated by NULL */
-env_ptrs:
-    .long   env_foo        /* &"FOO=hello" */
-    .long   env_bar        /* &"BAR=world" */
-    .long   0              /* NULL terminator */
+
 
 /* 2) The actual strings */
     .align 2
@@ -29,10 +25,7 @@ env_bar:
     .asciz  "BAR=world"
 
 /* 3) Global symbol for C’s environ */
-    .align 2
-    .global environ
-environ:
-    .long   env_ptrs
+
 
     .text
     .global _start
@@ -126,9 +119,6 @@ _start:
         /* Push argv = NULL (sp@(4) still holds return address slot) */
         pea     sp@(4)
 
-        /* Push environ pointer */
-	PICPEA SYM (environ),a0
-        movel   a0,-(sp)       /* push A0 value */
 
         /* Re-enable interrupts before entering main */
         CLI
