@@ -194,6 +194,7 @@ void kernel_start() //we dont return this is PID 0 process
     }
 
     trap1_init();
+    init_catcher();
     rtc_init();
     history_start();
 

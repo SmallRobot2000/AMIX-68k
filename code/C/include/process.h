@@ -33,3 +33,4 @@ extern void scheduler_start();
 extern void print_pcs();
 extern void pause_scheduler();
 extern void resume_scheduler();
+extern void init_catcher();

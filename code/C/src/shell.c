@@ -533,7 +533,7 @@ void shell_loop()
        
     
     
-        char ch = syscall_trap0(9L,0L,0L);
+        char ch = syscall_trap0(8L,0L,0L);
 
         if(i == 79){printf("\nToo long\n");i = 0;}
         

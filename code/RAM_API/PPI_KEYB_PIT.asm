@@ -287,6 +287,8 @@ init_tmr:
     ;NULL trap #2
     lea     _NULL_TRAP_2,a1
     move.l  a1,(_exc_trap_2)
+    lea     _NULL_TRAP_2,a1
+    move.l  a1,(_exc_trap_3)
 
 
 ;setup timer
@@ -375,6 +377,7 @@ update_CAPS:
 
 _exec_illegal:
 
+    trap    #3 ;err
     move    #20,d0
     move    #0,d1
     bsr     x_set_cursor_xy
@@ -384,9 +387,11 @@ _exec_illegal:
     bsr     send_string
     move.l  (2,a7),d0
     bsr     x_print_hex
-    jmp     *
+    
+    rte
 
 _exec_addr_err:
+    trap    #3 ;err
     move    #20,d0
     move    #0,d1
     bsr     x_set_cursor_xy
@@ -396,7 +401,7 @@ _exec_addr_err:
     bsr     send_string
     move.l  (2,a7),d0
     bsr     x_print_hex
-    jmp     *
+    rte
 
 _IRQ1_subrutine:
     move.l  d0,-(a7)

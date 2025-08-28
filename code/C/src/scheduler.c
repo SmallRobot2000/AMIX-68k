@@ -82,6 +82,7 @@ int proc_kill_r(struct _reent *r, int pid)
     {
         if(tasks[i] != NULL && tasks[i]-> pid == pid) //Empty task
         {
+            free(tasks[i]);
             tasks[i] = NULL; //erased!
             return 0;
         }
@@ -100,12 +101,12 @@ uint32_t _scheduler_deamon(void) //return stack pointer of a task to resume, and
         : "d0", "memory"
     );
     asm_STI();
-    if(pause && tasks[cur_task_place] != NULL)
+    if(pause)
     {
         asm_CLI();
         return (uint32_t)task_stack_ptr; //resume dont do anything
     }
-     if(tasks[cur_task_place]->state == READY)
+     if(tasks[cur_task_place]->state == READY && tasks[cur_task_place] != NULL)
      {
         //Startup of kernel or task restart
         tasks[cur_task_place]->state = RUNNING;
@@ -132,13 +133,11 @@ uint32_t _scheduler_deamon(void) //return stack pointer of a task to resume, and
     //valid task in cur task
     if(tasks[cur_task_place]->state == RUNNING) //after we left from previous task
      {
-        if(cur_task_place == prev_task_place)
+
+        if(tasks[prev_task_place] != NULL)
         {
-            //printf("Inposible task array logic halting...");
-            //fflush(stdout);
-            //while(1);
-        }
-        tasks[prev_task_place]->stack_pointer = task_stack_ptr; //update stack pointer for return
+            tasks[prev_task_place]->stack_pointer = task_stack_ptr; //update stack pointer for return
+        }        
         //Normal running task
         cur_pid = tasks[cur_task_place]->pid;
 
@@ -153,7 +152,10 @@ uint32_t _scheduler_deamon(void) //return stack pointer of a task to resume, and
             fflush(stdout);
             while(1);
         }
-        tasks[prev_task_place]->stack_pointer = task_stack_ptr; //update stack pointer for return
+        if(tasks[prev_task_place] != NULL)
+        {
+            tasks[prev_task_place]->stack_pointer = task_stack_ptr; //update stack pointer for return
+        }    
 
         tasks[cur_task_place]->state = RUNNING;
         cur_pid = tasks[cur_task_place]->pid;
