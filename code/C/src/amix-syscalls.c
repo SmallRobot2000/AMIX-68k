@@ -152,12 +152,14 @@ off_t _lseek_r(struct _reent *r, int fd, off_t offset, int whence) {
         case SEEK_END: newpos = f_size(fp) + offset; break;
         default: return -1;
     }
+    /*
     FRESULT fres = f_lseek(fp, newpos);
     if (fres != FR_OK)
     {
         errno = fatfs_to_errno(fres);
         return -1;
     }
+        */
     return newpos;
 }
 
@@ -398,6 +400,7 @@ int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
         free(wbuf);
         return count;   // Return bytes written
     default:
+    /*
         if (fd >= STD_FD_COUNT && fd < MAX_OPEN_FILES && fd_table[fd])
         {
             UINT bw;
@@ -422,6 +425,7 @@ int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
             printf("Wierd STD stream?\n");
         }
         r->_errno = EBADF;
+        */
         return -1;
     }
 }
@@ -446,6 +450,7 @@ int _read_r(struct _reent *r, int fd, char *buf, size_t count) {
         }
         return (int)count;  /* Number of bytes read */
     default:
+    /*
         if (fd >= STD_FD_COUNT && fd < MAX_OPEN_FILES && fd_table[fd]) {
             UINT br;
             FRESULT fres = f_read(fd_table[fd], buf, count, &br);
@@ -468,6 +473,7 @@ int _read_r(struct _reent *r, int fd, char *buf, size_t count) {
             printf("Wierd STD stream?\n");
         }
         r->_errno = EBADF;
+        */
         return -1;
     }
 }
@@ -530,7 +536,7 @@ int _close_r(struct _reent *r, int fd) {
         r->_errno = EBADF;
         return -1;
     }
-    f_close(fd_table[fd]);
+    //f_close(fd_table[fd]);
     free(fd_table[fd]);
     free_fd(fd);
     return 0;

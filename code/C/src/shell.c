@@ -289,7 +289,7 @@ void parse_line(char* line)
         
     }else if(strcmp(linePtr,"mnt") == 0)
     {
-        printf("Result of mnt: %d\n",f_mount(&fs,"0:",0)); //default params
+       // printf("Result of mnt: %d\n",f_mount(&fs,"0:",0)); //default params
     }/*else if(strcmp(linePtr,"ls") == 0)
     {
         char * arg;

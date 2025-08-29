@@ -299,7 +299,7 @@ char *custom_env[] = {
     "MYVAR=myvalue",
     NULL
 };
-extern char**__environ = custom_env;
+char**__environ = custom_env;
 typedef int (*prog_main_t)(int argc, char *argv[], char *custom_env[]);
 tcb_t *call_address(uint32_t add, char **argv, int argc)
 {

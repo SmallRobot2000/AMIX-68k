@@ -18,20 +18,20 @@ TARGET_PREFIX="m68k-elf-rosco"
 INCDIR="${NEWLIB_BASE}/${TARGET_PREFIX}/include"
 LIBDIR="${NEWLIB_BASE}/${TARGET_PREFIX}/lib"
 
+FS_INC="$INC_DIR/fs"
 # Clean previous builds
 rm -f "$BIN_DIR"/*.o "$BIN_DIR"/*.elf "$BIN_DIR"/*.bin "$BIN_DIR"/*.srec "$BIN_DIR"/*.map
 
-COMMON_CFLAGS="-Os -m68010 -ffunction-sections -fdata-sections -g -Wall -I${INCDIR} -I${INC_DIR} -I${COMM_INC}"
+COMMON_CFLAGS="-Os -m68010 -ffunction-sections -fdata-sections -g -Wall -I${INCDIR} -I${INC_DIR} -I${COMM_INC} -I${FS_INC}"
 
-echo "Compiling C files..."
-for c in "$SRC_DIR"/*.c; do
-  [ -e "$c" ] || continue
+echo -e "\033[33mCompiling C files...\033[0m"
+for c in $(find "$SRC_DIR" -type f -name '*.c'); do
   obj="$BIN_DIR/$(basename "${c%.c}").o"
   echo "  $c → $obj"
   $CC $COMMON_CFLAGS -c "$c" -o "$obj"
 done
 
-echo "Compiling assembly files..."
+echo -e "\033[33mCompiling assembly files...\033[0m"
 for s in "$SRC_DIR"/*.S; do
   [ -e "$s" ] || continue
   obj="$BIN_DIR/$(basename "${s%.S}").o"
@@ -45,7 +45,7 @@ if [ -z "$OBJ_FILES" ]; then
   exit 1
 fi
 
-echo "Linking into ELF (symbols preserved)..."
+echo -e "\033[33mLinking...\033[0m"
 CRT0_OBJ="$BIN_DIR/crt0.o"
 MAIN_OBJ="$BIN_DIR/main.o"
 OTHER_OBJS=$(for o in $OBJ_FILES; do
@@ -60,21 +60,23 @@ $CC -nostartfiles \
     -T "$LDSCRIPT" \
     -L "$LIBDIR" \
     -Wl,-Map="$BIN_DIR/program.map",--gc-sections \
-    -lc -lm -lgcc \
+    -lc -lm -lgcc -Wl,--no-warn-rwx-segments \
     -o "$BIN_DIR/program.elf"
+echo "$BIN_DIR/program.elf"
+#echo "Generated $BIN_DIR/program.elf (symbols intact)"
 
-echo "Generated $BIN_DIR/program.elf (symbols intact)"
+#echo "Size:"
+#$SIZE "$BIN_DIR/program.elf"
 
-echo "Size:"
-$SIZE "$BIN_DIR/program.elf"
-
-echo "Stripping debug symbols only..."
+#echo "Stripping debug symbols only..."
 $STRIP --strip-debug "$BIN_DIR/program.elf"
 
-echo "Size of program.elf:"
-$SIZE "$BIN_DIR/program.elf"
+#echo "Size of program.elf:"
+#$SIZE "$BIN_DIR/program.elf"
 
-echo "Generating binary and SREC..."
+#echo "Generating binary and SREC..."
 $OBJCOPY -O binary "$BIN_DIR/program.elf" "$BIN_DIR/program.bin"
 $OBJCOPY -O srec   "$BIN_DIR/program.elf" "$BIN_DIR/program.srec"
-echo "Build complete."
+
+
+echo -e "\033[32mBuild complete\033[0m"

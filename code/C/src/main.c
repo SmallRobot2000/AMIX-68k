@@ -20,19 +20,19 @@ extern void asm_STI();
 
 int main(int argc, char *argv[]) 
 {
-    
        
 //Need to init first proces and commit suicide
    scheduler_init();
     //Make kernel task with PID 0
    if(create_task(kernel_start,NULL,0,NULL) == NULL)
    {
-       printf("Error starting kernel process!");
+       printf("Error starting kernel process!\n");
        while(1);
    }
     //kernel_start();
-    while(1);
     scheduler_start();
+    while(1);
+    
     int n;
     while(1)    //This will hapen maybe once
     {

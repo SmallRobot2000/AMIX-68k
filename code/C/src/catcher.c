@@ -37,7 +37,7 @@ void clear_task(tcb_t *task)
 void trap3_deamon()
 {
     pause_scheduler();
-    printf("Crash! Killed pid: %d\n", cur_pid);
+    printf("Crash! Killed pid: %ld\n", cur_pid);
     if(proc_kill_r(NULL, cur_pid))
     {
         printf("Why wont u die??\n");

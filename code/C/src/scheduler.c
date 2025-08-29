@@ -16,7 +16,7 @@ static inline void asm_STI(void) {
 static inline void asm_CLI(void) {
     __asm__ volatile ("move.w #0x2200, %%sr" ::: "memory");
 }
-bool pause = false;
+bool pause = true;
 void pause_scheduler()
 {
     pause = true;
@@ -48,6 +48,7 @@ void scheduler_init()
     }
     cur_pid = 0;
     cur_task_place = 0;
+    pause = true;
     //Set our trap #2 deamon
     uintptr_t vbr = read_vbr(); //Get Vector table start
     // Vector #34 (trap #2) offset in vector table
@@ -90,7 +91,7 @@ int proc_kill_r(struct _reent *r, int pid)
 
     return -1;
 }
-uint32_t _scheduler_deamon(void) //return stack pointer of a task to resume, and gets a stack pointer of interupted task
+__attribute__((optimize("O0"))) uint32_t _scheduler_deamon(void) //return stack pointer of a task to resume, and gets a stack pointer of interupted task
 {
     //ds3234_read_register(123);
     static uint16_t* task_stack_ptr;
@@ -124,7 +125,8 @@ uint32_t _scheduler_deamon(void) //return stack pointer of a task to resume, and
         if(cur_task_place == MAX_TASKS) cur_task_place = 0;
         if(failed > MAX_TASKS)
         {
-            printf("No valid task available halting...");
+            pause_scheduler();
+            printf("\nNo valid task available halting...\n");
             fflush(stdout);
             while(1);
         }
@@ -148,7 +150,8 @@ uint32_t _scheduler_deamon(void) //return stack pointer of a task to resume, and
      {
         if(cur_task_place == prev_task_place)
         {
-            printf("Inposible task array logic halting...");
+            pause_scheduler();
+            printf("\nInposible task array logic halting...\n");
             fflush(stdout);
             while(1);
         }

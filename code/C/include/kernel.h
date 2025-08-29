@@ -1,4 +1,4 @@
-extern FATFS fs; //kernel FS
+
 extern char _SRC_PATH[256];
 extern char _BIN_PATH[256];
 extern char _SYS_PATH[256];

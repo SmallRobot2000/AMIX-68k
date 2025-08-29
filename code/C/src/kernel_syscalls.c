@@ -93,7 +93,7 @@ void trap1_init(void) {
 
 
 // Adapted opendir, readdir, closedir
-
+/*
 DIR *_opendir_r(struct _reent *r, const char *path) {
     r->_errno = ENOMEM;
     DIR *d = malloc(sizeof(DIR));
@@ -288,3 +288,10 @@ static inline int syscall_trap1(uintptr_t r, int callno, uintptr_t arg1, uintptr
     return ret;
 }
 
+*/
+
+//TMP
+int trap1_dispatch(void)
+{
+    return 0;
+}
