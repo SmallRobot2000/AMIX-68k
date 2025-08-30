@@ -4,17 +4,17 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/reent.h>  // For struct _reent
-#include <fcntl.h>
+//#include <fcntl.h>
 #include <string.h>
 #include <kernel_syscalls.h>
-#include <ff.h>
+#include <fs/ext4.h>
 #include <stddef.h>
 #include <sys/unistd.h>  // For ssize_t etc.
 #include <sys/types.h>
-#include <sys/fcntl.h>
+//#include <sys/fcntl.h>
 #include <sys/errno.h>
 #include <process.h>
-extern int fatfs_to_errno(FRESULT res);
+
 //extern defines
 extern int _open_r(struct _reent *, const char *, int, int);
 extern int _close_r(struct _reent *, int);
@@ -28,17 +28,33 @@ extern int _gettimeofday_r(struct _reent *r, void *, void *);
 extern int _unlink_r(struct _reent *r, const char *path);
 // Unlink (delete) file syscall replacement for newlib with FATfs
 
- 
+int chek_path_dir(const char* path)
+{
+    if(path == NULL)
+    {
+        return -1;
+    }
+    return 0;
+}
+
+int chek_path_file(const char* path)
+{
+    if(path == NULL)
+    {
+        return -1;
+    }
+    return 0;
+}
 //other FS stuff
 int _chdir_r(struct _reent *r, const char *str)
 {
-    FRESULT res = f_chdir(str);
-    if(res == FR_OK) //if ok
+    if(str != NULL) //if ok
     {
         setenv("PWD",str,1);
+    }else{
+        return EINVAL;
     }
-    r->_errno = fatfs_to_errno(res);
-    return r->_errno;
+    return EOK;
 
 }
 char* _getcwd_r(struct _reent *r, char *str, size_t len)
@@ -93,15 +109,20 @@ void trap1_init(void) {
 
 
 // Adapted opendir, readdir, closedir
-/*
+
 DIR *_opendir_r(struct _reent *r, const char *path) {
+    r->_errno = EINVAL;
+    if(chek_path_dir(path))
+        return NULL;
     r->_errno = ENOMEM;
     DIR *d = malloc(sizeof(DIR));
     if (!d) return NULL;
-    FRESULT res = f_opendir(&d->fatfs_dir, path);
-    if (res != FR_OK) {
+
+    int res = ext4_dir_open(&d->dir, path);
+    
+    if (res != EOK) {
         free(d);
-        r->_errno = fatfs_to_errno(res);
+        r->_errno = res;
         return NULL;
     }
     r->_errno = 0; //OK
@@ -110,76 +131,60 @@ DIR *_opendir_r(struct _reent *r, const char *path) {
 }
 
 struct dirent *_readdir_r(struct _reent *r, DIR *d) {
-    static struct dirent entry;
-    FRESULT res;
-    r->_errno = 0;
-    if (d->first) {
-        res = f_readdir(&d->fatfs_dir, &d->finfo); // first call
-        d->first = 0;
-    } else {
-        res = f_readdir(&d->fatfs_dir, &d->finfo);
-    }
-    if (res != FR_OK){
-        r->_errno = fatfs_to_errno(res);
-        return NULL;
-    }else if(d->finfo.fname[0] == 0) {
-        return NULL; // End of dir
-    }
-    strncpy(entry.d_name, d->finfo.fname, sizeof(entry.d_name));
-    entry.d_name[sizeof(entry.d_name)-1] = 0;
     
-    return &entry;
+    r->_errno = 0;
+    struct dirent *dir_e = &d->dir_ent;   //POSIX enty in DIR
+    dir_e->d_en = ext4_dir_entry_next(&d->dir); //FS entry in POSIX entry of DIR
+
+    
+    
+    strncpy(dir_e->d_name, (const char *)dir_e->d_en->name , sizeof(dir_e->d_en->name_length));
+    dir_e->d_ino = dir_e->d_en->inode;
+    
+    return dir_e;
 }
 
 int _closedir_r(struct _reent *r, DIR *d) {
-    r->_errno = fatfs_to_errno( f_closedir(&d->fatfs_dir));
-    free(d);
-    if(r->_errno)
+    r->_errno = 0;
+    if(d == NULL)
     {
-        return -1;
+        r->_errno = EINVAL;    
+        return EINVAL;
     }
-    return 0;
+    r->_errno = ext4_dir_close(&d->dir);
+    
+    free(d);
+    
+    return r->_errno;
 }
-int _mkdir_r(struct _reent *r, const char *pathname, int mode) { //mode not used for now
+int _mkdir_r(struct _reent *r, const char *pathname, int mode) {
+     //mode not used for now
     (void)mode; // suppress unused param warning
-
-    FRESULT res;
+    if(chek_path_dir(pathname) != EOK)
+    {
+        r->_errno = EINVAL;
+        return r->_errno;
+    }
+    
 
     // Create directory
-    res = f_mkdir(pathname);
-    if (res != FR_OK && res != FR_EXIST) {
-        r->_errno = fatfs_to_errno(res);
-        errno = r->_errno;
-        return -1;
-    }
-    r->_errno = 0;
-    return 0;
+    r->_errno = ext4_dir_mk(pathname);
+    return r->_errno;
 }
 
 
 
-// Remove directory syscall replacement for newlib with FATfs
+// Remove directory syscall replacement for newlib with lwext4
 int _rmdir_r(struct _reent *r, const char *path) {
-    FILINFO fno;
-    FRESULT res;
-
-    res = f_stat(path, &fno);
-    if (res != FR_OK) {
-        r->_errno = fatfs_to_errno(res);
-        return -1;
+    if(chek_path_dir(path) != EOK)
+    {
+        r->_errno = EINVAL;
+        return r->_errno;
     }
 
-    if (fno.fattrib & AM_DIR) {
-        res = f_unlink(path);
-        if (res != FR_OK) {
-            r->_errno = fatfs_to_errno(res);
-            return -1;
-        }
-        return 0;
-    }
 
-    r->_errno = ENOTDIR;
-    return -1;
+    r->_errno = ext4_dir_rm(path);
+    return r->_errno;
 }
 
 
@@ -288,10 +293,3 @@ static inline int syscall_trap1(uintptr_t r, int callno, uintptr_t arg1, uintptr
     return ret;
 }
 
-*/
-
-//TMP
-int trap1_dispatch(void)
-{
-    return 0;
-}

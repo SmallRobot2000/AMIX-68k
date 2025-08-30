@@ -8,12 +8,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ff.h>          // FatFs header
+#include <fs/ext4.h>          // FatFs header
 #include <sys/unistd.h>  // For ssize_t etc.
 #include <unistd.h>
 #include <stddef.h>
 #include <errno.h>
 #include <RTC.h>
+#include <ff.h> //temporary
 //Sys stuff
 #include<sys_amix.h>
 #include <stdint.h>
@@ -62,6 +63,7 @@ int fatfs_to_errno(FRESULT res) {
         default:                   return EIO;  // Unknown error mapped to I/O error
     }
 }
+
 
 
 void _exit(int status) {
@@ -179,31 +181,21 @@ long rtc_to_unix_epoch(int year, int mon, int day, int hour, int min, int sec) {
     return ((long)days * 24 * 3600) + (hour * 3600) + (min * 60) + sec;
 }
 
+extern int chek_path_dir(const char* path);
 
-
-// Unlink (delete) file syscall replacement for newlib with FATfs
+// Unlink (delete) file syscall replacement for newlib with lwext4
 int _unlink_r(struct _reent *r, const char *path) {
-    FILINFO fno;
-    FRESULT res;
 
-    res = f_stat(path, &fno);
-    if (res != FR_OK) {
-        r->_errno = fatfs_to_errno(res);
-        return -1;
+    if(chek_path_dir(path) != EOK)
+    {
+        r->_errno = EINVAL;
+        return r->_errno;
     }
 
-    if (fno.fattrib & AM_DIR) {
-        r->_errno = EISDIR;
-        return -1;
-    }
+    r->_errno = ext4_fremove(path);
+    
 
-    res = f_unlink(path);
-    if (res != FR_OK) {
-        r->_errno = fatfs_to_errno(res);
-        return -1;
-    }
-
-    return 0;
+    return r->_errno;
 }
 int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp) 
 { 
@@ -222,33 +214,18 @@ int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp)
 
 // _stat_r: info about a file path (not necessarily open)
 int _stat_r(struct _reent *r, const char *path, struct stat *st) {
-    if (!st || !path) {
-        if (r) r->_errno = EINVAL;
-        return -1;
+   
+    if(chek_path_file(path) != EOK)
+    {
+        r->_errno = EINVAL;
+        return r->_errno;
     }
+    st->st_atime = atime;
+    st->st_ctime = ctime;
+    
+    ext4_atime_get()
 
-    FILINFO finfo;
-#if _USE_LFN
-    TCHAR lfn_buf[FF_MAX_LFN + 1];
-    finfo.lfname = lfn_buf;
-    finfo.lfsize = sizeof(lfn_buf) / sizeof(lfn_buf[0]);
-#endif
-    FRESULT fres = f_stat(path, &finfo);
-    if (fres == FR_OK) {
-        memset(st, 0, sizeof(struct stat));
-        if (finfo.fattrib & AM_DIR) {
-            st->st_mode = S_IFDIR | 0555;
-        } else {
-            st->st_mode = S_IFREG | 0444;
-        }
-        st->st_nlink = 1;
-        st->st_size = finfo.fsize;
-        // Optionally, decode finfo.fdate/finfo.ftime for times here
-        return 0;
-    } else {
-        if (r) r->_errno = ENOENT;
-        return -1;
-    }
+    return 0;
 }
 // Map ANSI foreground colors (30-37 and 90-97) to 4-bit color values (0-15)
 BYTE ansi_fg_code_to_pc_color(int code) {

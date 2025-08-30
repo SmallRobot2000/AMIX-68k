@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <elf.h>
-#include "ff.h"      // FatFS
-#include <fcntl.h>
+#include <ext4.h>
+//#include <fcntl.h>
 #include <unistd.h>
 #include <stdbool.h>
 #include <kernel.h>
@@ -18,24 +18,24 @@
 uint32_t load_elf(const char *path, void *base_addr) {
 
     
-    FIL fil;
+    ext4_file fil;
     
     /* 1) Open file and check size */
-    if (f_open(&fil, path, FA_READ) != FR_OK) return (uint32_t)-1;
+    if (ext4_fopen(&fil, path, "r") != EOK) return (uint32_t)-1;
     
-    FSIZE_t fsize = f_size(&fil);
+    size_t fsize = ext4_fsize(&fil);
     if (fsize > BIGBUF_SIZE) {
-        f_close(&fil);
+        ext4_fclose(&fil);
         return (uint32_t)-1;
     }
     
     /* 2) Read entire file */
-    UINT br;
-    if (f_read(&fil, bigbuf, fsize, &br) != FR_OK || br != fsize) {
-        f_close(&fil);
+    size_t br;
+    if (ext4_fread(&fil, bigbuf, fsize, &br) != EOK || br != fsize) {
+        ext4_fclose(&fil);
         return (uint32_t)-1;
     }
-    f_close(&fil);
+    ext4_fclose(&fil);
     /* 3) Fast ELF validation */
     Elf32_Ehdr *ehdr = (Elf32_Ehdr*)bigbuf;
     /* Compare the first 4 magic bytes */
@@ -141,30 +141,34 @@ uint32_t load_elf(const char *path, void *base_addr) {
 
 
 uint32_t load_and_file_elf(const char *path, void *base_addr, const char *bin_path) {
-    FIL fil;
+    
     
     /* 1) Open file and check size */
-    FRESULT fres = f_open(&fil, path, FA_READ);
-    if (fres != FR_OK) 
+    ext4_file fil;
+    int fres =  ext4_fopen(&fil, path, "r");
+    if (fres != EOK) 
     {
-        printf("Error opening file %d\n",fres);
+        errno = fres;
+        perror("fopen");
         return (uint32_t)-1;
     }
-    FSIZE_t fsize = f_size(&fil);
+
+    size_t fsize = ext4_fsize(&fil);
     if (fsize > BIGBUF_SIZE) {
-        f_close(&fil);
+        ext4_fclose(&fil);
         return (uint32_t)-1;
     }
     
     /* 2) Read entire file */
-    UINT br;
-    fres = f_read(&fil, bigbuf, fsize, &br);
-    if (fres != FR_OK || br != fsize) {
-        f_close(&fil);
-        printf("Error opening file %d\n",fres);
+    size_t br;
+    fres = ext4_fread(&fil, bigbuf, fsize, &br);
+    
+    if (fres != EOK || br != fsize) {
+        perror("Error opening file");
+        ext4_fclose(&fil);
         return (uint32_t)-1;
     }
-    f_close(&fil);
+    ext4_fclose(&fil);
     
     /* 3) Fast ELF validation */
     Elf32_Ehdr *ehdr = (Elf32_Ehdr*)bigbuf;
@@ -279,15 +283,16 @@ uint32_t load_and_file_elf(const char *path, void *base_addr, const char *bin_pa
 
     /* 9) Save the loaded binary to specified .bin file */
     if (bin_path != NULL) {
-        FIL binfile;
-        if (f_open(&binfile, bin_path, FA_CREATE_ALWAYS | FA_WRITE) == FR_OK) {
-            UINT bw;
+        ext4_file binfile;
+        if (ext4_fopen(&binfile, bin_path, "w") != EOK) {
+            size_t bw;
             uint8_t *binary_start = (uint8_t*)base_addr + lowest;
             
-            if (f_write(&binfile, binary_start, binary_size, &bw) == FR_OK && bw == binary_size) {
-                f_sync(&binfile);  /* Ensure data is written to disk */
+            if (ext4_fwrite(&binfile, binary_start, binary_size, &bw) != EOK || bw != binary_size)
+            {
+                printf("Error writing to file\n");
             }
-            f_close(&binfile);
+            ext4_fclose(&binfile);
         }
     }
 
@@ -324,21 +329,21 @@ tcb_t *call_address(uint32_t add, char **argv, int argc)
  */
 bool is_elf_file(const char *path)
 {
-    FIL fil;
-    FRESULT res;
-    UINT br;
+    ext4_file fil;
+    int res;
+    size_t br;
 
     /* 1) Open the file for reading */
-    res = f_open(&fil, path, FA_READ);
-    if (res != FR_OK) {
+    res = ext4_fopen(&fil, path, "r");
+    if (res != EOK) {
         return false;
     }
 
     /* 2) Read exactly EI_NIDENT bytes (ELF e_ident) */
     unsigned char ident[EI_NIDENT];
-    res = f_read(&fil, ident, EI_NIDENT, &br);
-    f_close(&fil);
-    if (res != FR_OK || br != EI_NIDENT) {
+    res = ext4_fread(&fil, ident, EI_NIDENT, &br);
+    ext4_fclose(&fil);
+    if (res != EOK || br != EI_NIDENT) {
         return false;
     }
 
@@ -382,16 +387,20 @@ int run_file(const char* path, char **argv, int argc) //sets $?
         wait_pid(task->pid);
         return 0;
     }else{
-        FIL fd;
-        FRESULT res = f_open(&fd, path, FA_READ);
+        ext4_file fd;
+        int res = ext4_fopen(&fd, path, "r");
         if(res)
         {
-            printf("%s: file not found\n",path);
+            fprintf(stderr, "%s", path);
+            errno = res;
+            perror("");
+            fflush(stderr);
             return -1;
         }
-        unsigned int br;
-        res = f_read(&fd, (void *)_WORKING_PROGRAM_ADD, _WORKING_PROGRAM_MAX_SIZE, &br);
-        if(res != FR_OK)
+        size_t br;
+        res = ext4_fread(&fd, (void *)_WORKING_PROGRAM_ADD, _WORKING_PROGRAM_MAX_SIZE, &br);
+        ext4_fclose(&fd);
+        if(res != EOK)
         {
             printf("Error reading file %d\n",res);
         }

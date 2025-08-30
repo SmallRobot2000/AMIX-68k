@@ -335,7 +335,7 @@ int bd_unlock(struct ext4_blockdev *bdev)
 
 struct ext4_blockdev *cf_init()
 {
-    uint8_t *block_buffer = malloc(512);
+    uint8_t *block_buffer = malloc(1024);
     struct cf_stat *CF_STAT = malloc(sizeof(struct cf_stat));
     struct ext4_blockdev_iface *bdif = malloc(sizeof(struct ext4_blockdev_iface));
 
@@ -369,11 +369,11 @@ struct ext4_blockdev *cf_init()
   
 
     bdev->bdif = bdif;
-    bdev->part_offset = 0;
-    bdev->part_size = 1024 * 128 * 1024; //128 MiB
+    bdev->part_offset = 0; //i think
+    bdev->part_size = 128 * 1024 * 1024; //128 MiB
     bdev->bc = cache;           
     bdev->lg_bsize = 1024;
-    bdev->lg_bcnt = bdif->ph_bcnt;
+    bdev->lg_bcnt = 128 * 1024;
     bdev->cache_write_back = 0;
     bdev->fs = NULL;
     bdev->journal = NULL;

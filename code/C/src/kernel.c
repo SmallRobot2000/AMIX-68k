@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include <malloc.h>
 #include <sys_amix.h>
-#include <ff.h>
 #include <stdint.h>
 #include <elf_loader.h>
 #include <history.h>
@@ -87,7 +86,8 @@ void test_lwext4_dir_ls(const char *path)
 
 	printf("ls %s\n", path);
 
-	ext4_dir_open(&d, path);
+	int r = ext4_dir_open(&d, path);
+    if(r != EOK) return;
 	de = ext4_dir_entry_next(&d);
 
 	while (de) {
@@ -185,8 +185,8 @@ int kernel_files_init()
     strcpy(_BIN_PATH,BIN_PATH);
     //printf("System path: %s\nBinary path: %s\nSource path: %s\n",_SYS_PATH,_BIN_PATH,_SRC_PATH);
    
-    test_lwext4_dir_ls("/sys");
     
+    test_lwext4_dir_ls("/");
     
 
     //Make some sys folders if they dont exist
@@ -194,7 +194,7 @@ int kernel_files_init()
     
     printf("Binary path: %s\n",_BIN_PATH);
     int ret = ext4_dir_mk(_BIN_PATH);
-    if(ret) //Err
+    if(ret != EOK) //Err
     {
         errno = ret;
         perror("mkdir");
@@ -222,6 +222,7 @@ int kernel_files_init()
 
     printf("All dirs exist\n");
 
+    test_lwext4_dir_ls("/sys/src");
     
 
     //--------------------------
@@ -237,49 +238,43 @@ int kernel_files_init()
 
 
     
+    int r;
 
-
-    /*
-    printf("Opening SRC directory\n");
-    f_res = f_opendir(&dir, _SRC_PATH);
     
+    printf("Opening SRC directory\n");
+    r = ext4_dir_open(&dir, _SRC_PATH);
+    if(r != EOK) return -5;
     //setenv("PATH",_BIN_PATH,1);
     
     char binPath[256];
     char srcPath[256];
 
-    if(f_res == FR_OK)
+    const ext4_direntry *dir_en;
+
+    do
     {
-        for(;;)
+        dir_en = ext4_dir_entry_next(&dir);
+        if(dir_en == NULL) break;
+        if(strcmp((const char*)dir_en->name, ".") == 0 || strcmp((const char*)dir_en->name, "..") == 0) continue; //skip dot dirs
+        strcpy(binPath, _BIN_PATH);
+        strcat(binPath, (const char*)dir_en->name);
+        strcpy(srcPath, _SRC_PATH);
+        strcat(srcPath, "/");
+        strcat(srcPath, (const char*)dir_en->name);
+
+        printf("Realocating %s", srcPath);
+        fflush(stdout);
+        uint32_t radd = load_and_file_elf(srcPath, (void *)_WORKING_PROGRAM_ADD, binPath);
+        if(radd != _WORKING_PROGRAM_ADD)
         {
-            f_res = f_readdir(&dir, &fno);
-            if(fno.fname[0] == 0) break; //End
-            strcpy(binPath, _BIN_PATH);
-            strcpy(srcPath, _SRC_PATH);
-            strcat(srcPath, fno.fname);
-            const char* dot = strrchr(fno.fname, '.');
-            if (!dot || dot == fno.fname){
-                strcat(binPath,fno.fname); 
-            }else{
-                size_t len = dot - fno.fname;
-                strncat(binPath, fno.fname, len);
-            }
-            printf("Realocating %s", srcPath);
-            fflush(stdout);
-            uint32_t radd = load_and_file_elf(srcPath, (void *)_WORKING_PROGRAM_ADD, binPath);
-            if(radd != _WORKING_PROGRAM_ADD)
-            {
-                printf("... Error Incorect address %08lX\n",radd);
-                //return -6;
-            }else{
-                printf("... OK\n");
-            }
+            printf("... Error Incorect address %08lX\n",radd);
+            //return -6;
+        }else{
+            printf("... OK\n");
         }
-    }else{
-        errno = fatfs_to_errno(f_res);
-        return -7;
-    }
-      */
+    }while(dir_en);
+    
+      
     return 0;
 }
 void kernel_error_fatal(int err)
@@ -323,11 +318,12 @@ void kernel_start() //we dont return this is PID 0 process
     
     printf("Krnel init done!\n");
     printf("Kernel done PID %lu\n",cur_pid);
+    
     fflush(stdout);
-    //if(create_task(shell_start, NULL, 0, NULL) == NULL)
-    //{
-    //  printf("Error starting shell!\n");
-    //}
+    if(create_task(shell_start, NULL, 0, NULL) == NULL)
+    {
+      printf("Error starting shell!\n");
+    }
     
     
     while(1); //nyhing to do for now
