@@ -65,11 +65,13 @@ int call_command(command_t *cmd)
     {
         return run_file(path, cmd->argv, cmd->argc);
     }else{ //From /bin
-        char* fullPath = malloc(strlen(_BIN_PATH)+strlen(path)+1);
-        memset(fullPath, 0, strlen(_BIN_PATH)+strlen(path)+1);
+        char* fullPath = malloc(256);
+        memset(fullPath, 0, strlen(_BIN_PATH)+strlen(path)+2);
 
         strcat(fullPath, _BIN_PATH);
+        strcat(fullPath, "/");
         strcat(fullPath, path);
+        //printf("DEBUG shell call bin file %s\n", fullPath);
         int ret = run_file(fullPath, cmd->argv, cmd->argc);
         free(fullPath);
         return ret;

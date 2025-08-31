@@ -45,6 +45,88 @@ int chek_path_file(const char* path)
     }
     return 0;
 }
+
+__attribute__((optimize("O0"))) char* format_path_abs(char* path, char* ret_path)
+{
+    
+
+    if(path[0] != '/')
+        return NULL;
+    
+    char *fpath = malloc(256);
+    char *fpath_fin = malloc(256);
+
+    strcpy(fpath, path);
+        
+    char *path_part;
+    if(!strchr(fpath, '/'))
+    {
+        path_part = fpath; 
+    }else{
+        path_part = strtok(fpath, "/");
+    }
+    
+    strcpy(fpath_fin, "/");
+
+    for(;;)
+    {
+        if(!strcmp(path_part, "")) //for a//b -> a/b
+            goto for_next;
+        
+        if(!strcmp(path_part, ".")) //reset to cwd
+        {
+            goto for_next;
+        }
+        
+        if(!strcmp(path_part, "..")) //set to last cwd and update cwd
+        {
+
+            //if(fpath_fin[strlen(fpath_cwd)-1] == '/' && strcmp(fpath_fin, "/") != 0)
+            //    fpath_cwd[strlen(fpath_cwd)-1] = 0; //remove last / if not in root
+                
+            
+            //printf("Fin after 1 .. %s\n",fpath_fin);
+            char* pos = strrchr(fpath_fin, '/'); //make the dir before
+            if(pos != NULL)
+                *pos = 0;
+            //printf("Fin after .. %p\n",pos);
+            goto for_next;
+        }
+        
+        
+        if(fpath_fin[strlen(fpath_fin)-1] != '/')
+            strcat(fpath_fin, "/");
+            
+        strcat(fpath_fin, path_part);
+        for_next:
+        //printf("Path part: %s\n",path_part);
+        if(!(path_part = strtok(NULL, "/")))
+            break;
+           
+    }
+    strcpy(ret_path, fpath_fin);
+    
+    free(fpath_fin);
+    free(fpath);
+    return ret_path;
+}
+/*
+@brief Translate relative to absolute path
+@param path input path
+@param ret_path pointer to char* buffer at least 256 bytes in size, not NULL
+*/
+__attribute__((optimize("O0"))) char* format_path(char *path, char *ret_path)
+{
+    if(path[0] == '/')
+    {
+        return format_path_abs(path, ret_path);
+    }
+    char *abs_path = malloc(256);
+    sprintf(abs_path, "/%s", path);
+    ret_path = format_path_abs(abs_path, ret_path);
+    free(abs_path);
+    return ret_path;
+}
 //other FS stuff
 int _chdir_r(struct _reent *r, const char *str)
 {
@@ -111,14 +193,18 @@ void trap1_init(void) {
 // Adapted opendir, readdir, closedir
 
 DIR *_opendir_r(struct _reent *r, const char *path) {
+    char f_path[256];
+    format_path((char*)path, f_path);
+
+        
     r->_errno = EINVAL;
-    if(chek_path_dir(path))
+    if(chek_path_dir(f_path))
         return NULL;
     r->_errno = ENOMEM;
     DIR *d = malloc(sizeof(DIR));
     if (!d) return NULL;
 
-    int res = ext4_dir_open(&d->dir, path);
+    int res = ext4_dir_open(&d->dir, f_path);
     
     if (res != EOK) {
         free(d);
@@ -135,10 +221,11 @@ struct dirent *_readdir_r(struct _reent *r, DIR *d) {
     r->_errno = 0;
     struct dirent *dir_e = &d->dir_ent;   //POSIX enty in DIR
     dir_e->d_en = ext4_dir_entry_next(&d->dir); //FS entry in POSIX entry of DIR
-
+    if(dir_e->d_en == NULL)
+        return NULL;
     
     
-    strncpy(dir_e->d_name, (const char *)dir_e->d_en->name , sizeof(dir_e->d_en->name_length));
+    strncpy(dir_e->d_name, (const char *)dir_e->d_en->name , sizeof(dir_e->d_name));
     dir_e->d_ino = dir_e->d_en->inode;
     
     return dir_e;
@@ -160,7 +247,9 @@ int _closedir_r(struct _reent *r, DIR *d) {
 int _mkdir_r(struct _reent *r, const char *pathname, int mode) {
      //mode not used for now
     (void)mode; // suppress unused param warning
-    if(chek_path_dir(pathname) != EOK)
+    char f_path[256];
+    format_path((char*)pathname, f_path);
+    if(chek_path_dir(f_path) != EOK)
     {
         r->_errno = EINVAL;
         return r->_errno;
@@ -168,7 +257,7 @@ int _mkdir_r(struct _reent *r, const char *pathname, int mode) {
     
 
     // Create directory
-    r->_errno = ext4_dir_mk(pathname);
+    r->_errno = ext4_dir_mk(f_path);
     return r->_errno;
 }
 
@@ -176,14 +265,17 @@ int _mkdir_r(struct _reent *r, const char *pathname, int mode) {
 
 // Remove directory syscall replacement for newlib with lwext4
 int _rmdir_r(struct _reent *r, const char *path) {
-    if(chek_path_dir(path) != EOK)
+    char f_path[256];
+    format_path((char*)path, f_path);
+    
+    if(chek_path_dir(f_path) != EOK)
     {
         r->_errno = EINVAL;
-        return r->_errno;
+        return -1;
     }
 
 
-    r->_errno = ext4_dir_rm(path);
+    r->_errno = ext4_dir_rm(f_path);
     return r->_errno;
 }
 

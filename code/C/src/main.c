@@ -17,10 +17,10 @@
 #include <process.h>
 
 extern void asm_STI();
-
-int main(int argc, char *argv[]) 
+extern char* format_path(char *path);
+__attribute__((optimize("O0"))) int main(int argc, char *argv[]) 
 {
-       
+
 //Need to init first proces and commit suicide
    scheduler_init();
     //Make kernel task with PID 0
@@ -30,7 +30,12 @@ int main(int argc, char *argv[])
        while(1);
    }
     //kernel_start();
+    
+    fflush(stdout);
+    char *pth = "/this//a//./../path";
+    printf("\n%s\n", format_path(pth));
     scheduler_start();
+    //while(1);
     while(1);
     
     int n;

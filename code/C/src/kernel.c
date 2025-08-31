@@ -102,7 +102,7 @@ void test_lwext4_dir_ls(const char *path)
 __attribute__((optimize("O0"))) int kernel_init_fs()
 {
     pause_scheduler();
-    ext4_dmask_set(DEBUG_ALL);
+    //ext4_dmask_set(DEBUG_ALL);
 
     printf("CF init\n");
     bdev = cf_init();
@@ -257,12 +257,13 @@ int kernel_files_init()
         if(dir_en == NULL) break;
         if(strcmp((const char*)dir_en->name, ".") == 0 || strcmp((const char*)dir_en->name, "..") == 0) continue; //skip dot dirs
         strcpy(binPath, _BIN_PATH);
+        strcat(binPath, "/");
         strcat(binPath, (const char*)dir_en->name);
         strcpy(srcPath, _SRC_PATH);
         strcat(srcPath, "/");
         strcat(srcPath, (const char*)dir_en->name);
 
-        printf("Realocating %s", srcPath);
+        printf("Realocating %s to %s", srcPath, binPath);
         fflush(stdout);
         uint32_t radd = load_and_file_elf(srcPath, (void *)_WORKING_PROGRAM_ADD, binPath);
         if(radd != _WORKING_PROGRAM_ADD)

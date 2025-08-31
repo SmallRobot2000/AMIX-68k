@@ -8,13 +8,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <fs/ext4.h>          // FatFs header
+#include <fs/ext4.h>          // lwext4 header
+#include <fs/ext4_inode.h>
+#include <fs/ext4_fs.h>
 #include <sys/unistd.h>  // For ssize_t etc.
 #include <unistd.h>
 #include <stddef.h>
 #include <errno.h>
 #include <RTC.h>
-#include <ff.h> //temporary
 //Sys stuff
 #include<sys_amix.h>
 #include <stdint.h>
@@ -28,40 +29,18 @@
 #define STD_FD_COUNT 3
 #define MAX_OPEN_FILES 8
 
-static FIL *fd_table[MAX_OPEN_FILES] = {0}; // Maps fd -> FIL*
-
+#define MAX_PATH_LEN 255
+extern int chek_path_dir(const char* path);
+extern int chek_path_file(const char* path);
+extern char *format_path(char* path);
+static ext4_file *fd_table[MAX_OPEN_FILES] = {0}; // Maps fd -> FIL*
+static char fd_paths[MAX_OPEN_FILES][MAX_PATH_LEN+1];
 extern inline void asm_STI(void) {
     __asm__ volatile ("move.w #0x2700, %%sr" ::: "memory");
 }
 
 extern inline void asm_CLI(void) {
     __asm__ volatile ("move.w #0x2200, %%sr" ::: "memory");
-}
-
-int fatfs_to_errno(FRESULT res) {
-    switch(res) {
-        case FR_OK:                 return 0;
-        case FR_DISK_ERR:           return EIO;
-        case FR_INT_ERR:            return EFAULT;
-        case FR_NOT_READY:          return ENODEV;
-        case FR_NO_FILE:            return ENOENT;
-        case FR_NO_PATH:            return ENOENT;
-        case FR_INVALID_NAME:       return EINVAL;
-        case FR_DENIED:             return EACCES;
-        case FR_EXIST:              return EEXIST;
-        case FR_INVALID_OBJECT:     return EBADF;
-        case FR_WRITE_PROTECTED:    return EROFS;
-        case FR_INVALID_DRIVE:      return ENODEV;
-        case FR_NOT_ENABLED:        return ENODEV;
-        case FR_NO_FILESYSTEM:      return ENODEV;
-        case FR_MKFS_ABORTED:       return EFAULT;
-        case FR_TIMEOUT:            return ETIMEDOUT;
-        case FR_LOCKED:             return EACCES;
-        case FR_NOT_ENOUGH_CORE:    return ENOMEM;
-        case FR_TOO_MANY_OPEN_FILES:return EMFILE;
-        case FR_INVALID_PARAMETER:  return EINVAL;
-        default:                   return EIO;  // Unknown error mapped to I/O error
-    }
 }
 
 
@@ -108,34 +87,51 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
     return (void *)prev;
 }
 
-static void fill_stat_from_file(struct stat *st, DWORD fsize) {
-    memset(st, 0, sizeof(struct stat));
-    st->st_mode = S_IFREG | 0444;   // Regular file, read-only as default
-    st->st_nlink = 1;
-    st->st_size = fsize;
-    // Set additional fields if needed; mtime/atime/ctime can be set if you extract from FILINFO.fdate/ftime
+// _stat_r: info about a file path (not necessarily open)
+int _stat_r(struct _reent *r, const char *path, struct stat *st) {
+    char* f_path = path; //format_path((char*)path);
+    if(path == NULL || strcmp(path,""))
+    {
+        while(1);
+    }
+    
+    if(chek_path_file(f_path) != EOK)
+    {
+        r->_errno = EINVAL;
+        return -1;
+    }
+
+    struct ext4_inode ino;
+    uint32_t inode;
+    if((r->_errno = ext4_raw_inode_fill(f_path, &inode, &ino)))
+        return -1;
+    
+
+    st->st_atime = ino.access_time;
+    st->st_ctime = ino.crtime;
+    st->st_mtime = ino.modification_time;
+
+    st->st_ino = inode;
+    st->st_gid = ino.gid;
+    st->st_dev = ext4_inode_get_dev(&ino);
+
+    
+
+    st->st_mode = ino.mode;
+    st->st_blksize = 1024;
+    st->st_blocks = (ino.size_lo + 512 - 1) / 512;
+
+    st->st_uid = ino.uid;
+    st->st_size = ino.size_lo;
+    st->st_rdev = -1;
+    st->st_nlink = ino.links_count;
+
+    return 0;
 }
 
 // _fstat_r: info about an open file descriptor
 int _fstat_r(struct _reent *r, int fd, struct stat *st) {
-    if (!st) {
-        if (r) r->_errno = EINVAL;
-        return -1;
-    }
-    if (fd >= 0 && fd < STD_FD_COUNT) {
-        // stdin/out/err — character device
-        memset(st, 0, sizeof(struct stat));
-        st->st_mode = S_IFCHR;
-        st->st_nlink = 1;
-        return 0;
-    }
-    if (fd >= STD_FD_COUNT && fd < MAX_OPEN_FILES && fd_table[fd]) {
-        // For simplicity, fill only st_size and st_mode as regular file
-        fill_stat_from_file(st, f_size(fd_table[fd]));
-        return 0;
-    }
-    if (r) r->_errno = EBADF;
-    return -1;
+    return _stat_r(r,fd_paths[fd], st);
 }
 
 
@@ -146,23 +142,28 @@ int _isatty_r(struct _reent *r, int fd) {
 // _lseek_r
 off_t _lseek_r(struct _reent *r, int fd, off_t offset, int whence) {
     if (fd < 3) return -1; // Not a file
-    FIL *fp = fd_table[fd];
-    DWORD newpos;
-    switch (whence) {
-        case SEEK_SET: newpos = offset; break;
-        case SEEK_CUR: newpos = f_tell(fp) + offset; break;
-        case SEEK_END: newpos = f_size(fp) + offset; break;
-        default: return -1;
-    }
-    /*
-    FRESULT fres = f_lseek(fp, newpos);
-    if (fres != FR_OK)
+    if(fd_table[fd] == NULL)
     {
-        errno = fatfs_to_errno(fres);
+        r->_errno = EINVAL;
         return -1;
     }
-        */
-    return newpos;
+    ext4_file *fp = fd_table[fd];
+    
+    switch (whence) {
+        case SEEK_SET: break;
+        case SEEK_CUR: break;
+        case SEEK_END: break;
+        default: return -1;
+    }
+    
+    
+    
+    if ((r->_errno = ext4_fseek(fp, offset, whence)))
+    {
+        return -1;
+    }
+        
+    return fp->fpos;
 }
 
 
@@ -181,18 +182,18 @@ long rtc_to_unix_epoch(int year, int mon, int day, int hour, int min, int sec) {
     return ((long)days * 24 * 3600) + (hour * 3600) + (min * 60) + sec;
 }
 
-extern int chek_path_dir(const char* path);
+
 
 // Unlink (delete) file syscall replacement for newlib with lwext4
 int _unlink_r(struct _reent *r, const char *path) {
-
-    if(chek_path_dir(path) != EOK)
+    char* f_path = path;//format_path((char*)path);
+    if(chek_path_dir(f_path) != EOK)
     {
         r->_errno = EINVAL;
         return r->_errno;
     }
 
-    r->_errno = ext4_fremove(path);
+    r->_errno = ext4_fremove(f_path);
     
 
     return r->_errno;
@@ -212,23 +213,9 @@ int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp)
     return 0; 
 }
 
-// _stat_r: info about a file path (not necessarily open)
-int _stat_r(struct _reent *r, const char *path, struct stat *st) {
-   
-    if(chek_path_file(path) != EOK)
-    {
-        r->_errno = EINVAL;
-        return r->_errno;
-    }
-    st->st_atime = atime;
-    st->st_ctime = ctime;
-    
-    ext4_atime_get()
 
-    return 0;
-}
 // Map ANSI foreground colors (30-37 and 90-97) to 4-bit color values (0-15)
-BYTE ansi_fg_code_to_pc_color(int code) {
+uint8_t ansi_fg_code_to_pc_color(int code) {
     switch(code) {
         case 30: return 0x0;  // Black
         case 31: return 0x4;  // Red
@@ -251,7 +238,7 @@ BYTE ansi_fg_code_to_pc_color(int code) {
 }
 
 // Map ANSI background colors (40-47 and 100-107) to 4-bit color values (0-15)
-BYTE ansi_bg_code_to_pc_color(int code) {
+uint8_t ansi_bg_code_to_pc_color(int code) {
     switch(code) {
         case 40: return 0x0;  // Black
         case 41: return 0x4;  // Red
@@ -277,18 +264,16 @@ BYTE ansi_bg_code_to_pc_color(int code) {
 #include <stdlib.h>
 #include <string.h>
 
-typedef unsigned char BYTE;
-typedef unsigned short WORD;
 
 // Dummy color map functions (replace with your implementation)
-BYTE ansi_fg_code_to_pc_color(int code);
-BYTE ansi_bg_code_to_pc_color(int code);
+uint8_t ansi_fg_code_to_pc_color(int code);
+uint8_t ansi_bg_code_to_pc_color(int code);
 
 // Main function: converts input char buffer with ANSI color escapes into WORD buffer with color attributes
-size_t _byte_to_word_string(const char* buf, size_t count, WORD *wbuf)
+size_t _byte_to_word_string(const char* buf, size_t count, uint16_t *wbuf)
 {
-    BYTE _text_color_foreground = 0x02;  // green default fg
-    BYTE _text_color_background = 0x00;  // black default bg
+    uint8_t _text_color_foreground = 0x02;  // green default fg
+    uint8_t _text_color_background = 0x00;  // black default bg
     size_t out_count = 0;
 
     while (count > 0 && *buf)
@@ -361,12 +346,12 @@ size_t _byte_to_word_string(const char* buf, size_t count, WORD *wbuf)
 
 /* POSIX‐style _write stub that calls the reentrant version */
 int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
-    WORD *wbuf;
+    uint16_t *wbuf;
     size_t cnt = count;
     switch (fd) {
     case STDOUT_FILENO:
     case STDERR_FILENO:
-        wbuf = malloc(count*sizeof(WORD));
+        wbuf = malloc(count*sizeof(uint16_t));
         cnt = _byte_to_word_string(buf, cnt, wbuf);
         asm_STI();
         //if(count != 0){syscall_trap0(0xFL, count, (void *)buf);} //print byte buffer
@@ -377,16 +362,14 @@ int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
         free(wbuf);
         return count;   // Return bytes written
     default:
-    /*
+    
         if (fd >= STD_FD_COUNT && fd < MAX_OPEN_FILES && fd_table[fd])
         {
-            UINT bw;
-            FRESULT fres = f_write(fd_table[fd], buf, count, &bw);
-            if (fres != FR_OK)
-            {
-                r->_errno = fatfs_to_errno(fres);
+            size_t bw;
+            
+            if ((r->_errno = ext4_fwrite(fd_table[fd], buf, count, &bw)))
                 return -1;
-            }
+            
             return bw;
         }
         if(fd > MAX_OPEN_FILES)
@@ -402,7 +385,7 @@ int _write_r(struct _reent *r, int fd, const void *buf, size_t count) {
             printf("Wierd STD stream?\n");
         }
         r->_errno = EBADF;
-        */
+        
         return -1;
     }
 }
@@ -427,14 +410,13 @@ int _read_r(struct _reent *r, int fd, char *buf, size_t count) {
         }
         return (int)count;  /* Number of bytes read */
     default:
-    /*
+    
         if (fd >= STD_FD_COUNT && fd < MAX_OPEN_FILES && fd_table[fd]) {
-            UINT br;
-            FRESULT fres = f_read(fd_table[fd], buf, count, &br);
-            if (fres != FR_OK) {
-                r->_errno = fatfs_to_errno(fres);
+            size_t br;
+            
+            if ((r->_errno = ext4_fread(fd_table[fd], buf, count, &br)))
                 return -1;
-            }
+            
             return br;
         }
         if(fd > MAX_OPEN_FILES)
@@ -450,7 +432,7 @@ int _read_r(struct _reent *r, int fd, char *buf, size_t count) {
             printf("Wierd STD stream?\n");
         }
         r->_errno = EBADF;
-        */
+        
         return -1;
     }
 }
@@ -460,10 +442,11 @@ int _read_r(struct _reent *r, int fd, char *buf, size_t count) {
 
 
 // Helper to allocate a file descriptor
-static int allocate_fd(FIL *fp) {
+static int allocate_fd(ext4_file *fp, const char* path) {
     for (int i = STD_FD_COUNT; i < MAX_OPEN_FILES; ++i) {
-        if (!fd_table[i]) {
+        if (!fd_table[i] || chek_path_file(path)) {
             fd_table[i] = fp;
+            strcpy(fd_paths[i], path);
             return i;
         }
     }
@@ -473,34 +456,28 @@ static int allocate_fd(FIL *fp) {
 static void free_fd(int fd) {
     if (fd >= 0 && fd < MAX_OPEN_FILES) {
         fd_table[fd] = NULL;
+        memset(fd_paths[fd], 0, sizeof(*fd_paths));
     }
 }
 
 
 // _open_r implementation (newlib uses this form)
 int _open_r(struct _reent *r, const char *path, int flags, int mode) {
-    (void)mode; // FatFs doesn't use mode
-    BYTE fatfs_mode = 0;
-    if (flags & O_WRONLY) fatfs_mode |= FA_WRITE;
-    if (flags & O_RDWR)   fatfs_mode |= FA_READ | FA_WRITE;
-    if (flags & O_CREAT)  fatfs_mode |= FA_OPEN_ALWAYS;
-    if (!(flags & O_WRONLY)) fatfs_mode |= FA_READ;
-
-    FIL *fp = malloc(sizeof(FIL));
+    (void)mode; //TODO: make mode work!    
+    char* f_path = format_path((char*)path);
+    ext4_file *fp = malloc(sizeof(ext4_file));
     if (!fp) {
         r->_errno = ENOMEM;
         return -1;
     }
 
-    FRESULT fres = f_open(fp, path, fatfs_mode);
-    if (fres != FR_OK) {
+    if ((r->_errno = ext4_fopen2(fp, f_path, flags))) {
         free(fp);
-        r->_errno = ENOENT; // Or other mapping
         return -1;
     }
-    int fd = allocate_fd(fp);
+    int fd = allocate_fd(fp, path);
     if (fd < 0) {
-        f_close(fp); free(fp);
+        ext4_fclose(fp); free(fp);
         r->_errno = EMFILE;
         return -1;
     }
@@ -513,9 +490,11 @@ int _close_r(struct _reent *r, int fd) {
         r->_errno = EBADF;
         return -1;
     }
-    //f_close(fd_table[fd]);
+    r->_errno = ext4_fclose(fd_table[fd]);
     free(fd_table[fd]);
     free_fd(fd);
+    if(r->_errno)
+        return -1;
     return 0;
 }
 
