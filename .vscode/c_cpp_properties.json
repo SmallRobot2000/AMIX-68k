@@ -15,7 +15,7 @@
             "name": "AMIX",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/code/"
+                "/home/lovro/opt/cross-newlib/m68k-elf-rosco/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

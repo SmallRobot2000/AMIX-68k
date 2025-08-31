@@ -16,7 +16,7 @@
 #define PACKET_SIZE     128
 #define PACKET_1K_SIZE  1024
 
-#define MAX_XFILE_SIZE 256*1024
+#define MAX_XFILE_SIZE 128*1024
 typedef struct {
     uint8_t soh;        // Start of header (0x01)
     uint8_t block_num;  // Block number (1-255)
@@ -195,7 +195,7 @@ int xmodem_receive(char* fname)
     finish:
     ext4_fclose(&fp);
     free(tmp);
-    //resume_scheduler();
+    resume_scheduler();
     return res;
 }
 

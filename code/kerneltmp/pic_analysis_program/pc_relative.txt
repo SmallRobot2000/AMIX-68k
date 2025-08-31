@@ -1,0 +1,4 @@
+   10068:	4bfa 1962      	lea %pc@(119cc <_etext>),%a5
+   100ca:	4bfa 1900      	lea %pc@(119cc <_etext>),%a5
+   10106:	4bfa 18c4      	lea %pc@(119cc <_etext>),%a5
+   101a0:	4bfa 182a      	lea %pc@(119cc <_etext>),%a5
