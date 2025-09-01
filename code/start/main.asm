@@ -52,13 +52,21 @@ _start:
 
 	
 	lea		program,a0
-	jsr		xmodem_receve
+	;jsr		xmodem_receve
+	lea		kernel_loader,a1
+	move.l	#kernel_loader_end-kernel_loader,d0
+.l2:
+	move.b	(a1)+,d1
+	move.b	d1,(a0)+
+	sub.l	#1,d0
+	tst.l	d0
+	bne		.l2
 
 .wait:
 	
-	jsr		receve_byte
-	cmp		#13,d0
-	bne		.wait
+	;jsr		receve_byte
+	;cmp		#13,d0
+	;bne		.wait
 	lea		program,a0
 	
 	jsr		(a0)		;jump to loaded program
@@ -303,9 +311,12 @@ print_hex:
 	movem.l	(a7)+,d0/d1/d2/a0
 	rts
 
-	section .rodata
+	section .text
+kernel_loader:
+	incbin "../RAM_API/bin/program.bin"
+kernel_loader_end:
 msg:
-	dc.b 13,"Hello form 68k!",13,10,0
+	dc.b "Boot ROM start",0
 msg_empty:
 	dc.b "Empty exec",0
 msg_wrong:
@@ -317,7 +328,6 @@ msg_OK:
 	dc.b 13,"Memory test OK",13,10,0
 msg_t0:
 	dc.b "Hello TRAP #0",0
-
 
 
 

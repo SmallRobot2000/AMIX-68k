@@ -31,7 +31,7 @@ API_SEND_STR		equ		$05
 API_GET_CURSOR_XY	equ		$06
 API_SET_CURSOR_XY	equ		$07
 
-prog_start 	equ	RAM_START+$30000	;lots of space
+prog_start 	equ	RAM_START+$80000	;lots of space
 
 ; Macro to disable all maskable interrupts by setting IPL = 7
     macro STI
@@ -52,19 +52,36 @@ _start:
 
 
 	
-	lea		msg_press_enter,a0
+	lea		msg_lading_loader,a0
 	move	#3,d1
 	bsr		x_print_byte_string
 	;TRAP	#0
 	STI
 .l:
-	bsr		kyb_get_key
+	;bsr		kyb_get_key
 	;cmp.b	#10,d0
 	;bne		.l
 	;bsr		x_print_char_byte
+	;lea		msg_done,a0
+	;bsr		x_print_byte_string
+
 	lea		prog_start,a0
-	bsr		xmodem_receve
-	;bsr		kyb_get_key
+	;bsr		xmodem_receve
+
+	;jmp		.skip
+	lea		kernel_loader,a1
+	move.l	#kernel_loader_end-kernel_loader,d0
+.l2:
+	move.b	(a1)+,d1
+	move.b	d1,(a0)+
+	sub.l	#1,d0
+	tst.l	d0
+	bne		.l2
+.skip:
+	lea		msg_done,a0
+	bsr		x_print_byte_string
+
+
 	lea		prog_start,a0
 	jsr		(a0)
 	jmp		.l
@@ -281,7 +298,7 @@ msg:
 msg_w:
 	dc.w $0F41,$0F42,$0F43,$0A41,$0D41,10,13,0
 msg_done:
-	dc.B	13,10,"DONE!",13,10,0
+	dc.b	"Done",13,10,0
 msg_wrong:
 	dc.b 13,"Memory test FAIL",13,10,0
 msg_failed_at:
@@ -305,14 +322,25 @@ msg_press_enter:
 	dc.b 13,10,"Press ENTER key ...",0
 msg_empty_trap:
 	dc.b 13,10,"Empty TRAP",0
-	align	4
+msg_lading_loader:
+	dc.b 13,10,"Loading bootloader...",13,10,0
 
+
+	section .text
 	align 4
+
 	INCLUDE		"UART.asm"
 	INCLUDE		"xosera.asm"
-	INCLUDE		"xmodem.asm"
+	;INCLUDE		"xmodem.asm"
 	INCLUDE		"PPI_KEYB_PIT.asm"
 	INCLUDE		"IDE.asm"
 	INCLUDE		"../common/bss.asm"
+	section .rodata
+
+		section .text
+kernel_loader:
+
+	incbin "../C/bin/program.bin"
+kernel_loader_end:
 
 

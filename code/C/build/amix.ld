@@ -11,7 +11,7 @@ __DYNAMIC = 0;
 
 MEMORY
 {
-    ram (rwx) : ORIGIN = 0x130000, LENGTH = 2M
+    ram (rwx) : ORIGIN = 0x180000, LENGTH = 2M
     rom (rx)  : ORIGIN = 0x000000, LENGTH = 1M
 }
 

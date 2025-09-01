@@ -11,7 +11,7 @@ SECTIONS
     KEEP(*(.text))
   }
   .rodata : {
-    KEEP(*(.text))
+    KEEP(*(.rodata))
   }
 
   _bss_start = 0x100000;

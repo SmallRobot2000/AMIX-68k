@@ -72,9 +72,9 @@ _start:
 	 * Default to using the __stack for SP.
 	 */
 	STI
-	move	#0,d1
-	move	#13,d0
-	trap 	#0		//Needs to be here idk why
+	//move	#0,d1
+	//move	#13,d0
+	//trap 	#0		//Needs to be here idk why
 	lea		__stack,a7	//setup SP
 	/* set up initial stack frame */
 	link	a6, IMM(-8)

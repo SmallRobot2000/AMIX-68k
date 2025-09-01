@@ -11,7 +11,7 @@ CAN     equ     $18
 ;A0 - destination address for data
 ;clobbers: d0,d1,d2,d3,A0,d4
 xmodem_receve:
-
+    rts     ;No need
 st_loop:
     move    #NAK,d0
     jsr     send_byte   ;send NAK
@@ -22,6 +22,7 @@ st_loop:
 
     
 pa_loop:
+    
     jsr     receve_byte
     move    #$20,d2       ;error code
 

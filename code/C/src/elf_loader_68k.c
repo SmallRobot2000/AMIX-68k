@@ -19,10 +19,8 @@ uint32_t load_elf(const char *path, void *base_addr) {
 
     
     ext4_file fil;
-    printf("Sok?\n");
     /* 1) Open file and check size */
     if (ext4_fopen(&fil, path, "r") != EOK) return (uint32_t)-1;
-    printf("OK?\n");
     size_t fsize = ext4_fsize(&fil);
     if (fsize > BIGBUF_SIZE) {
         ext4_fclose(&fil);

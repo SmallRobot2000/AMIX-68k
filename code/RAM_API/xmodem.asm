@@ -11,7 +11,7 @@ CAN     equ     $18
 ;A0 - destination address for data
 ;clobbers: d0,d1,d2,d3,A0,d4
 xmodem_receve:
-
+    rts
 st_loop:
     move    #NAK,d0
     bsr     send_byte   ;send NAK
