@@ -31,18 +31,18 @@ uint32_t load_elf(const char *path, void *base_addr) {
     size_t br;
     if (ext4_fread(&fil, bigbuf, fsize, &br) != EOK || br != fsize) {
         ext4_fclose(&fil);
-        return (uint32_t)-1;
+        return (uint32_t)-2;
     }
     ext4_fclose(&fil);
     /* 3) Fast ELF validation */
     Elf32_Ehdr *ehdr = (Elf32_Ehdr*)bigbuf;
     /* Compare the first 4 magic bytes */
     if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG) != 0)
-        return (uint32_t)-1;
+        return (uint32_t)-3;
 
     /* Check class is 32-bit */
     if (ehdr->e_ident[EI_CLASS] != ELFCLASS32)
-        return (uint32_t)-1;
+        return (uint32_t)-4;
 
 
     /* 4) Load PT_LOAD segments */

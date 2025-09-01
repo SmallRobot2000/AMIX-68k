@@ -4,6 +4,7 @@ BIN="../bin"
 INC="../../include"
 COMM="../common"
 TMP="../tmp"
+INC2="../include"
 PROGRAMS=(kernel)
 set -e
 
@@ -19,7 +20,7 @@ else
 fi
 
 
-./compile.sh amix.ld "$SRC/$item" $BIN $INC $item $COMM $TMP
+./compile.sh amix.ld "$SRC/$item" $BIN $INC $item $COMM $TMP $INC2
 echo "$item done"
 #if [ ! -f $BIN/program.bin ]; then
     #echo "Build failed, aborting send."

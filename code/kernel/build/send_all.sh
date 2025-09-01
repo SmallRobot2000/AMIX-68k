@@ -1,0 +1,1 @@
+./send.sh /dev/ttyUSB0 115200 ../bin/kernel.elf

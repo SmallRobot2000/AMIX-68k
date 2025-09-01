@@ -31,6 +31,51 @@ char *my_env[] = {
     NULL
 };
 extern void trap1_init(void);
+
+static char *entry_to_str(uint8_t type)
+{
+	switch (type) {
+	case EXT4_DE_UNKNOWN:
+		return "[unk] ";
+	case EXT4_DE_REG_FILE:
+		return "[fil] ";
+	case EXT4_DE_DIR:
+		return "[dir] ";
+	case EXT4_DE_CHRDEV:
+		return "[cha] ";
+	case EXT4_DE_BLKDEV:
+		return "[blk] ";
+	case EXT4_DE_FIFO:
+		return "[fif] ";
+	case EXT4_DE_SOCK:
+		return "[soc] ";
+	case EXT4_DE_SYMLINK:
+		return "[sym] ";
+	default:
+		break;
+	}
+	return "[???]";
+}
+void test_lwext4_dir_ls(const char *path)
+{
+	char sss[255];
+	ext4_dir d;
+	const ext4_direntry *de;
+
+	printf("ls %s\n", path);
+
+	int r = ext4_dir_open(&d, path);
+    if(r != EOK) return;
+	de = ext4_dir_entry_next(&d);
+
+	while (de) {
+		memcpy(sss, de->name, de->name_length);
+		sss[de->name_length] = 0;
+		printf("  %s%s\n", entry_to_str(de->inode_type), sss);
+		de = ext4_dir_entry_next(&d);
+	}
+	ext4_dir_close(&d);
+}
 int init()
 {
     printf("Scheduler init...\n");
@@ -82,10 +127,18 @@ int main()
     }
         
     printf("Press 'x' to receve new /sys/kernel.sys\nPress any other key to continue\n");
-    if(syscall_trap0(0x08, 0, NULL) == 'x')
+    char ch;
+    ask:
+    ch = syscall_trap0(0x08, 0, NULL);
+    if(ch == 'x')
     {
         printf("Receving /sys/kernel.sys over xmodem\n");
         xmodem_receive("/sys/kernel.sys");
+    }
+    if(ch == 'l')
+    {
+        test_lwext4_dir_ls("/sys");
+        goto ask;
     }
     skip_dialog:
 
@@ -104,10 +157,11 @@ int main()
         while(1);
     }
     ext4_fclose(&fil);
-    if(load_elf("/sys/kernel.sys", add) != (uint32_t)add)
+    if((ret = load_elf("/sys/kernel.sys", add)) != (uint32_t)add)
     {
-        perror("FATAL -> load");
+        printf("FATAL -> load error: %d\n", ret);
         lock = true;
+        while(1);
     }
     ret = ext4_umount("/");
     if(ret)
@@ -139,8 +193,8 @@ int main()
    // //kernel_start();
    // 
    // 
-   // scheduler_start();
-   // //while(1);
+   //();
+   ///while(1);
    // while(1);
    // 
    // int n;

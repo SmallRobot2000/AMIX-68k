@@ -8,7 +8,7 @@ INC_DIR=$4
 NAME=$5
 COMM_DIR=$6 #common directory
 TMP_DIR=$7
-
+INC2=$8
 
 CROSS=m68k-elf-
 CC=${CROSS}gcc
@@ -25,15 +25,19 @@ LIBDIR="${NEWLIB_BASE}/${TARGET_PREFIX}/lib"
 #rm -f "$BIN_DIR"/*.{o,elf,bin,srec,map}
 
 # Enable debug info for .symtab, keep relocations
-COMMON_CFLAGS="-Os -g -m68010 -ffunction-sections -fdata-sections -Wall -I${INCDIR} -I${INC_DIR}"
+COMMON_CFLAGS="-Os -g -m68010 -ffunction-sections -fdata-sections -Wall -I${INCDIR} -I${INC_DIR} -I${INC2}"
 
 #echo "Compiling C files..."
-for src in "$SRC_DIR"/*.c; do
+find "$SRC_DIR" -name '*.c' | while read -r src; do
+  # Skip if no such file (precaution)
   [ -e "$src" ] || continue
-  obj="$TMP_DIR/$(basename "${src%.c}").o"
+
+  obj="$TMP_DIR/$(basename "${src%.c}.o")"
+
   echo "  $src -> $obj"
   $CC $COMMON_CFLAGS -c "$src" -o "$obj"
 done
+
 
 for comm in "$COMM_DIR"/*.c; do
   [ -e "$comm" ] || continue
@@ -43,9 +47,12 @@ for comm in "$COMM_DIR"/*.c; do
 done
 
 #echo "Compiling assembly files..."
-for src in "$SRC_DIR"/*.S; do
+find "$SRC_DIR" -name '*.S' | while read -r src; do
+  # Skip if no such file (precaution)
   [ -e "$src" ] || continue
-  obj="$TMP_DIR/$(basename "${src%.S}").o"
+  
+  obj="$TMP_DIR/$(basename "${src%.S}.o")"
+
   echo "  $src -> $obj"
   $CC $COMMON_CFLAGS -c "$src" -o "$obj"
 done
