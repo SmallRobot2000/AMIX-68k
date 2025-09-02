@@ -334,7 +334,7 @@ msg_lading_loader:
 	;INCLUDE		"xmodem.asm"
 	INCLUDE		"PPI_KEYB_PIT.asm"
 	INCLUDE		"IDE.asm"
-	INCLUDE		"../common/bss.asm"
+	INCLUDE		"../../common/bss.asm"
 	section .rodata
 
 		section .text

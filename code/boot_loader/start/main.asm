@@ -31,7 +31,7 @@ DEBUG		equ		1
 	INCLUDE		"xosera.asm"
 	INCLUDE		"dmac.asm"
 	INCLUDE		"PPI_KEYB_PIT.asm"
-	INCLUDE		"../common/bss.asm"
+	INCLUDE		"../../common/bss.asm"
 	section .text
 _start:
 	move.w  #$2700,sr	;disable interupts

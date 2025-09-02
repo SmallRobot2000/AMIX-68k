@@ -81,7 +81,7 @@ int init()
     //printf("Scheduler init...\n");
     //scheduler_init();
     printf("Catcher init...\n");
-    //init_catcher();
+    init_catcher();
     printf("SYScall init...\n");
     //trap1_init();
     printf("Done init...\n");
@@ -185,8 +185,8 @@ int main()
         }
         printf("Loaded %lu bytes\n",br);
         ext4_fclose(&fil);
-        dump_memory((void*)0x200000, 256);
-        dump_memory((void*)0x200000+size-256, 256);
+        //dump_memory((void*)0x200000, 256);
+        //dump_memory((void*)0x200000+size-256, 256);
         call_address(0x200000, argv, 1);
     }else{
     uint32_t ret1 = load_elf("/sys/kernel.sys", (void*)0x200000);

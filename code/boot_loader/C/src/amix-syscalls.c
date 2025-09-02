@@ -95,12 +95,7 @@ int _stat_r(struct _reent *r, const char *path, struct stat *st) {
     {
         while(1);
     }
-    
-    if(chek_path_file(f_path) != EOK)
-    {
-        r->_errno = EINVAL;
-        return -1;
-    }
+
 
     struct ext4_inode ino;
     uint32_t inode;
