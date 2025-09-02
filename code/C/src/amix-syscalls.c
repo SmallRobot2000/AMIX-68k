@@ -16,6 +16,7 @@
 #include <stddef.h>
 #include <errno.h>
 #include <RTC.h>
+#include <debug.h>
 //Sys stuff
 #include<sys_amix.h>
 #include <stdint.h>
@@ -90,9 +91,11 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
 // _stat_r: info about a file path (not necessarily open)
 int _stat_r(struct _reent *r, const char *path, struct stat *st) {
     char* f_path = path; //format_path((char*)path);
+    dbg_printf("STAT path: %s\n",f_path);
     if(path == NULL || strcmp(path,""))
     {
-        while(1);
+        r->_errno = EINVAL;
+        return -1;
     }
     
     if(chek_path_file(f_path) != EOK)

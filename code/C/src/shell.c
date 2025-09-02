@@ -14,6 +14,7 @@
 #include <history.h>
 #include <stdbool.h>
 #include <shell.h>
+#include <debug.h>
 #define PRG_MIN_ADD 0x180000
 #define DEFAULT_PROMPT "$ "
 
@@ -71,7 +72,7 @@ int call_command(command_t *cmd)
         strcat(fullPath, _BIN_PATH);
         strcat(fullPath, "/");
         strcat(fullPath, path);
-        //printf("DEBUG shell call bin file %s\n", fullPath);
+        dbg_printf("Shell call bin file %s\n", fullPath);
         int ret = run_file(fullPath, cmd->argv, cmd->argc);
         free(fullPath);
         return ret;

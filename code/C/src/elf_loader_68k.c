@@ -12,9 +12,11 @@
 #include <stdbool.h>
 #include <kernel.h>
 #include <process.h>
-#define BIGBUF_SIZE   (128 * 1024)
+#include <debug.h>
+
+extern uint32_t _WORKING_PROGRAM_MAX_SIZE;
     /* Buffer for entire file */
-    uint8_t bigbuf[BIGBUF_SIZE];
+extern uint8_t* bigbuf;
 uint32_t load_elf(const char *path, void *base_addr) {
 
     
@@ -24,8 +26,9 @@ uint32_t load_elf(const char *path, void *base_addr) {
     if (ext4_fopen(&fil, path, "r") != EOK) return (uint32_t)-1;
     
     size_t fsize = ext4_fsize(&fil);
-    if (fsize > BIGBUF_SIZE) {
+    if (fsize > _WORKING_PROGRAM_MAX_SIZE) {
         ext4_fclose(&fil);
+        printf("File to large\n");
         return (uint32_t)-1;
     }
     
@@ -33,6 +36,7 @@ uint32_t load_elf(const char *path, void *base_addr) {
     size_t br;
     if (ext4_fread(&fil, bigbuf, fsize, &br) != EOK || br != fsize) {
         ext4_fclose(&fil);
+        dbg_printf("Fread error\n");
         return (uint32_t)-1;
     }
     ext4_fclose(&fil);
@@ -154,7 +158,7 @@ uint32_t load_and_file_elf(const char *path, void *base_addr, const char *bin_pa
     }
 
     size_t fsize = ext4_fsize(&fil);
-    if (fsize > BIGBUF_SIZE) {
+    if (fsize > _WORKING_PROGRAM_MAX_SIZE) {
         ext4_fclose(&fil);
         return (uint32_t)-1;
     }
@@ -312,6 +316,7 @@ tcb_t *call_address(uint32_t add, char **argv, int argc)
     //char *argv[] = {"My name! WHAT IS MY NAME???",NULL};
     //int argc = sizeof(argv) / sizeof(argv[0]) - 1;  // Count elements, subtract 1 for NULL terminator
     //return prog_main( argc, argv, custom_env);
+
     return create_task((void*)add, argv, argc, custom_env);
 }
 
@@ -374,6 +379,7 @@ char resbuff[256];
 int run_file(const char* path, char **argv, int argc) //sets $?
 {
     int is_elf = is_elf_file(path);
+    dbg_printf("ELF is %d\n", is_elf);
     if(is_elf == true)
     {
         uint32_t res = load_elf(path, (void *)_WORKING_PROGRAM_ADD);
@@ -383,6 +389,7 @@ int run_file(const char* path, char **argv, int argc) //sets $?
             return -1;
         
         }
+        dbg_printf("Called as ELF\n");
         tcb_t *task = call_address(_WORKING_PROGRAM_ADD, argv, argc);
         wait_pid(task->pid);
         return 0;
@@ -408,6 +415,7 @@ int run_file(const char* path, char **argv, int argc) //sets $?
         {
             printf("Error file too big\n");
         }
+        dbg_printf("Called as BIN\n");
         tcb_t *task = call_address(_WORKING_PROGRAM_ADD, argv, argc);
         wait_pid(task->pid);
 

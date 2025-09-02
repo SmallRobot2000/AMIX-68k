@@ -287,6 +287,7 @@ int trap1_dispatch(void) {
     struct _reent *r;
     int ret = -1;
 
+    
     __asm__ volatile (
         "move.l %%d0, %0\n\t"
         "move.l %%d1, %1\n\t"
@@ -297,7 +298,7 @@ int trap1_dispatch(void) {
         :
         : "d0", "d1", "d2", "d3", "d4", "memory"
     );
-
+    printf("Syscall %d\n", syscall_no);
     switch (syscall_no) {
         case SYSCALL_OPEN:
             ret = _open_r(r, (const char *)arg1, arg2, arg3);

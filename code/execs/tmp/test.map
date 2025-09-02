@@ -199,7 +199,7 @@ Memory Configuration
 
 Name             Origin             Length             Attributes
 ram              0x00000000         0x00200000         xrw
-rom              0x00000000         0x00100000         xr
+rom              0x00200000         0x00100000         xr
 *default*        0x00000000         0xffffffff
 
 Linker script and memory map

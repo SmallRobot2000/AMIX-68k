@@ -1,0 +1,1 @@
+extern void dbg_printf(const char *format, ...);

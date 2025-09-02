@@ -14,11 +14,12 @@
 #include <RTC.h>
 #include <process.h>
 #include <kernel.h>
+#include <debug.h>
 #define BIN_PATH "/bin"
 #define SYS_PATH "/sys"
 #define SRC_PATH "/sys/src"
 #define DEFAULT_PROGRAM_ADD 0x200000
-#define DEFAULT_PROGRAM_MAX_SIZE 0x20000 //128k
+#define DEFAULT_PROGRAM_MAX_SIZE 0x40000 //256k
 #define DEFAULT_STS_VER_STR "AMIX system with kernel/shell v0.0.0 alfa"
 
 
@@ -27,6 +28,8 @@ char _BIN_PATH[256];
 char _SYS_PATH[256];
 uint32_t _WORKING_PROGRAM_ADD;
 uint32_t _WORKING_PROGRAM_MAX_SIZE;
+
+uint8_t *bigbuf; //for program loading!
 
 extern void asm_STI();
 extern void asm_CLI();
@@ -172,12 +175,17 @@ __attribute__((optimize("O0"))) int kernel_init_fs()
     resume_scheduler();
     return 0;
 }
+
 int kernel_files_init()
 {
     //FRESULT f_res;
-    _WORKING_PROGRAM_ADD = DEFAULT_PROGRAM_ADD;
+    //_WORKING_PROGRAM_ADD = DEFAULT_PROGRAM_ADD;
     _WORKING_PROGRAM_MAX_SIZE = DEFAULT_PROGRAM_MAX_SIZE;
+    _WORKING_PROGRAM_ADD = malloc(_WORKING_PROGRAM_MAX_SIZE);
     _SYS_VER_STR = DEFAULT_STS_VER_STR;
+    dbg_printf("Working program address: %p\n",(void*)_WORKING_PROGRAM_ADD);
+
+    bigbuf = malloc(_WORKING_PROGRAM_MAX_SIZE);
     //setenv("SYS_VER_STR",DEFAULT_STS_VER_STR,1);
     //printf("%s\n",getenv("SYS_VER_STR"));
     strcpy(_SYS_PATH,SYS_PATH);
@@ -186,7 +194,7 @@ int kernel_files_init()
     //printf("System path: %s\nBinary path: %s\nSource path: %s\n",_SYS_PATH,_BIN_PATH,_SRC_PATH);
    
     
-    test_lwext4_dir_ls("/");
+    //test_lwext4_dir_ls("/");
     
 
     //Make some sys folders if they dont exist
@@ -222,7 +230,7 @@ int kernel_files_init()
 
     printf("All dirs exist\n");
 
-    test_lwext4_dir_ls("/sys/src");
+    //test_lwext4_dir_ls("/sys/src");
     
 
     //--------------------------
@@ -265,7 +273,7 @@ int kernel_files_init()
 
         printf("Realocating %s to %s", srcPath, binPath);
         fflush(stdout);
-        uint32_t radd = load_and_file_elf(srcPath, (void *)_WORKING_PROGRAM_ADD, binPath);
+        uint32_t radd = 0;//load_and_file_elf(srcPath, (void *)_WORKING_PROGRAM_ADD, binPath);
         if(radd != _WORKING_PROGRAM_ADD)
         {
             printf("... Error Incorect address %08lX\n",radd);

@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     bool flagH = false; //Human readable
     bool flagA = false; //All files
     bool flagF = false; //Append indicator(/ for directories * for executables)
-    
+    printf("LS!\n");
     int pathCnt = 0;
     char** paths = malloc(argc * sizeof(char*)); //Max possilbe paths
     for(int i = 1;i < argc; i++)
