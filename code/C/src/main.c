@@ -23,6 +23,7 @@ __attribute__((optimize("O0"))) int main(int argc, char *argv[])
 
 //Need to init first proces and commit suicide
    scheduler_init();
+   
     //Make kernel task with PID 0
    if(create_task(kernel_start,NULL,0,NULL) == NULL)
    {
