@@ -9,7 +9,6 @@
 #include <fs/ext4_fs.h>
 #include <stdint.h>
 #include <xmodem.h>
-#include <elf_loader.h>
 //#include <kernel.h>
 //#include <history.h>
 #include <stdbool.h>
@@ -17,6 +16,7 @@
 //#include <unistd.h>
 #include <process.h>
 #include <errno.h>
+#include <stdbool.h>
 extern void asm_STI();
 extern char* format_path(char *path);
 
@@ -78,8 +78,8 @@ void test_lwext4_dir_ls(const char *path)
 }
 int init()
 {
-    printf("Scheduler init...\n");
-    scheduler_init();
+    //printf("Scheduler init...\n");
+    //scheduler_init();
     printf("Catcher init...\n");
     init_catcher();
     printf("SYScall init...\n");
@@ -87,6 +87,9 @@ int init()
     printf("Done init...\n");
     return 0;
 }
+extern int *call_address(uint32_t add, char **argv, int argc);
+extern uint32_t load_elf(const char *path, void *base_addr);
+extern bool is_elf_file(const char *path);
 int main()
 {
 
@@ -128,6 +131,7 @@ int main()
         
     printf("Press 'x' to receve new /sys/kernel.sys\nPress any other key to continue\n");
     char ch;
+    bool elf;
     ask:
     ch = syscall_trap0(0x08, 0, NULL);
     if(ch == 'x')
@@ -141,53 +145,67 @@ int main()
         goto ask;
     }
     skip_dialog:
-
     
-    if(ext4_fopen(&fil, "/sys/kernel.sys","r"))
-    {
-        perror("Fopen");
-        while(1);
-    }
-        
-    uint32_t size = (uint32_t)ext4_fsize(&fil);
-    void* add = malloc(size);
-    if(add == NULL)
-    {
-        printf("Malloc error!");
-        while(1);
-    }
-    ext4_fclose(&fil);
-    if((ret = load_elf("/sys/kernel.sys", add)) != (uint32_t)add)
-    {
-        printf("FATAL -> load error: %d\n", ret);
-        lock = true;
-        while(1);
-    }
-    ret = ext4_umount("/");
-    if(ret)
-    {
-        errno = ret;
-        perror("umount");
-    }else{
-        printf("Umount fine\n");
-    }
-
+    elf = is_elf_file("/sys/kernel.sys");
     char *argv[]=
     {
         "/sys/kernel.sys",
         NULL
     };
-    if(lock)
-        while(1);
-    printf("Launching kernel...\n");
-    
-    if(create_task(add,argv,1,my_env) == NULL)
+    if(!elf)
     {
-        printf("Error starting kernel process!\n");
+
+    
+        if(ext4_fopen(&fil, "/sys/kernel.sys","r"))
+        {
+            perror("Fopen");
+            while(1);
+        }
+
+        uint32_t size = (uint32_t)ext4_fsize(&fil);
+
+        printf("Kernel size %lu\n", size);
+        //void* add = malloc(256*1024); //256k
+        printf("Launching kernel as bin...\n");
+        size_t br;
+        ret = ext4_fread(&fil, (void*)0x200000, size, &br);
+        if(ret || br != size)
+        {
+            errno = ret;
+            printf("Read %lu of %lu\n",br, size);
+            perror("Fread");
+            while(1);
+        }
+        ext4_fclose(&fil);
+        call_address(0x200000, argv, 1);
+    }else{
+    uint32_t ret1 = load_elf("/sys/kernel.sys", (void*)0x200000);
+    if(ret1 != 0x200000)
+    {
+        
+        printf("Error loading kernel: %lx\n",ret1);
+        lock = true;
         while(1);
     }
-    scheduler_start();
-    resume_scheduler();
+    
+    //ret = ext4_umount("/");
+    //if(ret)
+    //{
+    //    errno = ret;
+    //    perror("umount");
+    //}else{
+    //    printf("Umount fine\n");
+    //}
+
+    
+    if(lock)
+        while(1);
+    printf("Launching kernel as elf...\n");
+    
+    void* idksal = malloc(256);
+    printf("madsa %p\n",idksal);
+    call_address(0x200000, argv, 1);
+    }
     while(1);
    
    // //kernel_start();

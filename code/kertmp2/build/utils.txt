@@ -1,0 +1,34 @@
+cat
+mkdir
+touch
+find
+grep
+vc
+echo
+edit
+rm
+mv
+cp
+tree
+mount
+umount
+df
+du
+
+-- osnovno
+cat
+mkdir  -p
+echo
+rm     -rf
+mv
+cp     -r
+chmod   7
+
+
+edit
+
+
+echo $var
+echo abc
+abc
+

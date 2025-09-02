@@ -216,7 +216,8 @@ int ext4_block_get_noread(struct ext4_blockdev *bdev, struct ext4_block *b,
 	bool is_new;
 	int r;
 
-	ext4_assert(bdev && b);
+	ext4_assert(bdev);
+	ext4_assert(b);
 
 	if (!bdev->bdif->ph_refctr)
 		return EIO;

@@ -357,6 +357,8 @@ int trap1_dispatch(void) {
         case SYSCALL_KILLPID:
             ret = proc_kill_r(r, arg1);
             break;
+        case SYSCALL_UMNT:
+            ret = ext4_umount("/");
         default:
             ret = -1; // Unknown syscall
             break;

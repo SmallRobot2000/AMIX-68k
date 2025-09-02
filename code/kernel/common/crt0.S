@@ -113,7 +113,7 @@ _start:
  * main (argc, argv, environ)
  * we pass argv as a pointer to NULL.
  */	
-	PICCALL SYM (_INIT)
+	//PICCALL SYM (_INIT)
 	movel	(sp)+,d0	//add of env
 	CLI	
 	PICCALL	SYM (main)

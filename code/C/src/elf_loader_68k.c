@@ -304,13 +304,14 @@ char *custom_env[] = {
 };
 char**__environ = custom_env;
 typedef int (*prog_main_t)(int argc, char *argv[], char *custom_env[]);
-tcb_t *call_address(uint32_t add, char **argv, int argc)
+int call_address(uint32_t add, char **argv, int argc)
 {
-    //prog_main_t prog_main = (prog_main_t)add;
+    prog_main_t prog_main = (prog_main_t)add;
     //char *argv[] = {"My name! WHAT IS MY NAME???",NULL};
     //int argc = sizeof(argv) / sizeof(argv[0]) - 1;  // Count elements, subtract 1 for NULL terminator
-    //return prog_main( argc, argv, custom_env);
-    return create_task((void*)add, argv, argc, custom_env);
+    int ret = prog_main( argc, argv, custom_env);
+    return ret;
+    //return create_task((void*)add, argv, argc, custom_env);
 }
 
 
