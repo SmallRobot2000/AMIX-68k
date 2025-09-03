@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
             //          h - human readable
             //          a - hidden fiels also
             //          F - append indicator
-            printf("dirent d_name arg %s\n",entry->d_name);
+            //printf("dirent d_name arg %s\n",entry->d_name);
             char* fullpath = malloc(strlen(paths[i])+strlen(entry->d_name)+2); //+2 for / and 0
             strcpy(fullpath, paths[i]);
             if(paths[i][strlen(paths[i])-1] != '/')
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
             struct stat st;
             if(stat(fullpath, &st) != 0)
             {
-                printf("Path: %s\n",fullpath);
+                //printf("Path: %s\n",fullpath);
                 perror("stat");
                 return -1;
             }
@@ -211,11 +211,6 @@ int main(int argc, char *argv[]) {
 
         for(int n = 0; n < entrys; n++)
         {
-            if(!flagL && (strPrintLineCnt + strlen(entryStr[n])) > 80)
-            {
-                strPrintLineCnt = 0;
-                printf("\n\n"); //New line when too much for single line(double for clearncy)
-            }
             if(!flagL)
             {
                 printf("%s", entryStr[n]);

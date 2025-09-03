@@ -57,7 +57,7 @@ int rm_r(const char *path) {
         // It's a directory, try to remove directory (must be empty) so recusevly empty it
         DIR *dir = opendir(path);
         struct dirent *dr = readdir(dir);
-        if(dr != NULL)
+        if(dr != NULL && strcmp(dr->d_name, ".") != 0 && strcmp(dr->d_name, "..") != 0) //not dot dir
         {
             char* newPath = malloc(strlen(path) + strlen(dr->d_name) + 2);
             strcpy(newPath, path);

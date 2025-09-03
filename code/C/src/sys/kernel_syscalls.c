@@ -87,9 +87,15 @@ __attribute__((optimize("O0"))) char* format_path_abs(char* path, char* ret_path
             
             //printf("Fin after 1 .. %s\n",fpath_fin);
             char* pos = strrchr(fpath_fin, '/'); //make the dir before
-            if(pos != NULL)
+            if(pos != NULL && pos == fpath_fin)
+            {
+                *(pos+sizeof(char)) = 0; //save '/'
+            }else if(pos != NULL)
+            {
                 *pos = 0;
-            //printf("Fin after .. %p\n",pos);
+            }
+                
+            //printf("Fin after .. %s\n",fpath_fin);
             goto for_next;
         }
         
@@ -99,11 +105,16 @@ __attribute__((optimize("O0"))) char* format_path_abs(char* path, char* ret_path
             
         strcat(fpath_fin, path_part);
         for_next:
-        //printf("Path part: %s\n",path_part);
+        printf("Path part: %s Fin: %s\n",path_part,fpath_fin);
         if(!(path_part = strtok(NULL, "/")))
             break;
            
     }
+    //Remove last / if not root
+    while(strlen(fpath_fin) != 1 && fpath_fin[strlen(fpath_fin)-1] == '/')
+        fpath_fin[strlen(fpath_fin)-1] = 0;
+    
+    
     strcpy(ret_path, fpath_fin);
     
     free(fpath_fin);
@@ -122,7 +133,7 @@ __attribute__((optimize("O0"))) char* format_path(char *path, char *ret_path)
         return format_path_abs(path, ret_path);
     }
     char *abs_path = malloc(256);
-    sprintf(abs_path, "/%s", path);
+    sprintf(abs_path, "%s/%s", getenv("PWD"), path);
     ret_path = format_path_abs(abs_path, ret_path);
     free(abs_path);
     return ret_path;
@@ -132,7 +143,15 @@ int _chdir_r(struct _reent *r, const char *str)
 {
     if(str != NULL) //if ok
     {
-        setenv("PWD",str,1);
+        char f_path[256];
+        format_path((char*)str, f_path);
+        if(_stat_r(NULL, f_path, NULL) == 0) //exists
+        {
+            setenv("PWD",f_path,1);
+        }else{
+            r->_errno = ENOENT;
+        }
+        
     }else{
         return EINVAL;
     }

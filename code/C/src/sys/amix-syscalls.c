@@ -16,6 +16,7 @@
 #include <stddef.h>
 #include <errno.h>
 #include <RTC.h>
+#include <debug.h>
 //Sys stuff
 #include<sys_amix.h>
 #include <stdint.h>
@@ -32,7 +33,7 @@
 #define MAX_PATH_LEN 255
 extern int chek_path_dir(const char* path);
 extern int chek_path_file(const char* path);
-extern char *format_path(char* path);
+extern char* format_path(char *path, char *ret_path);
 static ext4_file *fd_table[MAX_OPEN_FILES] = {0}; // Maps fd -> FIL*
 static char fd_paths[MAX_OPEN_FILES][MAX_PATH_LEN+1];
 extern inline void asm_STI(void) {
@@ -89,13 +90,16 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
 
 // _stat_r: info about a file path (not necessarily open)
 int _stat_r(struct _reent *r, const char *path, struct stat *st) {
-    char* f_path = path; //format_path((char*)path);
-    if(path == NULL || strcmp(path,""))
+    char f_path[256];
+    char* p_ptr = format_path((char*)path, f_path);
+    DBG_PRINTF("Path: %s -> %s\n",path,p_ptr);
+    if(p_ptr == NULL)
     {
-        while(1);
+        DBG_PRINTF("Stat error! path: %s\n",p_ptr);
+        return -1;
     }
     
-    if(chek_path_file(f_path) != EOK)
+    if(chek_path_file(p_ptr) != EOK)
     {
         r->_errno = EINVAL;
         return -1;
@@ -103,7 +107,7 @@ int _stat_r(struct _reent *r, const char *path, struct stat *st) {
 
     struct ext4_inode ino;
     uint32_t inode;
-    if((r->_errno = ext4_raw_inode_fill(f_path, &inode, &ino)))
+    if((r->_errno = ext4_raw_inode_fill(p_ptr, &inode, &ino)))
         return -1;
     
 
@@ -186,14 +190,15 @@ long rtc_to_unix_epoch(int year, int mon, int day, int hour, int min, int sec) {
 
 // Unlink (delete) file syscall replacement for newlib with lwext4
 int _unlink_r(struct _reent *r, const char *path) {
-    char* f_path = path;//format_path((char*)path);
-    if(chek_path_dir(f_path) != EOK)
+    char f_path[256];
+    char* p_ptr = format_path((char*)path, f_path);
+    if(chek_path_dir(p_ptr) != EOK)
     {
         r->_errno = EINVAL;
         return r->_errno;
     }
 
-    r->_errno = ext4_fremove(f_path);
+    r->_errno = ext4_fremove(p_ptr);
     
 
     return r->_errno;
@@ -464,14 +469,16 @@ static void free_fd(int fd) {
 // _open_r implementation (newlib uses this form)
 int _open_r(struct _reent *r, const char *path, int flags, int mode) {
     (void)mode; //TODO: make mode work!    
-    char* f_path = format_path((char*)path);
+    char f_path[256];
+    char *p_ptr = format_path((char*)path, f_path);
     ext4_file *fp = malloc(sizeof(ext4_file));
     if (!fp) {
         r->_errno = ENOMEM;
         return -1;
     }
 
-    if ((r->_errno = ext4_fopen2(fp, f_path, flags))) {
+    if ((r->_errno = ext4_fopen2(fp, p_ptr, flags))) {
+        DBG_PRINTF("Kaj si izmislio ): %d\n", r->_errno);
         free(fp);
         return -1;
     }
@@ -481,6 +488,7 @@ int _open_r(struct _reent *r, const char *path, int flags, int mode) {
         r->_errno = EMFILE;
         return -1;
     }
+    r->_errno = 0;
     return fd;
 }
 

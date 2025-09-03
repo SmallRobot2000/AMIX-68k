@@ -14,12 +14,15 @@
 #include <RTC.h>
 #include <process.h>
 #include <kernel.h>
+#include <ext4_debug.h>
 #define BIN_PATH "/bin"
 #define SYS_PATH "/sys"
 #define SRC_PATH "/sys/src"
 #define DEFAULT_PROGRAM_ADD 0x200000
-#define DEFAULT_PROGRAM_MAX_SIZE 0x20000 //128k
+#define DEFAULT_PROGRAM_MAX_SIZE 0x40000 //128k
 #define DEFAULT_STS_VER_STR "AMIX system with kernel/shell v0.0.0 alfa"
+
+//Enable debug
 
 
 char _SRC_PATH[256];
@@ -27,7 +30,7 @@ char _BIN_PATH[256];
 char _SYS_PATH[256];
 uint32_t _WORKING_PROGRAM_ADD;
 uint32_t _WORKING_PROGRAM_MAX_SIZE;
-
+uint8_t *bigbuf;
 extern void asm_STI();
 extern void asm_CLI();
 
@@ -137,7 +140,7 @@ __attribute__((optimize("O0"))) int kernel_init_fs()
 
         struct ext4_mkfs_info *info = malloc(sizeof(struct ext4_mkfs_info));
         memset(info, 0, sizeof(struct ext4_mkfs_info));
-        info->block_size = 1024;
+        info->block_size = 8*1024;
         info->journal = false;
         info->label = "CF";
         info->dsc_size = 32;
@@ -162,7 +165,8 @@ __attribute__((optimize("O0"))) int kernel_init_fs()
             perror("mount");
             return ret;
         }
-
+    
+    setenv("PWD","/",1); //Set initial CWD
     
         
         
@@ -175,8 +179,13 @@ __attribute__((optimize("O0"))) int kernel_init_fs()
 int kernel_files_init()
 {
     //FRESULT f_res;
-    _WORKING_PROGRAM_ADD = DEFAULT_PROGRAM_ADD;
+    
+
     _WORKING_PROGRAM_MAX_SIZE = DEFAULT_PROGRAM_MAX_SIZE;
+    bigbuf = malloc(_WORKING_PROGRAM_MAX_SIZE);
+    _WORKING_PROGRAM_ADD = (uint32_t)malloc(_WORKING_PROGRAM_MAX_SIZE);
+    
+    printf("Prog add: %p\n",(void*)_WORKING_PROGRAM_ADD);
     _SYS_VER_STR = DEFAULT_STS_VER_STR;
     //setenv("SYS_VER_STR",DEFAULT_STS_VER_STR,1);
     //printf("%s\n",getenv("SYS_VER_STR"));
@@ -186,9 +195,7 @@ int kernel_files_init()
     //printf("System path: %s\nBinary path: %s\nSource path: %s\n",_SYS_PATH,_BIN_PATH,_SRC_PATH);
    
     
-    test_lwext4_dir_ls("/");
-    
-
+    //test_lwext4_dir_ls("/");
     //Make some sys folders if they dont exist
     // /bin
     
@@ -210,71 +217,11 @@ int kernel_files_init()
         return -2;
         
     }
-    printf("Source path: %s\n",_SRC_PATH);
-    ret = ext4_dir_mk(_SRC_PATH);
-    if(ret && ret != ENOENT) //Err
-    {
-        errno = ret;
-        perror("mkdir");
-        return -3;
-        
-    }
 
     printf("All dirs exist\n");
 
-    test_lwext4_dir_ls("/sys/src");
-    
-
-    //--------------------------
-    struct ext4_dir dir;
-    ret = ext4_dir_open(&dir, "/sys");
-    if(ret)
-    {
-        errno = ret;
-        perror("dir_open");
-        return -4;
-    }
-    ext4_dir_close(&dir);
-
-
-    
-    int r;
-
-    
-    printf("Opening SRC directory\n");
-    r = ext4_dir_open(&dir, _SRC_PATH);
-    if(r != EOK) return -5;
-    //setenv("PATH",_BIN_PATH,1);
-    
-    char binPath[256];
-    char srcPath[256];
-
-    const ext4_direntry *dir_en;
-
-    do
-    {
-        dir_en = ext4_dir_entry_next(&dir);
-        if(dir_en == NULL) break;
-        if(strcmp((const char*)dir_en->name, ".") == 0 || strcmp((const char*)dir_en->name, "..") == 0) continue; //skip dot dirs
-        strcpy(binPath, _BIN_PATH);
-        strcat(binPath, "/");
-        strcat(binPath, (const char*)dir_en->name);
-        strcpy(srcPath, _SRC_PATH);
-        strcat(srcPath, "/");
-        strcat(srcPath, (const char*)dir_en->name);
-
-        printf("Realocating %s to %s", srcPath, binPath);
-        fflush(stdout);
-        uint32_t radd = load_and_file_elf(srcPath, (void *)_WORKING_PROGRAM_ADD, binPath);
-        if(radd != _WORKING_PROGRAM_ADD)
-        {
-            printf("... Error Incorect address %08lX\n",radd);
-            //return -6;
-        }else{
-            printf("... OK\n");
-        }
-    }while(dir_en);
-    
+    //test_lwext4_dir_ls("/sys/src");
+       
       
     return 0;
 }

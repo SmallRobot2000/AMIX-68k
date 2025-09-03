@@ -32,8 +32,7 @@ for c in $(find "$SRC_DIR" -type f -name '*.c'); do
 done
 
 echo -e "\033[33mCompiling assembly files...\033[0m"
-for s in "$SRC_DIR"/*.S; do
-  [ -e "$s" ] || continue
+for s in $(find "$SRC_DIR" -type f -name '*.S'); do
   obj="$BIN_DIR/$(basename "${s%.S}").o"
   echo "  $s → $obj"
   $CC $COMMON_CFLAGS -c "$s" -o "$obj"
