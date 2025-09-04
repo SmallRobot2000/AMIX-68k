@@ -17,6 +17,7 @@ typedef struct {
     uint32_t pid;           //Process ID
     uint32_t p_pid;         // Perent process ID(caller)
     uint32_t malloc_table[MAX_MALLOC]; // Table of allocations
+    int uid;
 } tcb_t;
 
 extern tcb_t *tasks[MAX_TASKS];

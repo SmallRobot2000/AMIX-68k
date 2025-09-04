@@ -8,9 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <fs/ext4.h>          // lwext4 header
-#include <fs/ext4_inode.h>
-#include <fs/ext4_fs.h>
+
 #include <sys/unistd.h>  // For ssize_t etc.
 #include <unistd.h>
 #include <stddef.h>
@@ -20,6 +18,9 @@
 //Sys stuff
 #include<sys_amix.h>
 #include <stdint.h>
+#include <fs/ext4.h>          // lwext4 header
+#include <fs/ext4_inode.h>
+#include <fs/ext4_fs.h>
 
 // File descriptor definitions
 #define STDIN_FILENO    0
@@ -92,7 +93,7 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
 int _stat_r(struct _reent *r, const char *path, struct stat *st) {
     char f_path[256];
     char* p_ptr = format_path((char*)path, f_path);
-    DBG_PRINTF("Path: %s -> %s\n",path,p_ptr);
+    DBG_PRINTF_ALL("Path: %s -> %s\n",path,p_ptr);
     if(p_ptr == NULL)
     {
         DBG_PRINTF("Stat error! path: %s\n",p_ptr);
@@ -466,6 +467,38 @@ static void free_fd(int fd) {
 }
 
 
+
+static const char *flags_to_string(uint32_t file_flags)
+{
+    if (file_flags == O_RDONLY) {
+        return "r";
+    }
+
+    if (file_flags == (O_WRONLY | O_CREAT | O_TRUNC)) {
+        return "w";
+    }
+
+    if (file_flags == (O_WRONLY | O_CREAT | O_APPEND)) {
+        return "a";
+    }
+
+    if (file_flags == O_RDWR) {
+        return "r+";
+    }
+
+    if (file_flags == (O_RDWR | O_CREAT | O_TRUNC)) {
+        return "w+";
+    }
+
+    if (file_flags == (O_RDWR | O_CREAT | O_APPEND)) {
+        return "a+";
+    }
+
+    // If no exact match, return NULL or some default
+    return NULL;
+}
+
+
 // _open_r implementation (newlib uses this form)
 int _open_r(struct _reent *r, const char *path, int flags, int mode) {
     (void)mode; //TODO: make mode work!    
@@ -476,9 +509,9 @@ int _open_r(struct _reent *r, const char *path, int flags, int mode) {
         r->_errno = ENOMEM;
         return -1;
     }
-
-    if ((r->_errno = ext4_fopen2(fp, p_ptr, flags))) {
-        DBG_PRINTF("Kaj si izmislio ): %d\n", r->_errno);
+    
+    if ((r->_errno = ext4_fopen(fp, p_ptr, flags_to_string(flags) ))) {
+        DBG_PRINTF("Kaj si izmislio ): %d, path: %s \n", r->_errno, p_ptr);
         free(fp);
         return -1;
     }
