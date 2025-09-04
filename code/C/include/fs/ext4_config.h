@@ -85,12 +85,12 @@ extern "C" {
 
 /**@brief  Enable/disable journaling*/
 #ifndef CONFIG_JOURNALING_ENABLE
-#define CONFIG_JOURNALING_ENABLE 1
+#define CONFIG_JOURNALING_ENABLE 0
 #endif
 
 /**@brief  Enable/disable xattr*/
 #ifndef CONFIG_XATTR_ENABLE
-#define CONFIG_XATTR_ENABLE 1
+#define CONFIG_XATTR_ENABLE 0
 #endif
 
 /**@brief  Enable/disable extents*/
@@ -125,7 +125,7 @@ extern "C" {
 
 /**@brief   Cache size of block device.*/
 #ifndef CONFIG_BLOCK_DEV_CACHE_SIZE
-#define CONFIG_BLOCK_DEV_CACHE_SIZE 8
+#define CONFIG_BLOCK_DEV_CACHE_SIZE 32
 #endif
 
 

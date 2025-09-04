@@ -105,7 +105,7 @@ __attribute__((optimize("O0"))) char* format_path_abs(char* path, char* ret_path
             
         strcat(fpath_fin, path_part);
         for_next:
-        printf("Path part: %s Fin: %s\n",path_part,fpath_fin);
+        //printf("Path part: %s Fin: %s\n",path_part,fpath_fin);
         if(!(path_part = strtok(NULL, "/")))
             break;
            

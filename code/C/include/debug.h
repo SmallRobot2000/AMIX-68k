@@ -1,4 +1,5 @@
 #define DEBUG
+//#define DEBUG_ALL
 //#define DEBUG_ELF
 
 #ifdef DEBUG
@@ -13,4 +14,11 @@
     do { fprintf(stderr, fmt, ##__VA_ARGS__); } while (0)
 #else
   #define DBG_ELF_PRINTF(fmt, ...) do { } while (0)
+#endif
+
+#ifdef DEBUG_ELF
+  #define DBG_PRINTF_ALL(fmt, ...) \
+    do { fprintf(stderr, fmt, ##__VA_ARGS__); } while (0)
+#else
+  #define DBG_PRINTF_ALL(fmt, ...) do { } while (0)
 #endif
