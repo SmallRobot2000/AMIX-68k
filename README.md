@@ -20,23 +20,19 @@ But somehow this is the first time working with 68k chip, I known for 68k style 
 |POWER| ATX PSU or 12V in|
 |TIME & TIMERS| Tmers in Xosera and 68230, and RTC (SparkFun BOB-10160)|
 
-# Present (problems)
-All important stuff in kernel is done, now its time to make a unix like shell inside the kernel(because no proccesess)
+# Present
+All important stuff in kernel is done, now its time to make a unix like shell inside the kernel, later I will make it a executable file
+All executables are in ELF file format, scripts are not yet suported nether are pipes and redirects.
 # Future (TODO)
 
-Fix all the above issues
+ - Add working permissions and thus users
+ - Shell as executable not built in kenrel
+ - Support for pipes and redirects
+ - Move keyboard to a new process and make it all in C because now it sometimes glitches
+ - Clean up code and make more flexiable(cariables insted of defines)
+ - Move some stuff to files like history and $PATH etc.
+ - Add global sbrk with suport for freeing all alocations per process when killed
+ - When poritng keyboard to C add some shortcuts
+ - add system specific command something similar to symctl
 
-~~make a C compiler working~~
-
-~~C memory allocation(it seems it depends on heap but will try to do it in a better way)~~
-
-~~nice API (kinda not full)~~
-
-~~libc (newlib)~~
-
-~~relocatable programs~~
-
-some sort of kernel
-
-simple OS the AMIX OS
 
