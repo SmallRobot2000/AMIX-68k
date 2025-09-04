@@ -155,12 +155,12 @@ get_key_in_row:
 ;return as byte in d0
 kyb_get_row_data:
     move.l  a0,-(a7)
-    STI     ;temporary disable interupts
+    ;STI     ;temporary disable interupts
     lea     PPI_BASE,a0
     and.b   #$F0,(PPI_PB_DATA,a0)   ;mask out raw number
     or.b    d0,(PPI_PB_DATA,a0)
     move.b  (PPI_PA_DATA,a0),d0      ;get colums
-    CLI     ;enable interuts
+    ;CLI     ;enable interuts
     move.l  (a7)+,a0
     rts   
 ;d1 - bit
@@ -284,6 +284,12 @@ init_tmr:
     lea     _exec_addr_err,a1
     move.l  a1,(_exc_add_err)
 
+    ;NULL trap #2
+    lea     _NULL_TRAP_2,a1
+    move.l  a1,(_exc_trap_2)
+    lea     _NULL_TRAP_2,a1
+    move.l  a1,(_exc_trap_3)
+
 
 ;setup timer
 
@@ -371,6 +377,7 @@ update_CAPS:
 
 _exec_illegal:
 
+    trap    #3 ;err
     move    #20,d0
     move    #0,d1
     bsr     x_set_cursor_xy
@@ -380,9 +387,11 @@ _exec_illegal:
     bsr     send_string
     move.l  (2,a7),d0
     bsr     x_print_hex
-    jmp     *
+    
+    rte
 
 _exec_addr_err:
+    trap    #3 ;err
     move    #20,d0
     move    #0,d1
     bsr     x_set_cursor_xy
@@ -392,7 +401,7 @@ _exec_addr_err:
     bsr     send_string
     move.l  (2,a7),d0
     bsr     x_print_hex
-    jmp     *
+    rte
 
 _IRQ1_subrutine:
     move.l  d0,-(a7)
@@ -414,6 +423,7 @@ _IRQ3_subrutine:
     move.l  (a7)+,d0
     rte
 _IRQ4_subrutine:
+    STI
     addq.l  #1,(tmr_cnt)
     move.b  #$01,(PPI_TMR_STAT+PPI_BASE)
     bsr     cursor_update
@@ -421,7 +431,9 @@ _IRQ4_subrutine:
     bsr     update_SHIFT
     bsr     update_CODE
     bsr     update_kyb_leds
+    trap    #2
     rte
+    ;jmp    (_exc_trap_2) ;call other execption
 _IRQ5_subrutine:
     move.l  d0,-(a7)
     move    #'5',d0
@@ -441,5 +453,7 @@ _IRQ7_subrutine:
     move.l  (a7)+,d0
     rte
 
+_NULL_TRAP_2:
+    rte
 
 

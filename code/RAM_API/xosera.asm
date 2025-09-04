@@ -70,7 +70,7 @@ x_set_border_color:
 ;d0 - color/char
 ;puts char in RAM map of VRAM display
 x_print_char_word:
-    STI
+    ;STI
     movem.l d0-d7/a0-a6,-(a7)
     bsr     clear_cursor
     move.w  (cursor_add),d1
@@ -90,16 +90,16 @@ x_print_char_word:
     movep   d0,(XM_DATA,a0)
     add.w   #1,(a1)
 .end:
-    STI
+    ;STI
     bsr     clear_cursor
     bsr     update_scroll
     movem.l (a7)+,d0-d7/a0-a6
-    CLI
+    ;CLI
     rts
 
 ;d0 - byte char
 x_print_char_byte:
-    STI
+    ;STI
     andi.w  #$00FF,d0
     or.w    #(DEFAULT_BG<<4|DEFAULT_FR)<<8,d0
     jmp     x_print_char_word
@@ -151,7 +151,7 @@ test_special
     rts
 
 clear_cursor:
-    STI
+    ;STI
     btst    #0,(cursor_state)  ;if it is flipped
     beq     .end
     bsr     flip_cursor
@@ -168,7 +168,7 @@ x_update_screen:
 ;updates the screen copy in ram
 cursor_update:
     movem.l d0/d1/d2/a0/a1/a2,-(a7)
-    STI
+    ;STI
     lea     XM_BASE,a0
     lea     cursor_state,a1
 
@@ -193,7 +193,7 @@ cursor_update:
     beq     .skip_need          ;chek needded state
     bset    #1,(cursor_state)   ;flip cursor need state
 .skip_need:
-    CLI
+    ;CLI
     movem.l (a7)+,d0/d1/d2/a0/a1/a2
     rts
  
@@ -248,7 +248,7 @@ flip_last_cursor:
 ;d1 - Y
 x_set_cursor_xy:
 	movem.l	d0/d1/a0,-(a7)
-    STI
+    ;STI
     bsr     clear_cursor
 	mulu.w	#80,d1
 	add.w	d1,d0
@@ -277,7 +277,7 @@ x_get_cursor_xy:
 
 ;New line and CR because UNIX like
 x_print_NL:
-    STI
+    ;STI
     bsr     x_print_CR
     movem.l	d0/d1,-(a7)
 	bsr		x_get_cursor_xy
@@ -287,7 +287,7 @@ x_print_NL:
     rts
 ;Carrige return
 x_print_CR:
-    STI
+    ;STI
     movem.l	d0/d1,-(a7)
 	bsr		x_get_cursor_xy
 	move.w	#0,d0
@@ -302,7 +302,7 @@ x_print_BS_DEL:
     
     
     bsr     clear_cursor
-    STI     ;temp disable irqs
+    ;STI     ;temp disable irqs
     subq.w  #1,(cursor_add)
     move.b  #' ',d0
     jsr     x_print_char_byte   ;clear acual character
@@ -343,7 +343,7 @@ x_send_screen:
 
 ;d0 - how much
 screen_scroll:
-    STI
+    ;STI
     bsr     clear_cursor
     movem.l d0-d1/a0-a1,-(a7)
     tst     d0
@@ -457,7 +457,7 @@ s:
 ;a0 - string (words)
 x_print_word_string:
     movem.l d0/a0/a1/a2/a3,-(a7)
-    STI
+    ;STI
     bsr     clear_cursor
     lea     XM_BASE,a1
     bsr     x_set_add_rep
@@ -500,7 +500,7 @@ x_print_word_string:
     addq.w  #1,(a2)
     jmp     .loop
 .end:
-    CLI
+    ;CLI
     movem.l (a7)+,d0/a0/a1/a2/a3
     rts
 
@@ -508,7 +508,7 @@ x_print_word_string:
 ;a0 - string(byte)
 x_print_byte_string:
     movem.l d0/a0/a1/a2/a3,-(a7)
-    STI
+    ;STI
     bsr     clear_cursor
     lea     XM_BASE,a1
     bsr     x_set_add_rep
@@ -551,7 +551,7 @@ x_print_byte_string:
     bsr     update_scroll
     jmp     .loop
 .end:
-    CLI
+    ;CLI
     movem.l (a7)+,d0/a0/a1/a2/a3
     rts
 
@@ -617,7 +617,7 @@ update_scroll:
 
 x_print_byte_buffer:
     movem.l d0/d1/d2/a0/a1/a2/a3,-(a7)
-    STI
+    ;STI
     move.l  d0,d2   ;CNT
     subq.l  #1,d2
 .loop:
@@ -625,14 +625,14 @@ x_print_byte_buffer:
     bsr     x_print_char_byte
     dbra    d2,.loop
 .end:
-    CLI
+    ;CLI
     movem.l (a7)+,d0/d1/d2/a0/a1/a2/a3
     rts
 
 
 x_print_word_buffer:
     movem.l d0/d1/d2/a0/a1/a2/a3,-(a7)
-    STI
+    ;STI
     move.l  d0,d2   ;CNT
     subq.l  #1,d2
 .loop:
@@ -640,6 +640,6 @@ x_print_word_buffer:
     bsr     x_print_char_word
     dbra    d2,.loop
 .end:
-    CLI
+    ;CLI
     movem.l (a7)+,d0/d1/d2/a0/a1/a2/a3
     rts

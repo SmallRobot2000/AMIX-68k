@@ -12,6 +12,10 @@
         "stdlib.h": "c",
         "ff.h": "c",
         "unistd.h": "c",
-        "stat.h": "c"
+        "stat.h": "c",
+        "ext4.h": "c",
+        "ext4_config.h": "c",
+        "ext4_extent.h": "c",
+        "ext4_trans.h": "c"
     }
 }

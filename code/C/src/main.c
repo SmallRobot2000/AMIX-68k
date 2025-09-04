@@ -14,23 +14,40 @@
 #include <stdbool.h>
 #include <shell.h>
 #include <unistd.h>
+#include <process.h>
 
-extern void trap1_test();
-
-
-int main(int argc, char *argv[], char *environp[]) 
+extern void asm_STI();
+extern char* format_path(char *path);
+__attribute__((optimize("O0"))) int main(int argc, char *argv[]) 
 {
 
-    if(kernel_start() != 0)
-    {
-        //while(1); //Oh no
-    }
+//Need to init first proces and commit suicide
+   scheduler_init();
+    //Make kernel task with PID 0
+   if(create_task(kernel_start,NULL,0,NULL) == NULL)
+   {
+       printf("Error starting kernel process!\n");
+       while(1);
+   }
+    //kernel_start();
     
-    while(1)
+    fflush(stdout);
+    char *pth = "/this//a//./../path";
+    printf("\n%s\n", format_path(pth));
+    scheduler_start();
+    //while(1);
+    while(1);
+    
+    int n;
+    while(1)    //This will hapen maybe once
     {
-        shell_loop();
-        
-        
+        if(n%42 == 3){n = 492;}
+        n++;
+        printf("Hi\n");
     }
     return 0;
 }
+
+
+
+

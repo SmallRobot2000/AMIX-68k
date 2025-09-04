@@ -6,14 +6,15 @@
 #include <errno.h>
 #include <string.h>
 int touch(const char *filename) {
-    int fd = open(filename, O_WRONLY | O_CREAT, 0666);
-    if (fd == -1) {
+    FILE *fil;
+    fil = fopen(filename, "w");
+    if (fil == NULL) {
         perror("touch");
         return -1;
     }
 
 
-    close(fd);
+    fclose(fil);
     return 0;
 }
 

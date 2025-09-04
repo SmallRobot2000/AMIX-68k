@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <RTC.h>
 #include <dirent.h>
+#include <signal.h>
 //Sys stuff
 #include<sys_amix.h>
 #include<kernel_syscalls.h>
@@ -21,7 +22,13 @@
 #define STDERR_FILENO   2
 #define UART_FILENO     3    // Custom: UART i/os
 
-
+extern char **environ;
+uint32_t environ_ptr;
+void _INIT(uint32_t envp)
+{
+    environ = (char**)envp;
+    
+}
 //kernel SYS calls
 
 static inline int syscall_trap1(uintptr_t r, int callno, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3)
@@ -57,6 +64,8 @@ void _exit(int status) {
     }
     sys_print_screen('\n');
 */
+    fflush(stdout);
+    kill(getpid(), SIGINT);
     while(1);
 }
 
@@ -77,8 +86,8 @@ void *_sbrk_r(struct _reent *r, ptrdiff_t incr) {
 }
 
 // Process control - minimal implementations
-int _getpid_r(struct _reent *r) { return 1; }
-int _kill_r(struct _reent *r, int pid, int sig) { r->_errno = ENOSYS; return -1; }
+
+
 int _link_r(struct _reent *r, const char *old, const char *new) { r->_errno = EMLINK; return -1; }
 int _gettimeofday_r(struct _reent *r, struct timeval *tp, struct timezone *tzp) 
 { 
@@ -179,4 +188,15 @@ int _unlink_r(struct _reent *r, const char *pathname)
     int ret = syscall_trap1((uintptr_t)&rent, SYSCALL_UNLINK, (uintptr_t)pathname, 0, 0);
     errno = rent._errno;
     return ret;
+}
+
+
+int _getpid_r(struct _reent *r) 
+{
+    return syscall_trap1((uintptr_t)&r, SYSCALL_GETPID, 0, 0, 0);
+}
+
+int _kill_r(struct _reent *r, int pid, int sig) 
+{ 
+    return syscall_trap1((uintptr_t)&r, SYSCALL_KILLPID, pid, sig, 0);
 }

@@ -5,7 +5,8 @@
 #include <stdint.h>
 #include <malloc.h>
 #include <sys_amix.h>
-#include <ff.h>
+#include <ext4.h>
+#include <ext4_fs.h>
 #include <stdint.h>
 #include <xmodem.h>
 #include <elf_loader.h>
@@ -16,14 +17,6 @@
 #define PRG_MIN_ADD 0x180000
 #define DEFAULT_PROMPT "$ "
 
-//FS stuff(temp) TODO better!
-PARTITION VolToPart[FF_VOLUMES] = {
-        {0, 1},    /* "0:" ==> 1st partition in physical drive 0 */
-        {0, 2}     /* "1:" ==> 2nd partition in physical drive 0 */
-    };
-LBA_t plist[] = {100, 0, 0};  /* Divide the drive to one full volume and one empty */
-
-BYTE work[FF_MAX_SS];         /* Working buffer */
 
 //Loop stuff
 int i = 0;
@@ -72,11 +65,13 @@ int call_command(command_t *cmd)
     {
         return run_file(path, cmd->argv, cmd->argc);
     }else{ //From /bin
-        char* fullPath = malloc(strlen(_BIN_PATH)+strlen(path)+1);
-        memset(fullPath, 0, strlen(_BIN_PATH)+strlen(path)+1);
+        char* fullPath = malloc(256);
+        memset(fullPath, 0, strlen(_BIN_PATH)+strlen(path)+2);
 
         strcat(fullPath, _BIN_PATH);
+        strcat(fullPath, "/");
         strcat(fullPath, path);
+        //printf("DEBUG shell call bin file %s\n", fullPath);
         int ret = run_file(fullPath, cmd->argv, cmd->argc);
         free(fullPath);
         return ret;
@@ -239,38 +234,7 @@ void shell_demo(char* line)
         free_tokens(tokens, ntokens);
     
 }
-
-FRESULT list_dir (const char *path)
-{
-    return 0;
-//}
-//    FRESULT res;
-//    DIR dir;
-//    FILINFO fno;
-//    int nfile, ndir;
-//    
-//
-//    res = f_opendir(&dir, path);                   /* Open the directory */
-//    if (res == FR_OK) {
-//        nfile = ndir = 0;
-//        for (;;) {
-//            res = f_readdir(&dir, &fno);           /* Read a directory item */
-//            if (fno.fname[0] == 0) break;          /* Error or end of dir */
-//            if (fno.fattrib & AM_DIR) {            /* It is a directory */
-//                printf("   <DIR>   %s\n", fno.fname);
-//                ndir++;
-//            } else {                               /* It is a file */
-//                printf("%10lu %s\n", fno.fsize, fno.fname);
-//                nfile++;
-//            }
-//        }
-//        f_closedir(&dir);
-//        printf("%d dirs, %d files.\n", ndir, nfile);
-//    } else {
-//        printf("Failed to open \"%s\". (%u)\n", path, res);
-//    }
-//    return res;
-}
+extern struct ext4_fs fs;
 
 void parse_line(char* line)
 {
@@ -283,142 +247,27 @@ void parse_line(char* line)
         sys_scroll(32);
         syscall_trap0(0x0CL,0x00L,0x00); //set cursor to 0,0
         //fs
-    }else if(strcmp(linePtr,"fdisk") == 0){
-        printf("Result of fdisk: %x\n", f_fdisk(0, plist, work));            /* Divide the physical drive 0 */
-        printf("Hello??? \n");
-
-
     }else if(strcmp(linePtr,"getfree") == 0)
     {
-        DWORD fre_clust, fre_sect, tot_sect;
-        FATFS *fatfs;
-        if(f_getfree("0",&fre_clust,&fatfs)){printf("Error!");}            /* Divide the physical drive 0 */
-        /* Get total sectors and free sectors */
-        tot_sect = (fatfs->n_fatent - 2) * fatfs->csize;
-        fre_sect = fre_clust * fatfs->csize;
-        /* Print the free space (assuming 512 bytes/sector) */
-        printf("%10lu KiB total drive space.\n%10lu KiB available.\n", tot_sect / 2, fre_sect / 2);
         
-    }else if(strcmp(linePtr,"mkfs") == 0)
-    {
+        uint32_t free_blocks = fs.sb.free_blocks_count_lo; //shourly cant be more than > 4G * 1024 = 4T
+        uint32_t block_size = fs.sb.log_block_size;
+        uint32_t free_space_bytes = (uint32_t)free_blocks * block_size;
+        printf("Space left on disk: %lu bytes\n", free_space_bytes);
         
-        printf("Result of mkfs: %d\n",f_mkfs("0:",NULL,work,FF_MAX_SS)); //default params
-    }else if(strcmp(linePtr,"mnt") == 0)
-    {
-        printf("Result of mnt: %d\n",f_mount(&fs,"0:",0)); //default params
-    }/*else if(strcmp(linePtr,"ls") == 0)
+    }else if(strcmp(linePtr,"xmodem") == 0)
     {
         char * arg;
+        do{
         arg = strtok(NULL," ");
         if(arg == NULL)
         {
-            arg = ".";
-        }
-        printf("\n");
-        if(list_dir(arg)){printf("Error");}
-        
-    }*/else if(strcmp(linePtr,"xmodem") == 0)
-    {
-        char * arg;
-        arg = strtok(NULL," ");
-        if(arg == NULL)
-        {
-            printf("Usage: xmodem <file_name>");
+            printf("\nUsage: xmodem <file_name(s)>\n");
             return;
         }
         xmodem_receive(arg);
-        
-    }/*else if(strcmp(linePtr,"cat") == 0)
-    {
-        char * arg;
-        arg = strtok(NULL," ");
-        if(arg == NULL)
-        {
-            printf("Usage: xmodem <file_name>");
-            return;
-        }
-        FIL fp;
-        FRESULT res = f_open(&fp, arg, FA_READ);
-        if(res)
-        {
-            printf("Error opening file %s\n",arg);
-        }
-        char cbuf[32];
-        unsigned int bw;
-        while(1)
-        {
-            res = f_read(&fp, cbuf, 32, &bw);
-            if(res)
-            {
-                printf("Error reading file\n");
-                f_close(&fp);
-                return;
-            }
-            if(bw == 0)
-            {
-                break;
-            }
-            for(int i = 0; i < bw; i++)
-            {
-                printf("%c",cbuf[i]);
-            }
-        }
-        printf("\n");
-    }else if(strcmp(linePtr,"load") == 0)
-    {
-        printf("\n");
-        char * arg;
-        arg = strtok(NULL," ");
-        if(arg == NULL)
-        {
-            printf("Usage: load <.elf file> <address>\n");
-            return;
-        }
-        char path[128];
-        memcpy(path, arg, strlen(arg)+1);
-
-        arg = strtok(NULL," ");
-        if(arg == NULL)
-        {
-            printf("Usage: load <.elf file> <address>\n");
-            return;
-        }
-        char *end;
-        long add = strtol(arg, &end, 0);
-
-        if (errno == ERANGE) {int call_address(uint32_t add, char **argv, int argc);
-            printf("Error converting address\n");
-            return;
-        }
-        if(end == arg || add < PRG_MIN_ADD)
-        {
-            printf("Invalid address\n");
-            return;
-        }
-        
-        printf("Load exit code: %lu\n", load_elf(path, (void*)add));
-    }else if(strcmp(linePtr,"run") == 0)
-    {
-        printf("\n");
-        char * arg;
-        arg = strtok(NULL," ");
-        
-        if(arg == NULL)
-        {
-            printf("Usage: run <ELF file>\n");
-            return;
-        }
-        uint32_t add = _WORKING_PROGRAM_ADD;
-        if(load_elf(arg, (void *)add) < 0)
-        {
-            printf("Error loading file\n");
-        }else{
-            //printf("Return exit code: 0x%04x\n", call_address(add, NULL, NULL));
-        }
-        
-        
-        
-    }*/else if(strcmp(linePtr,"dump") == 0)
+        }while(arg != NULL);
+    }else if(strcmp(linePtr,"dump") == 0)
     {
         printf("\n");
         char * arg;
@@ -463,46 +312,45 @@ void parse_line(char* line)
         dump_memory((void *)add, (size_t)len);
         printf("\n");
         
-    }/*else if(strcmp(linePtr,"rm") == 0)
+    }else if(strcmp(linePtr,"umnt") == 0)
     {
+        char *arg = strtok(NULL, " ");
+        if(arg == NULL || arg[strlen(arg)-1] != '/')
+        {
+            printf("\nUsage: umnt <path/>\n");
+            return;
+        }
+        
+        int res = ext4_umount(arg);
         printf("\n");
-        char *arg = strtok(NULL, " ");
-        if(arg == NULL)
-        {
-            printf("Usage: rm <path>\n");
-        }
-        FRESULT res = f_unlink(arg);
-        if(res)
-        {
-            printf("Error removing file\n");
-        }
-    }*/else if(strcmp(linePtr,"umnt") == 0)
-    {
-        char *arg = strtok(NULL, " ");
-        if(arg == NULL)
-        {
-            printf("Usage: umnt <path>\n");
-        }
-        FRESULT res = f_unmount(arg);
         if(res)
         {
             printf("Error unmounting drive %d\n",res);
         }
         return;
-    }else if(strcmp(linePtr, "mv") == 0)
+    }else if(strcmp(linePtr,"mnt") == 0)
     {
-        printf("\n");
-        char *arg = strtok(NULL, " ");
         char *arg1 = strtok(NULL, " ");
-        if(arg == NULL || arg1 == NULL)
+        if(arg1 == NULL)
         {
-            printf("Usage: mv <old path> <new path>\n");
+            printf("\nUsage: umnt <dev> <mount/point>\n");
+            return;
         }
-        FRESULT res = f_rename(arg,arg1);
+
+        char *arg2 = strtok(NULL, " ");
+        if(arg2 == NULL)
+        {
+            printf("\nUsage: umnt <dev> <mount/point>\n");
+            return;
+        }
+        
+        int res = ext4_mount(arg1,arg2,0);
+        printf("\n");
         if(res)
         {
-            printf("Fs error %d",res);
+            printf("Error unmounting drive %d\n",res);
         }
+        return;
     }else
     {
         printf("\n");
@@ -547,8 +395,9 @@ void shell_loop()
 {
        
     
+    
         char ch = syscall_trap0(8L,0L,0L);
-        
+
         if(i == 79){printf("\nToo long\n");i = 0;}
         
             
@@ -606,7 +455,7 @@ void shell_loop()
             i = 0;
             history_cur = 0;
             line[0] = 0;
-        }else if (ch == 0x08) //BS
+        }else if (ch == 0x08 && i > 0) //BS
         {
             line[i-1] = 0;
             i--;
@@ -620,16 +469,20 @@ void shell_loop()
         }
         line[i] = 0;
         
-    
+        
         printf("\r%s\r%s%s",print_buf,DEFAULT_PROMPT,line);
         fflush(stdout);
 }
-
+extern uint32_t cur_pid;
 void shell_start()
 {
-    printf("Shell starting ...\n");
+    printf("Shell starting ...\nPID %lu\n",cur_pid);
     printf("%s",DEFAULT_PROMPT);
     fflush(stdout);
     memset(print_buf,' ',80);
     print_buf[79] = 0;
+    while(1)
+    {
+        shell_loop();
+    }
 }
