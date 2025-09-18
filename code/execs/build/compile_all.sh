@@ -4,7 +4,7 @@ BIN="../bin"
 INC="../../include"
 COMM="../common"
 TMP="../tmp"
-PROGRAMS=(pwd ls cd echo env mkdir rm cat touch test)
+PROGRAMS=(pwd ls cd echo env mkdir rm cat touch test xm demo dma )
 set -e
 
 
