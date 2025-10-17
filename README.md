@@ -34,5 +34,6 @@ All executables are in ELF file format, scripts are not yet suported nether are 
  - Add global sbrk with suport for freeing all alocations per process when killed
  - When poritng keyboard to C add some shortcuts
  - add system specific command something similar to symctl
+ - add Ethernet as expantion
 
 
